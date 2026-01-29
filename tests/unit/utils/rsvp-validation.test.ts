@@ -5,6 +5,7 @@ describe('rsvpSchema', () => {
   const validRsvp = {
     childName: 'Emma',
     attending: true,
+    parentEmail: 'anna@example.com',
   };
 
   it('accepts valid RSVP with required fields only', () => {
@@ -17,7 +18,6 @@ describe('rsvpSchema', () => {
       ...validRsvp,
       parentName: 'Anna Andersson',
       parentPhone: '+46701234567',
-      parentEmail: 'anna@example.com',
       message: 'Vi ser fram emot det!',
       allergies: ['Laktos', 'Gluten'],
       otherDietary: 'Vegetarian',
@@ -74,6 +74,22 @@ describe('rsvpSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('rejects missing email', () => {
+    const result = rsvpSchema.safeParse({
+      childName: 'Emma',
+      attending: true,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty email string', () => {
+    const result = rsvpSchema.safeParse({
+      ...validRsvp,
+      parentEmail: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('rejects invalid email', () => {
     const result = rsvpSchema.safeParse({
       ...validRsvp,
@@ -82,12 +98,26 @@ describe('rsvpSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('accepts empty email string', () => {
+  it('normalizes email to lowercase', () => {
     const result = rsvpSchema.safeParse({
       ...validRsvp,
-      parentEmail: '',
+      parentEmail: 'Anna@Example.COM',
     });
     expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parentEmail).toBe('anna@example.com');
+    }
+  });
+
+  it('normalizes mixed-case email correctly', () => {
+    const result = rsvpSchema.safeParse({
+      ...validRsvp,
+      parentEmail: 'Test.User+Tag@Gmail.Com',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parentEmail).toBe('test.user+tag@gmail.com');
+    }
   });
 
   it('rejects message over 500 chars', () => {
@@ -102,6 +132,7 @@ describe('rsvpSchema', () => {
     const result = rsvpSchema.safeParse({
       childName: 'Erik',
       attending: false,
+      parentEmail: 'erik@example.com',
     });
     expect(result.success).toBe(true);
   });

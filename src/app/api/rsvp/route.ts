@@ -73,14 +73,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltig inbjudan' }, { status: 404 });
   }
 
-  // Check for existing response (upsert)
+  const email = parsed.data.parentEmail;
+
+  // Check for existing response by invitation + email (upsert)
   const { data: existing } = await supabase
     .from('rsvp_responses')
     .select('id')
     .eq('invitation_id', invitation.id)
+    .eq('parent_email', email)
     .single();
 
   let rsvpId: string;
+  let isUpdate = false;
 
   if (existing) {
     // Update existing response
@@ -91,7 +95,7 @@ export async function POST(request: NextRequest) {
         attending: parsed.data.attending,
         parent_name: parsed.data.parentName || null,
         parent_phone: parsed.data.parentPhone || null,
-        parent_email: parsed.data.parentEmail || null,
+        parent_email: email,
         message: parsed.data.message || null,
       })
       .eq('id', existing.id);
@@ -101,6 +105,7 @@ export async function POST(request: NextRequest) {
     }
 
     rsvpId = existing.id;
+    isUpdate = true;
 
     // Delete old allergy data if updating
     await supabase.from('allergy_data').delete().eq('rsvp_id', rsvpId);
@@ -114,7 +119,7 @@ export async function POST(request: NextRequest) {
         attending: parsed.data.attending,
         parent_name: parsed.data.parentName || null,
         parent_phone: parsed.data.parentPhone || null,
-        parent_email: parsed.data.parentEmail || null,
+        parent_email: email,
         message: parsed.data.message || null,
       })
       .select('id')
@@ -153,5 +158,5 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  return NextResponse.json({ success: true, rsvpId });
+  return NextResponse.json({ success: true, rsvpId, isUpdate });
 }

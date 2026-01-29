@@ -72,6 +72,17 @@ All notable changes to this project will be documented in this file.
 - Supabase admin client (service role) for server-side user management
 - Temporary delete account button in dashboard header (for testing)
 
+#### Multipla RSVP-svar per inbjudan
+- Multiple RSVP responses per invitation via shared QR code
+- Email required as identifier: UNIQUE(invitation_id, parent_email)
+- Upsert logic: same email + same QR updates existing response
+- RSVP page shows guest list with names and attending status
+- Email field moved to top of form, marked required with helper text
+- Confirmation page shows update-specific message and re-scan instructions
+- Case-insensitive email matching via Zod lowercase transform and DB index
+- SQL migration with constraint swap and backfill for existing data
+- 17 RSVP validation tests including email requirement and normalization
+
 ### Fixed
 - Post-registration redirect now goes to /check-email instead of /dashboard
 - Middleware now protects both /dashboard and /kalas routes
@@ -87,4 +98,4 @@ All notable changes to this project will be documented in this file.
 - Constants: app config, mock mode, common allergies, party themes
 - Shared components: DevBadge, LoadingSpinner, ErrorBoundary, QRCode
 - Custom hooks: useParty, useGuests, useRealtime
-- 46 unit tests across 4 test files (format, auth, party, RSVP validation)
+- 49 unit tests across 4 test files (format, auth, party, RSVP validation)

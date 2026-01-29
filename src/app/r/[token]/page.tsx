@@ -43,12 +43,12 @@ export default async function RsvpPage({ params }: RsvpPageProps) {
     notFound();
   }
 
-  // Check if already responded
-  const { data: existingResponse } = await supabase
+  // Fetch all responses for this invitation
+  const { data: responses } = await supabase
     .from('rsvp_responses')
     .select('child_name, attending')
     .eq('invitation_id', invitation.id)
-    .single();
+    .order('responded_at', { ascending: true });
 
   return (
     <div className="min-h-screen bg-muted/50 px-4 py-8">
@@ -84,23 +84,36 @@ export default async function RsvpPage({ params }: RsvpPageProps) {
           </CardContent>
         </Card>
 
-        {/* Already responded */}
-        {existingResponse ? (
+        {/* Guest responses */}
+        {responses && responses.length > 0 && (
           <Card>
-            <CardContent className="py-8 text-center">
-              <p className="text-lg font-medium">
-                Du har redan svarat!
-              </p>
-              <p className="mt-1 text-muted-foreground">
-                {existingResponse.child_name} -{' '}
-                {existingResponse.attending ? 'Kommer' : 'Kan inte komma'}
-              </p>
-              <p className="mt-4 text-sm text-muted-foreground">
-                Vill du ändra ditt svar? Fyll i formuläret igen nedan.
+            <CardHeader>
+              <CardTitle className="text-base">
+                Vilka har svarat ({responses.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-1.5">
+                {responses.map((r, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <span
+                      className={`inline-block h-2 w-2 rounded-full ${
+                        r.attending ? 'bg-green-500' : 'bg-red-400'
+                      }`}
+                    />
+                    <span>{r.child_name}</span>
+                    <span className="text-muted-foreground">
+                      – {r.attending ? 'Kommer' : 'Kan inte komma'}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 text-xs text-muted-foreground">
+                Fyll i med samma e-post om du vill uppdatera ditt svar.
               </p>
             </CardContent>
           </Card>
-        ) : null}
+        )}
 
         {/* RSVP Form */}
         <RsvpForm token={token} childName={party.child_name} />

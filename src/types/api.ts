@@ -12,7 +12,7 @@ export interface RsvpRequest {
   attending: boolean;
   parentName?: string;
   parentPhone?: string;
-  parentEmail?: string;
+  parentEmail: string;
   message?: string;
   allergies?: string[];
   otherDietary?: string;

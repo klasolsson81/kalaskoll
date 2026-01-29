@@ -22,7 +22,7 @@ export const rsvpSchema = z.object({
     .regex(/^(\+46|0)[0-9]{6,12}$/, 'Ogiltigt telefonnummer')
     .optional()
     .or(z.literal('')),
-  parentEmail: z.string().email('Ogiltig e-postadress').optional().or(z.literal('')),
+  parentEmail: z.string().email('Ogiltig e-postadress').transform((v) => v.toLowerCase()),
   message: z.string().max(500).optional(),
   allergies: z.array(z.string()).optional(),
   otherDietary: z.string().max(200).optional(),

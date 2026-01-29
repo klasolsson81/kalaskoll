@@ -15,6 +15,7 @@ interface RsvpFormProps {
 export function RsvpForm({ token, childName }: RsvpFormProps) {
   const [attending, setAttending] = useState<boolean | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +37,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
       attending,
       parentName: (formData.get('parentName') as string) || undefined,
       parentPhone: (formData.get('parentPhone') as string) || undefined,
-      parentEmail: (formData.get('parentEmail') as string) || undefined,
+      parentEmail: formData.get('parentEmail') as string,
       message: (formData.get('message') as string) || undefined,
       allergies: allergies.length > 0 ? allergies : undefined,
       otherDietary: (formData.get('otherDietary') as string) || undefined,
@@ -57,6 +58,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
         return;
       }
 
+      setIsUpdate(data.isUpdate ?? false);
       setSubmitted(true);
     } catch {
       setError('Kunde inte skicka svar. Försök igen.');
@@ -70,12 +72,19 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
       <Card>
         <CardContent className="py-12 text-center">
           <p className="text-2xl font-bold">
-            {attending ? 'Tack! Vi ses på kalaset!' : 'Tack för ditt svar!'}
+            {isUpdate
+              ? 'Ditt svar har uppdaterats!'
+              : attending
+                ? 'Tack! Vi ses på kalaset!'
+                : 'Tack för ditt svar!'}
           </p>
           <p className="mt-2 text-muted-foreground">
             {attending
               ? `Vi ser fram emot att fira med ${childName}!`
               : 'Hoppas vi ses en annan gång!'}
+          </p>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Behöver du ändra ditt svar? Scanna QR-koden igen och fyll i med samma e-postadress.
           </p>
         </CardContent>
       </Card>
@@ -123,6 +132,28 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
 
       {attending !== null && (
         <>
+          {/* Email (required identifier) */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Din e-postadress</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="space-y-2">
+                <Label htmlFor="parentEmail">E-post</Label>
+                <Input
+                  id="parentEmail"
+                  name="parentEmail"
+                  type="email"
+                  required
+                  placeholder="din@email.se"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Används för att identifiera ditt svar. Fyll i samma e-post om du vill ändra ditt svar.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Child info */}
           <Card>
             <CardHeader>
@@ -153,15 +184,6 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
                   name="parentPhone"
                   type="tel"
                   placeholder="070 123 4567"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="parentEmail">E-post</Label>
-                <Input
-                  id="parentEmail"
-                  name="parentEmail"
-                  type="email"
-                  placeholder="din@email.se"
                 />
               </div>
             </CardContent>

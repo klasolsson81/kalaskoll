@@ -28,7 +28,7 @@ export interface RsvpResponse {
   attending: boolean;
   parentName?: string;
   parentPhone?: string;
-  parentEmail?: string;
+  parentEmail: string;
   message?: string;
   respondedAt: string;
 }

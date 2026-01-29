@@ -140,7 +140,7 @@ export type Database = {
           attending: boolean;
           parent_name: string | null;
           parent_phone: string | null;
-          parent_email: string | null;
+          parent_email: string;
           message: string | null;
           responded_at: string;
           updated_at: string;
@@ -152,7 +152,7 @@ export type Database = {
           attending: boolean;
           parent_name?: string | null;
           parent_phone?: string | null;
-          parent_email?: string | null;
+          parent_email: string;
           message?: string | null;
           responded_at?: string;
           updated_at?: string;
@@ -164,7 +164,7 @@ export type Database = {
           attending?: boolean;
           parent_name?: string | null;
           parent_phone?: string | null;
-          parent_email?: string | null;
+          parent_email?: string;
           message?: string | null;
           updated_at?: string;
         };
@@ -172,7 +172,7 @@ export type Database = {
           {
             foreignKeyName: "rsvp_responses_invitation_id_fkey";
             columns: ["invitation_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "invitations";
             referencedColumns: ["id"];
           },
