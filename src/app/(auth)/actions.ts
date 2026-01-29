@@ -1,5 +1,6 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -45,6 +46,9 @@ export async function register(formData: FormData): Promise<AuthResult> {
     return { error: parsed.error.issues[0].message };
   }
 
+  const headersList = await headers();
+  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
@@ -53,6 +57,7 @@ export async function register(formData: FormData): Promise<AuthResult> {
       data: {
         full_name: parsed.data.fullName,
       },
+      emailRedirectTo: `${origin}/auth/callback`,
     },
   });
 
