@@ -47,7 +47,7 @@ export async function register(formData: FormData): Promise<AuthResult> {
   }
 
   const headersList = await headers();
-  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const origin = (headersList.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, '');
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
