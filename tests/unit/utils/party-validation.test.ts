@@ -1,0 +1,125 @@
+import { describe, it, expect } from 'vitest';
+import { partySchema } from '@/lib/utils/validation';
+
+describe('partySchema', () => {
+  const validParty = {
+    childName: 'Klas',
+    childAge: 7,
+    partyDate: '2026-03-27',
+    partyTime: '14:00',
+    venueName: "Leo's Lekland",
+  };
+
+  it('accepts valid party data with required fields only', () => {
+    const result = partySchema.safeParse(validParty);
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts valid party data with all optional fields', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      venueAddress: 'Storgatan 1, Stockholm',
+      description: 'Kom och fira!',
+      theme: 'dinosaurier',
+      rsvpDeadline: '2026-03-20',
+      maxGuests: 15,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects empty child name', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childName: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects child name over 100 characters', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childName: 'A'.repeat(101),
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects child age of 0', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childAge: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects child age of 20', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childAge: 20,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts child age of 1', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childAge: 1,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts child age of 19', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childAge: 19,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects empty party date', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      partyDate: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty party time', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      partyTime: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty venue name', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      venueName: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects max guests below 1', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      maxGuests: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects max guests above 100', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      maxGuests: 101,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects description over 1000 characters', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      description: 'A'.repeat(1001),
+    });
+    expect(result.success).toBe(false);
+  });
+});

@@ -1,0 +1,38 @@
+/**
+ * Format a Swedish phone number for display.
+ * Accepts +46 or 0-prefix formats.
+ */
+export function formatPhoneNumber(phone: string): string {
+  const cleaned = phone.replace(/\s/g, '');
+
+  if (cleaned.startsWith('+46')) {
+    const local = cleaned.slice(3);
+    return `+46 ${local.slice(0, 2)} ${local.slice(2, 5)} ${local.slice(5)}`.trim();
+  }
+
+  if (cleaned.startsWith('0')) {
+    return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`.trim();
+  }
+
+  return phone;
+}
+
+/**
+ * Format a date for Swedish locale.
+ */
+export function formatDate(date: Date | string, locale = 'sv-SE'): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleDateString(locale, {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+/**
+ * Format a time string (HH:MM) for display.
+ */
+export function formatTime(time: string): string {
+  return time.slice(0, 5);
+}

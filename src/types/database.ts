@@ -1,0 +1,228 @@
+// Supabase generated types
+// Run: pnpm db:generate to update from live schema
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export type Database = {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          full_name: string | null;
+          phone: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          full_name?: string | null;
+          phone?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          full_name?: string | null;
+          phone?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      parties: {
+        Row: {
+          id: string;
+          owner_id: string;
+          child_name: string;
+          child_age: number;
+          party_date: string;
+          party_time: string;
+          venue_name: string;
+          venue_address: string | null;
+          description: string | null;
+          theme: string | null;
+          invitation_image_url: string | null;
+          rsvp_deadline: string | null;
+          max_guests: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          child_name: string;
+          child_age: number;
+          party_date: string;
+          party_time: string;
+          venue_name: string;
+          venue_address?: string | null;
+          description?: string | null;
+          theme?: string | null;
+          invitation_image_url?: string | null;
+          rsvp_deadline?: string | null;
+          max_guests?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          child_name?: string;
+          child_age?: number;
+          party_date?: string;
+          party_time?: string;
+          venue_name?: string;
+          venue_address?: string | null;
+          description?: string | null;
+          theme?: string | null;
+          invitation_image_url?: string | null;
+          rsvp_deadline?: string | null;
+          max_guests?: number | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "parties_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      invitations: {
+        Row: {
+          id: string;
+          party_id: string;
+          token: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          party_id: string;
+          token: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          party_id?: string;
+          token?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "invitations_party_id_fkey";
+            columns: ["party_id"];
+            isOneToOne: false;
+            referencedRelation: "parties";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      rsvp_responses: {
+        Row: {
+          id: string;
+          invitation_id: string;
+          child_name: string;
+          attending: boolean;
+          parent_name: string | null;
+          parent_phone: string | null;
+          parent_email: string | null;
+          message: string | null;
+          responded_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          invitation_id: string;
+          child_name: string;
+          attending: boolean;
+          parent_name?: string | null;
+          parent_phone?: string | null;
+          parent_email?: string | null;
+          message?: string | null;
+          responded_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          invitation_id?: string;
+          child_name?: string;
+          attending?: boolean;
+          parent_name?: string | null;
+          parent_phone?: string | null;
+          parent_email?: string | null;
+          message?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "rsvp_responses_invitation_id_fkey";
+            columns: ["invitation_id"];
+            isOneToOne: true;
+            referencedRelation: "invitations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      allergy_data: {
+        Row: {
+          id: string;
+          rsvp_id: string;
+          allergies: Json;
+          other_dietary: string | null;
+          consent_given_at: string;
+          auto_delete_at: string;
+        };
+        Insert: {
+          id?: string;
+          rsvp_id: string;
+          allergies: Json;
+          other_dietary?: string | null;
+          consent_given_at: string;
+          auto_delete_at: string;
+        };
+        Update: {
+          id?: string;
+          rsvp_id?: string;
+          allergies?: Json;
+          other_dietary?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "allergy_data_rsvp_id_fkey";
+            columns: ["rsvp_id"];
+            isOneToOne: true;
+            referencedRelation: "rsvp_responses";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
+};
