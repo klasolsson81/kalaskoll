@@ -707,6 +707,10 @@ NEXT_PUBLIC_APP_NAME=KalasKoll
 # 🎭 Mock Mode (sätt till 'false' för riktiga AI-anrop)
 NEXT_PUBLIC_MOCK_AI=true
 
+# Resend (email)
+RESEND_API_KEY=your-resend-api-key
+RESEND_FROM_EMAIL=KalasKoll <noreply@kalaskoll.se>
+
 # Analytics (optional)
 NEXT_PUBLIC_POSTHOG_KEY=
 NEXT_PUBLIC_POSTHOG_HOST=
@@ -719,6 +723,8 @@ NEXT_PUBLIC_POSTHOG_HOST=
 | `SUPABASE_SERVICE_ROLE_KEY` | Production, Preview | Server-side Supabase access |
 | `IDEOGRAM_API_KEY` | Production, Preview | AI-bildgenerering |
 | `OPENAI_API_KEY` | Production, Preview | Fallback AI |
+| `RESEND_API_KEY` | Production, Preview | E-postutskick (Resend) |
+| `RESEND_FROM_EMAIL` | Production, Preview | Avsändaradress för e-post |
 
 > ⚠️ **ALDRIG** commita `.env.local` eller faktiska secrets!
 
@@ -899,6 +905,22 @@ pnpm analyze                # Bundle analyzer
 ---
 
 ## 🚨 Viktiga påminnelser för Claude Code
+
+### ⚡ AUTOMATISKA STEG EFTER VARJE UPPGIFT (OBLIGATORISKT!)
+
+> **KRITISKT:** Dessa steg ska ALLTID utföras automatiskt när en uppgift är klar.
+> Vänta INTE på att användaren ber om det. Det ingår i varje uppgift.
+
+1. **Uppdatera docs** – `docs/CHANGELOG.md` (alltid för feat/fix), `docs/API.md` (vid API-ändringar), `README.md` (vid setup-ändringar)
+2. **Kör kvalitetskontroll** – `pnpm lint && pnpm test && pnpm build`
+3. **Commita** – Med konventionellt commit-meddelande (se commit-konvention nedan)
+4. **Pusha till GitHub** – `git push origin <branch>`
+
+> Hoppa ALDRIG över dessa steg. De är lika viktiga som själva koden.
+
+---
+
+### Övriga regler
 
 1. **ALLTID** kör `pnpm lint && pnpm test` innan commit
 2. **ALLTID** uppdatera relevanta docs innan push

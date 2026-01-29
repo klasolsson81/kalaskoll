@@ -142,6 +142,7 @@ export type Database = {
           parent_phone: string | null;
           parent_email: string;
           message: string | null;
+          edit_token: string;
           responded_at: string;
           updated_at: string;
         };
@@ -154,6 +155,7 @@ export type Database = {
           parent_phone?: string | null;
           parent_email: string;
           message?: string | null;
+          edit_token: string;
           responded_at?: string;
           updated_at?: string;
         };
@@ -166,6 +168,7 @@ export type Database = {
           parent_phone?: string | null;
           parent_email?: string;
           message?: string | null;
+          edit_token?: string;
           updated_at?: string;
         };
         Relationships: [

@@ -8,10 +8,12 @@ import { COMMON_ALLERGIES } from '@/lib/constants';
 
 interface AllergyCheckboxesProps {
   disabled?: boolean;
+  initialSelected?: string[];
+  initialOtherDietary?: string;
 }
 
-export function AllergyCheckboxes({ disabled }: AllergyCheckboxesProps) {
-  const [selected, setSelected] = useState<string[]>([]);
+export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDietary }: AllergyCheckboxesProps) {
+  const [selected, setSelected] = useState<string[]>(initialSelected ?? []);
   const [consentGiven, setConsentGiven] = useState(false);
   const hasAllergies = selected.length > 0;
 
@@ -49,6 +51,7 @@ export function AllergyCheckboxes({ disabled }: AllergyCheckboxesProps) {
           id="otherDietary"
           name="otherDietary"
           placeholder="t.ex. vegetarian, vegan..."
+          defaultValue={initialOtherDietary ?? ''}
           disabled={disabled}
         />
       </div>

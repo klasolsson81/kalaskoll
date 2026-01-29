@@ -9,6 +9,9 @@ export const MOCK_MODE = process.env.NEXT_PUBLIC_MOCK_AI === 'true';
 export const TEST_INVITATION_TOKEN = 'test1234';
 export const TEST_RSVP_URL = `${APP_URL}/r/${TEST_INVITATION_TOKEN}`;
 
+// Email
+export const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'KalasKoll <onboarding@resend.dev>';
+
 // Swedish allergies commonly found at children's parties
 export const COMMON_ALLERGIES = [
   'Laktos',

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatDate, formatTime } from '@/lib/utils/format';
+import { PartyHeader } from '@/components/cards/PartyHeader';
 import { RsvpForm } from '@/components/forms/RsvpForm';
 import type { Database } from '@/types/database';
 
@@ -54,35 +54,16 @@ export default async function RsvpPage({ params }: RsvpPageProps) {
     <div className="min-h-screen bg-muted/50 px-4 py-8">
       <div className="mx-auto max-w-md space-y-6">
         {/* Party header */}
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">
-              {party.child_name} fyller {party.child_age} år!
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-center">
-            <div>
-              <p className="text-lg font-medium">
-                {formatDate(party.party_date)}
-              </p>
-              <p className="text-muted-foreground">kl {formatTime(party.party_time)}</p>
-            </div>
-            <div>
-              <p className="font-medium">{party.venue_name}</p>
-              {party.venue_address && (
-                <p className="text-sm text-muted-foreground">{party.venue_address}</p>
-              )}
-            </div>
-            {party.description && (
-              <p className="text-sm text-muted-foreground">{party.description}</p>
-            )}
-            {party.theme && (
-              <p className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium capitalize text-primary">
-                Tema: {party.theme}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+        <PartyHeader
+          childName={party.child_name}
+          childAge={party.child_age}
+          partyDate={party.party_date}
+          partyTime={party.party_time}
+          venueName={party.venue_name}
+          venueAddress={party.venue_address}
+          description={party.description}
+          theme={party.theme}
+        />
 
         {/* Guest responses */}
         {responses && responses.length > 0 && (
@@ -109,7 +90,7 @@ export default async function RsvpPage({ params }: RsvpPageProps) {
                 ))}
               </ul>
               <p className="mt-4 text-xs text-muted-foreground">
-                Fyll i med samma e-post om du vill uppdatera ditt svar.
+                Har du redan svarat? Kolla din e-post för en länk att ändra ditt svar.
               </p>
             </CardContent>
           </Card>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rsvpSchema } from '@/lib/utils/validation';
+import { rsvpSchema, rsvpEditSchema } from '@/lib/utils/validation';
 
 describe('rsvpSchema', () => {
   const validRsvp = {
@@ -150,6 +150,104 @@ describe('rsvpSchema', () => {
       ...validRsvp,
       otherDietary: 'A'.repeat(201),
     });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('rsvpEditSchema', () => {
+  const validEdit = {
+    editToken: 'a'.repeat(64),
+    childName: 'Emma',
+    attending: true,
+    parentEmail: 'anna@example.com',
+  };
+
+  it('accepts valid edit request with required fields', () => {
+    const result = rsvpEditSchema.safeParse(validEdit);
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts valid edit request with all optional fields', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      parentName: 'Anna Andersson',
+      parentPhone: '+46701234567',
+      message: 'Vi ändrade oss!',
+      allergies: ['Gluten'],
+      otherDietary: 'Vegan',
+      allergyConsent: true,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects missing editToken', () => {
+    const { editToken: _editToken, ...noToken } = validEdit;
+    const result = rsvpEditSchema.safeParse(noToken);
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty editToken', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      editToken: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects editToken over 64 chars', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      editToken: 'a'.repeat(65),
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('normalizes email to lowercase', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      parentEmail: 'Anna@Example.COM',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parentEmail).toBe('anna@example.com');
+    }
+  });
+
+  it('accepts Swedish phone formats', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      parentPhone: '+46701234567',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects invalid phone format', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      parentPhone: '123',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty child name', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      childName: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts attending false', () => {
+    const result = rsvpEditSchema.safeParse({
+      ...validEdit,
+      attending: false,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects missing email', () => {
+    const { parentEmail: _email, ...noEmail } = validEdit;
+    const result = rsvpEditSchema.safeParse(noEmail);
     expect(result.success).toBe(false);
   });
 });

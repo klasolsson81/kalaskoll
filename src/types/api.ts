@@ -19,6 +19,19 @@ export interface RsvpRequest {
   allergyConsent?: boolean;
 }
 
+export interface RsvpEditRequest {
+  editToken: string;
+  childName: string;
+  attending: boolean;
+  parentName?: string;
+  parentPhone?: string;
+  parentEmail: string;
+  message?: string;
+  allergies?: string[];
+  otherDietary?: string;
+  allergyConsent?: boolean;
+}
+
 export interface GenerateInvitationRequest {
   partyId: string;
   theme: string;

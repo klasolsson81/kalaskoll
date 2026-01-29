@@ -83,6 +83,24 @@ All notable changes to this project will be documented in this file.
 - SQL migration with constraint swap and backfill for existing data
 - 17 RSVP validation tests including email requirement and normalization
 
+#### Bekräftelsemail & säker edit-token
+- Resend integration for RSVP confirmation emails (Swedish, mobile-friendly HTML)
+- Cryptographic `edit_token` (64 hex chars) generated per RSVP response
+- Secure edit flow: only token holder can modify their response
+- Edit page at `/r/[token]/edit?token=xyz` with pre-filled form
+- GET `/api/rsvp/edit` returns RSVP + allergy data for pre-fill
+- POST `/api/rsvp/edit` validates edit_token, updates response, sends new confirmation
+- Duplicate email on same invitation returns 409 with "check your email" message
+- Removed upsert logic from POST `/api/rsvp` (insert-only now)
+- Fire-and-forget email sending (RSVP saved even if email fails)
+- Defense-in-depth: edit page verifies both edit_token and invitation_token
+- PartyHeader shared component extracted for RSVP and edit pages
+- AllergyCheckboxes supports initial values for edit mode
+- RsvpForm supports create/edit modes with defaultValues prop
+- SQL migration 00005: edit_token column with backfill, NOT NULL, UNIQUE, index
+- `rsvpEditSchema` Zod validation + 13 new test cases (60 total tests)
+- Resend dependency added, RESEND_API_KEY + RESEND_FROM_EMAIL env vars
+
 ### Fixed
 - Post-registration redirect now goes to /check-email instead of /dashboard
 - Middleware now protects both /dashboard and /kalas routes
@@ -98,4 +116,4 @@ All notable changes to this project will be documented in this file.
 - Constants: app config, mock mode, common allergies, party themes
 - Shared components: DevBadge, LoadingSpinner, ErrorBoundary, QRCode
 - Custom hooks: useParty, useGuests, useRealtime
-- 49 unit tests across 4 test files (format, auth, party, RSVP validation)
+- 60 unit tests across 4 test files (format, auth, party, RSVP validation)

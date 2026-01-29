@@ -7,17 +7,32 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AllergyCheckboxes } from '@/components/forms/AllergyCheckboxes';
 
+interface RsvpDefaultValues {
+  childName?: string;
+  attending?: boolean;
+  parentName?: string | null;
+  parentPhone?: string | null;
+  parentEmail?: string;
+  message?: string | null;
+  allergies?: string[];
+  otherDietary?: string | null;
+}
+
 interface RsvpFormProps {
   token: string;
   childName: string;
+  mode?: 'create' | 'edit';
+  editToken?: string;
+  defaultValues?: RsvpDefaultValues;
 }
 
-export function RsvpForm({ token, childName }: RsvpFormProps) {
-  const [attending, setAttending] = useState<boolean | null>(null);
+export function RsvpForm({ token, childName, mode = 'create', editToken, defaultValues }: RsvpFormProps) {
+  const [attending, setAttending] = useState<boolean | null>(defaultValues?.attending ?? null);
   const [submitted, setSubmitted] = useState(false);
-  const [isUpdate, setIsUpdate] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const isEdit = mode === 'edit';
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,8 +46,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
     const allergies: string[] = [];
     formData.getAll('allergies').forEach((v) => allergies.push(v as string));
 
-    const body = {
-      token,
+    const baseBody = {
       childName: formData.get('childName') as string,
       attending,
       parentName: (formData.get('parentName') as string) || undefined,
@@ -44,8 +58,13 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
       allergyConsent: formData.get('allergyConsent') === 'true',
     };
 
+    const url = isEdit ? '/api/rsvp/edit' : '/api/rsvp';
+    const body = isEdit
+      ? { ...baseBody, editToken }
+      : { ...baseBody, token };
+
     try {
-      const res = await fetch('/api/rsvp', {
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -54,11 +73,14 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Något gick fel');
+        if (res.status === 409) {
+          setError(data.error || 'Du har redan svarat. Kolla din e-post för en länk att ändra.');
+        } else {
+          setError(data.error || 'Något gick fel');
+        }
         return;
       }
 
-      setIsUpdate(data.isUpdate ?? false);
       setSubmitted(true);
     } catch {
       setError('Kunde inte skicka svar. Försök igen.');
@@ -72,7 +94,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
       <Card>
         <CardContent className="py-12 text-center">
           <p className="text-2xl font-bold">
-            {isUpdate
+            {isEdit
               ? 'Ditt svar har uppdaterats!'
               : attending
                 ? 'Tack! Vi ses på kalaset!'
@@ -84,7 +106,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
               : 'Hoppas vi ses en annan gång!'}
           </p>
           <p className="mt-4 text-sm text-muted-foreground">
-            Behöver du ändra ditt svar? Scanna QR-koden igen och fyll i med samma e-postadress.
+            Kolla din e-post för en bekräftelse och länk att ändra ditt svar.
           </p>
         </CardContent>
       </Card>
@@ -146,10 +168,20 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
                   type="email"
                   required
                   placeholder="din@email.se"
+                  defaultValue={defaultValues?.parentEmail ?? ''}
+                  readOnly={isEdit}
+                  className={isEdit ? 'bg-muted' : ''}
                 />
-                <p className="text-xs text-muted-foreground">
-                  Används för att identifiera ditt svar. Fyll i samma e-post om du vill ändra ditt svar.
-                </p>
+                {!isEdit && (
+                  <p className="text-xs text-muted-foreground">
+                    Hit skickar vi en bekräftelse och en länk om du vill ändra ditt svar.
+                  </p>
+                )}
+                {isEdit && (
+                  <p className="text-xs text-muted-foreground">
+                    E-postadressen kan inte ändras.
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -162,7 +194,13 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="childName">Barnets namn</Label>
-                <Input id="childName" name="childName" required placeholder="Barnets namn" />
+                <Input
+                  id="childName"
+                  name="childName"
+                  required
+                  placeholder="Barnets namn"
+                  defaultValue={defaultValues?.childName ?? ''}
+                />
               </div>
             </CardContent>
           </Card>
@@ -175,7 +213,12 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="parentName">Förälders namn</Label>
-                <Input id="parentName" name="parentName" placeholder="Ditt namn" />
+                <Input
+                  id="parentName"
+                  name="parentName"
+                  placeholder="Ditt namn"
+                  defaultValue={defaultValues?.parentName ?? ''}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="parentPhone">Telefon</Label>
@@ -184,6 +227,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
                   name="parentPhone"
                   type="tel"
                   placeholder="070 123 4567"
+                  defaultValue={defaultValues?.parentPhone ?? ''}
                 />
               </div>
             </CardContent>
@@ -196,7 +240,10 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
                 <CardTitle>Allergier & specialkost</CardTitle>
               </CardHeader>
               <CardContent>
-                <AllergyCheckboxes />
+                <AllergyCheckboxes
+                  initialSelected={defaultValues?.allergies}
+                  initialOtherDietary={defaultValues?.otherDietary ?? undefined}
+                />
               </CardContent>
             </Card>
           )}
@@ -211,6 +258,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
                   name="message"
                   rows={2}
                   placeholder="Vi ser fram emot det!"
+                  defaultValue={defaultValues?.message ?? ''}
                   className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 />
               </div>
@@ -218,7 +266,7 @@ export function RsvpForm({ token, childName }: RsvpFormProps) {
           </Card>
 
           <Button type="submit" className="w-full" size="lg" disabled={loading}>
-            {loading ? 'Skickar...' : 'Skicka svar'}
+            {loading ? 'Skickar...' : isEdit ? 'Uppdatera svar' : 'Skicka svar'}
           </Button>
         </>
       )}
