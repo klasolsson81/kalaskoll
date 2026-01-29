@@ -65,10 +65,15 @@ All notable changes to this project will be documented in this file.
 - Full metadata: OpenGraph, Twitter Cards, robots, sitemap
 - Swedish locale (lang="sv") throughout
 
-### Fixed
-- Post-registration redirect now goes to /check-email instead of /dashboard
+#### Auth improvements
+- Check-email page shown after registration with instructions
 - Auth callback route (/auth/callback) handles email verification code exchange
 - Confirmed page (/confirmed) shown after successful email verification
+- Supabase admin client (service role) for server-side user management
+- Temporary delete account button in dashboard header (for testing)
+
+### Fixed
+- Post-registration redirect now goes to /check-email instead of /dashboard
 - Middleware now protects both /dashboard and /kalas routes
 
 #### Cross-cutting

@@ -17,12 +17,14 @@ Förenkla kalasplanering för svenska föräldrar genom att eliminera kaos med p
 
 ### Kärnflöde
 ```
-1. Förälder skapar konto → Dashboard
-2. Skapar nytt kalas med AI-genererad inbjudan
-3. Skriver ut inbjudan med QR-kod
-4. Gäster scannar QR → Mobil OSA-sida
-5. Gäster svarar ja/nej + allergiinfo
-6. Förälder ser alla svar i realtid
+1. Förälder skapar konto → "Kolla din e-post"-sida
+2. Klickar verifieringslänk → /auth/callback → /confirmed
+3. Loggar in → Dashboard
+4. Skapar nytt kalas med AI-genererad inbjudan
+5. Skriver ut inbjudan med QR-kod
+6. Gäster scannar QR → Mobil OSA-sida
+7. Gäster svarar ja/nej + allergiinfo
+8. Förälder ser alla svar i realtid
 ```
 
 ---
@@ -64,7 +66,11 @@ kalasfix/
 │   │   ├── (auth)/
 │   │   │   ├── login/page.tsx
 │   │   │   ├── register/page.tsx
+│   │   │   ├── check-email/page.tsx   # Visas efter registrering
+│   │   │   ├── confirmed/page.tsx     # Visas efter e-postverifiering
 │   │   │   └── layout.tsx
+│   │   ├── auth/
+│   │   │   └── callback/route.ts      # Hanterar e-postverifieringslänk
 │   │   ├── (dashboard)/
 │   │   │   ├── dashboard/page.tsx
 │   │   │   ├── kalas/
@@ -72,6 +78,7 @@ kalasfix/
 │   │   │   │   ├── [id]/edit/page.tsx
 │   │   │   │   ├── [id]/guests/page.tsx
 │   │   │   │   └── new/page.tsx
+│   │   │   ├── DeleteAccountButton.tsx # Tillfällig – för testning
 │   │   │   └── layout.tsx
 │   │   ├── r/[token]/page.tsx     # Publik RSVP-sida
 │   │   ├── api/
@@ -105,6 +112,7 @@ kalasfix/
 │   │   ├── supabase/
 │   │   │   ├── client.ts          # Browser client
 │   │   │   ├── server.ts          # Server client
+│   │   │   ├── admin.ts           # Admin client (service role)
 │   │   │   ├── middleware.ts      # Auth middleware
 │   │   │   └── types.ts           # Generated types
 │   │   ├── ai/
