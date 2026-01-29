@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/dashboard/', '/r/'],
       },
     ],
-    sitemap: 'https://kalasfix.se/sitemap.xml',
+    sitemap: 'https://kalaskoll.se/sitemap.xml',
   };
 }

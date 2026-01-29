@@ -25,7 +25,7 @@ export default async function DashboardLayout({
       <header className="border-b">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
           <Link href="/dashboard" className="text-xl font-bold">
-            KalasFix
+            KalasKoll
           </Link>
           <nav className="flex items-center gap-4">
             <Link href="/dashboard" className="text-sm hover:underline">

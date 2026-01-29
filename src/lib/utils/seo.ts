@@ -14,7 +14,7 @@ export function generateMetadata({
   path = '',
   image = '/og-image.png',
 }: SeoProps): Metadata {
-  const url = `https://kalasfix.se${path}`;
+  const url = `https://kalaskoll.se${path}`;
 
   return {
     title,

@@ -14,28 +14,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://kalasfix.se'),
+  metadataBase: new URL('https://kalaskoll.se'),
   title: {
-    default: 'KalasFix – Smarta inbjudningar för barnkalas',
-    template: '%s | KalasFix',
+    default: 'KalasKoll – Smarta inbjudningar för barnkalas',
+    template: '%s | KalasKoll',
   },
   description:
     'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt. Perfekt för barnkalas!',
   keywords: ['barnkalas', 'inbjudningar', 'kalas', 'OSA', 'födelsedagskalas', 'allergi'],
-  authors: [{ name: 'KalasFix' }],
-  creator: 'KalasFix',
+  authors: [{ name: 'KalasKoll' }],
+  creator: 'KalasKoll',
   openGraph: {
     type: 'website',
     locale: 'sv_SE',
-    url: 'https://kalasfix.se',
-    siteName: 'KalasFix',
-    title: 'KalasFix – Smarta inbjudningar för barnkalas',
+    url: 'https://kalaskoll.se',
+    siteName: 'KalasKoll',
+    title: 'KalasKoll – Smarta inbjudningar för barnkalas',
     description: 'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt.',
     images: [{ url: '/og-image.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'KalasFix – Smarta inbjudningar för barnkalas',
+    title: 'KalasKoll – Smarta inbjudningar för barnkalas',
     description: 'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt.',
     images: ['/og-image.png'],
   },

@@ -1,5 +1,5 @@
 [project]
-id = "kalasfix"
+id = "kalaskoll"
 
 [db]
 port = 54322
@@ -13,7 +13,7 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://kalasfix.se/**"]
+additional_redirect_urls = ["https://kalaskoll.se/**"]
 jwt_expiry = 3600
 enable_signup = true
 

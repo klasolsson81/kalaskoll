@@ -107,7 +107,7 @@ export default async function RsvpPage({ params }: RsvpPageProps) {
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground">
-          Drivs av KalasFix – Smarta inbjudningar för barnkalas
+          Drivs av KalasKoll – Smarta inbjudningar för barnkalas
         </p>
       </div>
     </div>

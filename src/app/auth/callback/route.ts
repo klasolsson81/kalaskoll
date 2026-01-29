@@ -4,17 +4,30 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/dashboard';
+  const tokenHash = searchParams.get('token_hash');
+  const type = searchParams.get('type');
 
+  const supabase = await createClient();
+
+  // PKCE flow: Supabase redirects with a code parameter
   if (code) {
-    const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-
     if (!error) {
       return NextResponse.redirect(`${origin}/confirmed`);
     }
   }
 
-  // If code exchange fails, redirect to login with error
-  return NextResponse.redirect(`${origin}/login`);
+  // Email verification flow: Supabase sends token_hash + type directly
+  if (tokenHash && type) {
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: type as 'signup' | 'email',
+    });
+    if (!error) {
+      return NextResponse.redirect(`${origin}/confirmed`);
+    }
+  }
+
+  // If both flows fail, redirect to login with error
+  return NextResponse.redirect(`${origin}/login?error=verification_failed`);
 }

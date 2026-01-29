@@ -18,7 +18,7 @@ export default function RegisterPage() {
     <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Skapa konto</CardTitle>
-        <CardDescription>Kom igång med KalasFix</CardDescription>
+        <CardDescription>Kom igång med KalasKoll</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">

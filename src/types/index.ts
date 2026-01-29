@@ -1,4 +1,4 @@
-// Shared types for KalasFix
+// Shared types for KalasKoll
 export type PartyTheme =
   | 'dinosaurier'
   | 'prinsessor'

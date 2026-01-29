@@ -18,7 +18,7 @@ export default function LoginPage() {
     <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Logga in</CardTitle>
-        <CardDescription>Logga in på ditt KalasFix-konto</CardDescription>
+        <CardDescription>Logga in på ditt KalasKoll-konto</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">

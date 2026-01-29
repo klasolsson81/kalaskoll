@@ -1,4 +1,4 @@
-# CLAUDE.md – KalasFix
+# CLAUDE.md – KalasKoll
 
 > **Instruktionsfil för Claude Code**
 > Senast uppdaterad: 2026-01-29
@@ -7,7 +7,7 @@
 
 ## 📋 Projektöversikt
 
-**KalasFix** är en svensk webapp för att hantera barnkalas-inbjudningar med AI-genererade inbjudningskort, QR-kod-baserad OSA-hantering och allergiinformation.
+**KalasKoll** är en svensk webapp för att hantera barnkalas-inbjudningar med AI-genererade inbjudningskort, QR-kod-baserad OSA-hantering och allergiinformation.
 
 ### Vision
 Förenkla kalasplanering för svenska föräldrar genom att eliminera kaos med pappersinbjudningar, SMS och WhatsApp-meddelanden.
@@ -49,7 +49,7 @@ Förenkla kalasplanering för svenska föräldrar genom att eliminera kaos med p
 ## 📁 Projektstruktur
 
 ```
-kalasfix/
+kalaskoll/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                 # GitHub Actions CI/CD
@@ -473,27 +473,27 @@ pnpm test:e2e:ui       # Med Playwright UI
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://kalasfix.se'),
+  metadataBase: new URL('https://kalaskoll.se'),
   title: {
-    default: 'KalasFix – Smarta inbjudningar för barnkalas',
-    template: '%s | KalasFix',
+    default: 'KalasKoll – Smarta inbjudningar för barnkalas',
+    template: '%s | KalasKoll',
   },
   description: 'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt. Perfekt för barnkalas!',
   keywords: ['barnkalas', 'inbjudningar', 'kalas', 'OSA', 'födelsedagskalas', 'allergi'],
-  authors: [{ name: 'KalasFix' }],
-  creator: 'KalasFix',
+  authors: [{ name: 'KalasKoll' }],
+  creator: 'KalasKoll',
   openGraph: {
     type: 'website',
     locale: 'sv_SE',
-    url: 'https://kalasfix.se',
-    siteName: 'KalasFix',
-    title: 'KalasFix – Smarta inbjudningar för barnkalas',
+    url: 'https://kalaskoll.se',
+    siteName: 'KalasKoll',
+    title: 'KalasKoll – Smarta inbjudningar för barnkalas',
     description: 'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt.',
     images: [{ url: '/og-image.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'KalasFix – Smarta inbjudningar för barnkalas',
+    title: 'KalasKoll – Smarta inbjudningar för barnkalas',
     description: 'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt.',
     images: ['/og-image.png'],
   },
@@ -519,9 +519,9 @@ export default function HomePage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'KalasFix',
+    name: 'KalasKoll',
     description: 'Skapa inbjudningar för barnkalas med AI-genererade kort och digital OSA-hantering',
-    url: 'https://kalasfix.se',
+    url: 'https://kalaskoll.se',
     applicationCategory: 'LifestyleApplication',
     operatingSystem: 'Web',
     offers: {
@@ -557,7 +557,7 @@ export default function HomePage() {
 
 // ✅ Tydliga, beskrivande headings
 <h1>Skapa inbjudningar för barnkalas</h1>
-<h2>Så här fungerar KalasFix</h2>
+<h2>Så här fungerar KalasKoll</h2>
 
 // ✅ Strukturerad FAQ med schema
 const faqJsonLd = {
@@ -566,7 +566,7 @@ const faqJsonLd = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Kostar det något att använda KalasFix?',
+      name: 'Kostar det något att använda KalasKoll?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'Grundfunktionerna är helt gratis. Premium-funktioner som AI-genererade inbjudningar kostar 49 kr per kalas.',
@@ -594,10 +594,10 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    { url: 'https://kalasfix.se', lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
-    { url: 'https://kalasfix.se/om-oss', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: 'https://kalasfix.se/priser', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: 'https://kalasfix.se/kontakt', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: 'https://kalaskoll.se', lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
+    { url: 'https://kalaskoll.se/om-oss', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: 'https://kalaskoll.se/priser', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: 'https://kalaskoll.se/kontakt', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
   ];
 }
 
@@ -609,7 +609,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       { userAgent: '*', allow: '/', disallow: ['/api/', '/dashboard/', '/r/'] },
     ],
-    sitemap: 'https://kalasfix.se/sitemap.xml',
+    sitemap: 'https://kalaskoll.se/sitemap.xml',
   };
 }
 ```
@@ -702,7 +702,7 @@ OPENAI_API_KEY=your-openai-key
 
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME=KalasFix
+NEXT_PUBLIC_APP_NAME=KalasKoll
 
 # 🎭 Mock Mode (sätt till 'false' för riktiga AI-anrop)
 NEXT_PUBLIC_MOCK_AI=true
@@ -1076,7 +1076,7 @@ Om alla är ✅ → Byt till NEXT_PUBLIC_MOCK_AI=false
 
 ## 🔗 Länkar
 
-- **GitHub**: https://github.com/klasolsson81/kalasfix
+- **GitHub**: https://github.com/klasolsson81/kalaskoll
 - **Vercel**: (sätts upp efter första deploy)
 - **Supabase**: (sätts upp i Fas 1)
 - **Ideogram API**: https://ideogram.ai/api
@@ -1084,4 +1084,4 @@ Om alla är ✅ → Byt till NEXT_PUBLIC_MOCK_AI=false
 
 ---
 
-*Denna fil är källan till sanning för KalasFix-projektet. Håll den uppdaterad!*
+*Denna fil är källan till sanning för KalasKoll-projektet. Håll den uppdaterad!*

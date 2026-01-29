@@ -6,10 +6,10 @@ export default function HomePage() {
   const appJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'KalasFix',
+    name: 'KalasKoll',
     description:
       'Skapa inbjudningar för barnkalas med AI-genererade kort och digital OSA-hantering',
-    url: 'https://kalasfix.se',
+    url: 'https://kalaskoll.se',
     applicationCategory: 'LifestyleApplication',
     operatingSystem: 'Web',
     offers: {
@@ -32,7 +32,7 @@ export default function HomePage() {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Kostar det något att använda KalasFix?',
+        name: 'Kostar det något att använda KalasKoll?',
         acceptedAnswer: {
           '@type': 'Answer',
           text: 'Grundfunktionerna är helt gratis. Premium-funktioner som AI-genererade inbjudningar kostar 49 kr per kalas.',
@@ -80,7 +80,7 @@ export default function HomePage() {
         {/* Header */}
         <header className="border-b">
           <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-            <h1 className="text-xl font-bold">KalasFix</h1>
+            <h1 className="text-xl font-bold">KalasKoll</h1>
             <nav className="flex gap-2">
               <Link href="/login">
                 <Button variant="ghost">Logga in</Button>
@@ -114,7 +114,7 @@ export default function HomePage() {
           {/* How it works */}
           <section className="border-t bg-muted/50 py-20">
             <div className="mx-auto max-w-5xl px-4">
-              <h3 className="mb-12 text-center text-2xl font-bold">Så här fungerar KalasFix</h3>
+              <h3 className="mb-12 text-center text-2xl font-bold">Så här fungerar KalasKoll</h3>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {[
                   {
@@ -191,7 +191,7 @@ export default function HomePage() {
               <div className="space-y-6">
                 {[
                   {
-                    q: 'Kostar det något att använda KalasFix?',
+                    q: 'Kostar det något att använda KalasKoll?',
                     a: 'Grundfunktionerna är helt gratis. Premium-funktioner som AI-genererade inbjudningar kostar 49 kr per kalas.',
                   },
                   {
@@ -235,7 +235,7 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="border-t py-8">
           <div className="mx-auto max-w-5xl px-4 text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} KalasFix. Alla rättigheter förbehållna.</p>
+            <p>&copy; {new Date().getFullYear()} KalasKoll. Alla rättigheter förbehållna.</p>
           </div>
         </footer>
       </div>

@@ -1,6 +1,6 @@
 // App-wide constants
 
-export const APP_NAME = 'KalasFix';
+export const APP_NAME = 'KalasKoll';
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
 export const MOCK_MODE = process.env.NEXT_PUBLIC_MOCK_AI === 'true';
