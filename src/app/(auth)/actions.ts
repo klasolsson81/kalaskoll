@@ -62,7 +62,8 @@ export async function register(formData: FormData): Promise<AuthResult> {
   });
 
   if (error) {
-    return { error: 'Kunde inte skapa konto. Försök igen.' };
+    console.error('[register] Supabase signUp error:', error.message, error.status);
+    return { error: `Kunde inte skapa konto: ${error.message}` };
   }
 
   redirect('/check-email');
