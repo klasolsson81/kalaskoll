@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Sluttid, gästlista & inbjudningsmail
+- Optional end time (`party_time_end`) on parties with `formatTimeRange()` display
+- End time shown across all views: detail, dashboard, RSVP, edit, invitation card
+- `invited_guests` table for tracking email invitations per party with RLS
+- `SendInvitationsSection` component: send invitations via email, view invited guests with response status
+- `POST /api/invitation/send` endpoint: auth-protected, sends HTML emails via Resend, saves to `invited_guests`
+- `sendPartyInvitation()` email function with party details, AI image link, and RSVP button
+- `sendInvitationSchema` Zod validation for email sending
+- SQL migrations 00006 (party_time_end) and 00007 (invited_guests with RLS)
+- 8 new tests: `formatTimeRange` (6 cases) + `partyTimeEnd` validation (2 cases)
+
 #### Fas 1: Projektsetup
 - Initial project setup with Next.js 16, TypeScript 5.9, Tailwind CSS 4
 - shadcn/ui component library (button, card, input, label, checkbox)

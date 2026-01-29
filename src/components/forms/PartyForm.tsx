@@ -14,6 +14,7 @@ interface PartyFormProps {
     childAge?: number;
     partyDate?: string;
     partyTime?: string;
+    partyTimeEnd?: string;
     venueName?: string;
     venueAddress?: string;
     description?: string;
@@ -73,7 +74,7 @@ export function PartyForm({ action, defaultValues, submitLabel }: PartyFormProps
           <CardTitle>Datum & Plats</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="partyDate">Datum</Label>
               <Input
@@ -85,13 +86,22 @@ export function PartyForm({ action, defaultValues, submitLabel }: PartyFormProps
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="partyTime">Tid</Label>
+              <Label htmlFor="partyTime">Starttid</Label>
               <Input
                 id="partyTime"
                 name="partyTime"
                 type="time"
                 defaultValue={defaultValues?.partyTime}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="partyTimeEnd">Sluttid (valfritt)</Label>
+              <Input
+                id="partyTimeEnd"
+                name="partyTimeEnd"
+                type="time"
+                defaultValue={defaultValues?.partyTimeEnd}
               />
             </div>
           </div>

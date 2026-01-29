@@ -36,3 +36,13 @@ export function formatDate(date: Date | string, locale = 'sv-SE'): string {
 export function formatTime(time: string): string {
   return time.slice(0, 5);
 }
+
+/**
+ * Format a time range for display.
+ * Returns "14:00" if no end time, or "14:00–16:00" if both provided.
+ */
+export function formatTimeRange(start: string, end?: string | null): string {
+  const s = formatTime(start);
+  if (!end) return s;
+  return `${s}–${formatTime(end)}`;
+}

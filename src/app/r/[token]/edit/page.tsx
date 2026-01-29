@@ -51,7 +51,7 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
   // Get party details
   const { data: party } = await supabase
     .from('parties')
-    .select('child_name, child_age, party_date, party_time, venue_name, venue_address, theme, description')
+    .select('child_name, child_age, party_date, party_time, party_time_end, venue_name, venue_address, theme, description')
     .eq('id', invitation.party_id)
     .single();
 
@@ -76,6 +76,7 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
           childAge={party.child_age}
           partyDate={party.party_date}
           partyTime={party.party_time}
+          partyTimeEnd={party.party_time_end}
           venueName={party.venue_name}
           venueAddress={party.venue_address}
           description={party.description}

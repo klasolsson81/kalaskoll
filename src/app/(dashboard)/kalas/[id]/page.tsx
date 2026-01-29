@@ -3,10 +3,11 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatDate, formatTime } from '@/lib/utils/format';
+import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { DeletePartyButton } from './DeletePartyButton';
 import { QRCodeSection } from './QRCodeSection';
 import { InvitationSection } from './InvitationSection';
+import { SendInvitationsSection } from './SendInvitationsSection';
 
 interface PartyPageProps {
   params: Promise<{ id: string }>;
@@ -43,6 +44,29 @@ export default async function PartyPage({ params }: PartyPageProps) {
     .eq('invitation_id', invitation?.id ?? '')
     .eq('attending', true);
 
+  // Fetch invited guests + match against RSVP responses
+  const { data: invitedGuests } = await supabase
+    .from('invited_guests')
+    .select('email, name, invited_at')
+    .eq('party_id', id)
+    .order('invited_at', { ascending: true });
+
+  const { data: rsvpEmails } = invitation
+    ? await supabase
+        .from('rsvp_responses')
+        .select('parent_email')
+        .eq('invitation_id', invitation.id)
+    : { data: null };
+
+  const respondedEmails = new Set(
+    (rsvpEmails ?? []).map((r) => r.parent_email?.toLowerCase()),
+  );
+
+  const invitedGuestsWithStatus = (invitedGuests ?? []).map((g) => ({
+    ...g,
+    hasResponded: respondedEmails.has(g.email.toLowerCase()),
+  }));
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -66,7 +90,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
           childName={party.child_name}
           childAge={party.child_age}
           partyDate={formatDate(party.party_date)}
-          partyTime={formatTime(party.party_time)}
+          partyTime={formatTimeRange(party.party_time, party.party_time_end)}
           venueName={party.venue_name}
           theme={party.theme}
           token={invitation.token}
@@ -75,6 +99,12 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
       {/* QR Code */}
       {invitation?.token && <QRCodeSection token={invitation.token} />}
+
+      {/* Send invitations via email */}
+      <SendInvitationsSection
+        partyId={id}
+        invitedGuests={invitedGuestsWithStatus}
+      />
 
       <div className="grid gap-6 sm:grid-cols-2">
         <Card>
@@ -91,7 +121,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
             <div>
               <p className="text-sm text-muted-foreground">Datum & tid</p>
               <p className="font-medium">
-                {formatDate(party.party_date)} kl {formatTime(party.party_time)}
+                {formatDate(party.party_date)} kl {formatTimeRange(party.party_time, party.party_time_end)}
               </p>
             </div>
             <div>

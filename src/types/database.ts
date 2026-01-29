@@ -51,6 +51,7 @@ export type Database = {
           child_age: number;
           party_date: string;
           party_time: string;
+          party_time_end: string | null;
           venue_name: string;
           venue_address: string | null;
           description: string | null;
@@ -68,6 +69,7 @@ export type Database = {
           child_age: number;
           party_date: string;
           party_time: string;
+          party_time_end?: string | null;
           venue_name: string;
           venue_address?: string | null;
           description?: string | null;
@@ -85,6 +87,7 @@ export type Database = {
           child_age?: number;
           party_date?: string;
           party_time?: string;
+          party_time_end?: string | null;
           venue_name?: string;
           venue_address?: string | null;
           description?: string | null;
@@ -177,6 +180,37 @@ export type Database = {
             columns: ["invitation_id"];
             isOneToOne: false;
             referencedRelation: "invitations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      invited_guests: {
+        Row: {
+          id: string;
+          party_id: string;
+          email: string;
+          name: string | null;
+          invited_at: string;
+        };
+        Insert: {
+          id?: string;
+          party_id: string;
+          email: string;
+          name?: string | null;
+          invited_at?: string;
+        };
+        Update: {
+          id?: string;
+          party_id?: string;
+          email?: string;
+          name?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "invited_guests_party_id_fkey";
+            columns: ["party_id"];
+            isOneToOne: false;
+            referencedRelation: "parties";
             referencedColumns: ["id"];
           },
         ];

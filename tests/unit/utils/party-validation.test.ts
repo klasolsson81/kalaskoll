@@ -18,6 +18,7 @@ describe('partySchema', () => {
   it('accepts valid party data with all optional fields', () => {
     const result = partySchema.safeParse({
       ...validParty,
+      partyTimeEnd: '16:00',
       venueAddress: 'Storgatan 1, Stockholm',
       description: 'Kom och fira!',
       theme: 'dinosaurier',
@@ -25,6 +26,25 @@ describe('partySchema', () => {
       maxGuests: 15,
     });
     expect(result.success).toBe(true);
+  });
+
+  it('accepts party without end time', () => {
+    const result = partySchema.safeParse(validParty);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.partyTimeEnd).toBeUndefined();
+    }
+  });
+
+  it('accepts party with end time', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      partyTimeEnd: '16:30',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.partyTimeEnd).toBe('16:30');
+    }
   });
 
   it('rejects empty child name', () => {

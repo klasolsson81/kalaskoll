@@ -34,6 +34,7 @@ export default async function EditPartyPage({ params }: EditPartyPageProps) {
           childAge: party.child_age,
           partyDate: party.party_date,
           partyTime: party.party_time,
+          partyTimeEnd: party.party_time_end ?? undefined,
           venueName: party.venue_name,
           venueAddress: party.venue_address ?? undefined,
           description: party.description ?? undefined,

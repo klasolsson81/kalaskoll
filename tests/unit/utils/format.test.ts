@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatPhoneNumber, formatDate, formatTime } from '@/lib/utils/format';
+import { formatPhoneNumber, formatDate, formatTime, formatTimeRange } from '@/lib/utils/format';
 
 describe('formatPhoneNumber', () => {
   it('formats +46 numbers correctly', () => {
@@ -39,5 +39,31 @@ describe('formatTime', () => {
 
   it('handles already short format', () => {
     expect(formatTime('14:30')).toBe('14:30');
+  });
+});
+
+describe('formatTimeRange', () => {
+  it('returns start time only when no end time', () => {
+    expect(formatTimeRange('14:00')).toBe('14:00');
+  });
+
+  it('returns start time only when end is null', () => {
+    expect(formatTimeRange('14:00', null)).toBe('14:00');
+  });
+
+  it('returns start time only when end is undefined', () => {
+    expect(formatTimeRange('14:00', undefined)).toBe('14:00');
+  });
+
+  it('returns start time only when end is empty string', () => {
+    expect(formatTimeRange('14:00', '')).toBe('14:00');
+  });
+
+  it('returns range when both start and end given', () => {
+    expect(formatTimeRange('14:00', '16:00')).toBe('14:00\u201316:00');
+  });
+
+  it('handles full time strings with seconds', () => {
+    expect(formatTimeRange('14:00:00', '16:30:00')).toBe('14:00\u201316:30');
   });
 });

@@ -40,3 +40,13 @@ export interface GenerateInvitationRequest {
 export interface GenerateInvitationResponse {
   imageUrl: string;
 }
+
+export interface SendInvitationRequest {
+  partyId: string;
+  emails: Array<{ email: string; name?: string }>;
+}
+
+export interface SendInvitationResponse {
+  sent: number;
+  failed: number;
+}

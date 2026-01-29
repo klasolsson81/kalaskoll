@@ -53,6 +53,7 @@ export const partySchema = z.object({
   childAge: z.number().int().min(1).max(19),
   partyDate: z.string().min(1, 'Datum krävs'),
   partyTime: z.string().min(1, 'Tid krävs'),
+  partyTimeEnd: z.string().optional(),
   venueName: z.string().min(1, 'Plats krävs').max(200),
   venueAddress: z.string().max(300).optional(),
   description: z.string().max(1000).optional(),
@@ -61,8 +62,23 @@ export const partySchema = z.object({
   maxGuests: z.number().int().min(1).max(100).optional(),
 });
 
+// Send invitation email schema
+export const sendInvitationSchema = z.object({
+  partyId: z.string().uuid('Ogiltigt kalas-ID'),
+  emails: z
+    .array(
+      z.object({
+        email: z.string().email('Ogiltig e-postadress'),
+        name: z.string().max(100).optional(),
+      }),
+    )
+    .min(1, 'Minst en e-postadress krävs')
+    .max(50, 'Max 50 e-postadresser åt gången'),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type RsvpFormData = z.infer<typeof rsvpSchema>;
 export type RsvpEditFormData = z.infer<typeof rsvpEditSchema>;
 export type PartyFormData = z.infer<typeof partySchema>;
+export type SendInvitationFormData = z.infer<typeof sendInvitationSchema>;

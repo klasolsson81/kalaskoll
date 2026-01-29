@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatDate, formatTime } from '@/lib/utils/format';
+import { formatDate, formatTimeRange } from '@/lib/utils/format';
 
 interface PartyHeaderProps {
   childName: string;
   childAge: number;
   partyDate: string;
   partyTime: string;
+  partyTimeEnd?: string | null;
   venueName: string;
   venueAddress?: string | null;
   description?: string | null;
@@ -17,6 +18,7 @@ export function PartyHeader({
   childAge,
   partyDate,
   partyTime,
+  partyTimeEnd,
   venueName,
   venueAddress,
   description,
@@ -32,7 +34,7 @@ export function PartyHeader({
       <CardContent className="space-y-3 text-center">
         <div>
           <p className="text-lg font-medium">{formatDate(partyDate)}</p>
-          <p className="text-muted-foreground">kl {formatTime(partyTime)}</p>
+          <p className="text-muted-foreground">kl {formatTimeRange(partyTime, partyTimeEnd)}</p>
         </div>
         <div>
           <p className="font-medium">{venueName}</p>

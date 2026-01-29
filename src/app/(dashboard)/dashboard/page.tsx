@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatDate, formatTime } from '@/lib/utils/format';
+import { formatDate, formatTimeRange } from '@/lib/utils/format';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -85,7 +85,7 @@ export default async function DashboardPage() {
                       {party.child_name} fyller {party.child_age} år
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {formatDate(party.party_date)} kl {formatTime(party.party_time)}
+                      {formatDate(party.party_date)} kl {formatTimeRange(party.party_time, party.party_time_end)}
                     </p>
                     <p className="text-sm text-muted-foreground">{party.venue_name}</p>
                     <div className="flex items-center gap-3 pt-2">
