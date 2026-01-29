@@ -29,10 +29,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect unauthenticated users trying to access dashboard
+  // Redirect unauthenticated users trying to access protected routes
   if (
     !user &&
-    request.nextUrl.pathname.startsWith('/dashboard')
+    (request.nextUrl.pathname.startsWith('/dashboard') ||
+      request.nextUrl.pathname.startsWith('/kalas'))
   ) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';

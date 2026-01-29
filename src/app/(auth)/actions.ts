@@ -59,7 +59,7 @@ export async function register(formData: FormData): Promise<AuthResult> {
     return { error: 'Kunde inte skapa konto. Försök igen.' };
   }
 
-  redirect('/dashboard');
+  redirect('/check-email');
 }
 
 export async function logout(): Promise<void> {

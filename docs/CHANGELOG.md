@@ -65,9 +65,15 @@ All notable changes to this project will be documented in this file.
 - Full metadata: OpenGraph, Twitter Cards, robots, sitemap
 - Swedish locale (lang="sv") throughout
 
+### Fixed
+- Post-registration redirect now goes to /check-email instead of /dashboard
+- Auth callback route (/auth/callback) handles email verification code exchange
+- Confirmed page (/confirmed) shown after successful email verification
+- Middleware now protects both /dashboard and /kalas routes
+
 #### Cross-cutting
 - Supabase client/server/middleware setup with SSR cookie handling
-- Auth middleware protecting /dashboard routes
+- Auth middleware protecting /dashboard and /kalas routes
 - Database types matching full Supabase schema (5 tables)
 - Shared types for PartyDetails, RsvpResponse, AllergyData, API types
 - Utility functions: formatPhoneNumber, formatDate, formatTime
