@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from './LogoutButton';
+import { DeleteAccountButton } from './DeleteAccountButton';
 
 export default async function DashboardLayout({
   children,
@@ -32,6 +33,7 @@ export default async function DashboardLayout({
             </Link>
             <span className="text-sm text-muted-foreground">{displayName}</span>
             <LogoutButton />
+            <DeleteAccountButton />
           </nav>
         </div>
       </header>

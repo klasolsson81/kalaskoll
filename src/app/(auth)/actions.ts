@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { loginSchema, registerSchema } from '@/lib/utils/validation';
 
 export interface AuthResult {
@@ -64,6 +65,22 @@ export async function register(formData: FormData): Promise<AuthResult> {
 
 export async function logout(): Promise<void> {
   const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect('/login');
+}
+
+export async function deleteAccount(): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  const admin = createAdminClient();
+  await admin.auth.admin.deleteUser(user.id);
   await supabase.auth.signOut();
   redirect('/login');
 }
