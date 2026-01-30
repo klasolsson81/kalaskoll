@@ -59,15 +59,31 @@ export function InvitationSection({
   const [showPicker, setShowPicker] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
 
-  // Determine what mode we're in
-  const hasTemplate = activeTemplate !== null;
-  const hasAiImage = currentImageUrl !== null;
-  const hasNothing = !hasTemplate && !hasAiImage && images.length === 0;
+  // Determine active mode
+  const activeMode: 'template' | 'ai' | null = activeTemplate
+    ? 'template'
+    : currentImageUrl
+      ? 'ai'
+      : null;
 
-  const [expanded, setExpanded] = useState(hasNothing || showPicker);
+  const hasAnything = activeMode !== null || images.length > 0;
+
+  const [expanded, setExpanded] = useState(!hasAnything || showPicker);
 
   const maxImages = AI_MAX_IMAGES_PER_PARTY;
   const canGenerate = isAdmin || images.length < maxImages;
+
+  // Party data shared across template and picker
+  const partyData = {
+    childName,
+    childAge,
+    partyDate,
+    partyTime,
+    venueName,
+    venueAddress,
+    rsvpDeadline,
+    token,
+  };
 
   async function selectTemplate(templateId: string) {
     setSavingTemplate(true);
@@ -87,6 +103,7 @@ export function InvitationSection({
 
       setActiveTemplate(templateId);
       setCurrentImageUrl(null);
+      setImages((prev) => prev.map((img) => ({ ...img, isSelected: false })));
       setShowPicker(false);
       setExpanded(true);
     } catch {
@@ -142,7 +159,7 @@ export function InvitationSection({
 
   async function selectImage(imageId: string) {
     const image = images.find((img) => img.id === imageId);
-    if (!image || image.isSelected) return;
+    if (!image) return;
 
     setSelecting(imageId);
     setError(null);
@@ -167,6 +184,7 @@ export function InvitationSection({
           isSelected: img.id === imageId,
         })),
       );
+      setExpanded(true);
     } catch {
       setError('Något gick fel');
     } finally {
@@ -181,20 +199,8 @@ export function InvitationSection({
     document.title = prev;
   }
 
-  // Party data shared across template and picker
-  const partyData = {
-    childName,
-    childAge,
-    partyDate,
-    partyTime,
-    venueName,
-    venueAddress,
-    rsvpDeadline,
-    token,
-  };
-
-  // --- State: Nothing selected yet (no template, no AI image) ---
-  if (hasNothing && !showPicker) {
+  // --- State: Nothing selected yet (no template, no AI image, no images at all) ---
+  if (!hasAnything && !showPicker) {
     return (
       <Card>
         <CardHeader>
@@ -239,46 +245,13 @@ export function InvitationSection({
     );
   }
 
-  // --- State: Picker open (switching template) ---
-  if (showPicker) {
-    return (
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle>Välj mall</CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowPicker(false)}
-          >
-            Avbryt
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {error && <p className="text-sm text-red-600">{error}</p>}
-
-          <TemplatePicker
-            {...partyData}
-            selectedId={activeTemplate}
-            onSelect={selectTemplate}
-          />
-
-          {savingTemplate && (
-            <p className="text-center text-sm text-muted-foreground">
-              Sparar mall...
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // --- State: Template selected (showing full-size template card) ---
-  if (hasTemplate) {
-    return (
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle>Inbjudan</CardTitle>
-          <div className="flex gap-2">
+  // --- State: Has something selected OR picker open ---
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle>Inbjudan</CardTitle>
+        <div className="flex gap-2 print:hidden">
+          {activeMode && (
             <Button
               variant="ghost"
               size="sm"
@@ -286,72 +259,27 @@ export function InvitationSection({
             >
               {expanded ? '▲ Dölj' : '▼ Visa'}
             </Button>
+          )}
+          {activeMode && (
             <Button variant="outline" size="sm" onClick={handlePrint}>
               Skriv ut
             </Button>
-          </div>
-        </CardHeader>
-
-        {expanded && (
-          <CardContent className="space-y-4">
-            {error && <p className="text-sm text-red-600">{error}</p>}
-
-            {/* Full-size template card */}
-            <div data-print-area>
-              <TemplateCard templateId={activeTemplate} {...partyData} />
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-wrap gap-2 print:hidden">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowPicker(true)}
-              >
-                Byt mall
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={generateImage}
-                disabled={generating}
-              >
-                {generating ? 'Genererar...' : 'Skapa med AI ✨'}
-              </Button>
-            </div>
-          </CardContent>
-        )}
-      </Card>
-    );
-  }
-
-  // --- State: AI image selected (existing flow) ---
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle>Inbjudan</CardTitle>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setExpanded(!expanded)}
-          >
-            {expanded ? '▲ Dölj' : '▼ Visa'}
-          </Button>
-          <Button variant="outline" size="sm" onClick={handlePrint}>
-            Skriv ut
-          </Button>
+          )}
         </div>
       </CardHeader>
 
-      {expanded && (
-        <CardContent className="space-y-4">
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
+      {/* Full-size card — only when expanded */}
+      {expanded && !showPicker && activeMode && (
+        <CardContent className="pb-2">
+          {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
+
+          {activeMode === 'template' && activeTemplate && (
+            <div data-print-area>
+              <TemplateCard templateId={activeTemplate} {...partyData} />
+            </div>
           )}
 
-          {/* Selected invitation card (large) */}
-          {currentImageUrl && (
+          {activeMode === 'ai' && currentImageUrl && (
             <div data-print-area>
               <InvitationCard
                 imageUrl={currentImageUrl}
@@ -366,79 +294,140 @@ export function InvitationSection({
               />
             </div>
           )}
-
-          {/* Image gallery */}
-          <div className="print:hidden">
-            {!isAdmin && (
-              <p className="mb-2 text-sm text-muted-foreground">
-                {images.length} av {maxImages} bilder genererade
-              </p>
-            )}
-
-            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
-              {images.map((img) => (
-                <button
-                  key={img.id}
-                  onClick={() => selectImage(img.id)}
-                  disabled={selecting !== null}
-                  className={cn(
-                    'relative aspect-[3/4] overflow-hidden rounded-lg border-2 transition-all',
-                    img.isSelected
-                      ? 'border-blue-500 ring-2 ring-blue-500/30'
-                      : 'border-muted hover:border-blue-300',
-                    selecting === img.id && 'opacity-50',
-                  )}
-                >
-                  <Image
-                    src={img.imageUrl}
-                    alt="Inbjudningsbild"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw"
-                  />
-                  {img.isSelected && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-blue-500/20">
-                      <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
-                        ✓
-                      </span>
-                    </div>
-                  )}
-                </button>
-              ))}
-
-              {/* Generate new image button */}
-              {canGenerate && (
-                <button
-                  onClick={generateImage}
-                  disabled={generating}
-                  className="flex aspect-[3/4] flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 text-muted-foreground transition-colors hover:border-muted-foreground/60 hover:text-foreground disabled:opacity-50"
-                >
-                  {generating ? (
-                    <span className="text-sm">Genererar...</span>
-                  ) : (
-                    <>
-                      <span className="text-2xl">+</span>
-                      <span className="text-xs">Ny bild</span>
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-
-            {/* Switch to free templates */}
-            <div className="mt-3">
-              <Button
-                variant="link"
-                size="sm"
-                className="h-auto p-0 text-muted-foreground"
-                onClick={() => setShowPicker(true)}
-              >
-                Byt till gratis mall
-              </Button>
-            </div>
-          </div>
         </CardContent>
       )}
+
+      {/* Picker overlay — replaces full-size card when open */}
+      {showPicker && (
+        <CardContent className="space-y-4 print:hidden">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium">Välj mall</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPicker(false)}
+            >
+              Avbryt
+            </Button>
+          </div>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          <TemplatePicker
+            {...partyData}
+            selectedId={activeTemplate}
+            onSelect={selectTemplate}
+          />
+
+          {savingTemplate && (
+            <p className="text-center text-sm text-muted-foreground">
+              Sparar mall...
+            </p>
+          )}
+        </CardContent>
+      )}
+
+      {/* Thumbnail strip — ALWAYS visible (even collapsed) */}
+      <CardContent className="print:hidden">
+        {!showPicker && error && !expanded && (
+          <p className="mb-2 text-sm text-red-600">{error}</p>
+        )}
+
+        {!isAdmin && images.length > 0 && (
+          <p className="mb-2 text-xs text-muted-foreground">
+            {images.length} av {maxImages} AI-bilder
+          </p>
+        )}
+
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {/* Template thumbnail */}
+          {activeTemplate && (
+            <button
+              onClick={() => {
+                if (activeMode !== 'template') {
+                  selectTemplate(activeTemplate);
+                } else {
+                  setExpanded(true);
+                }
+              }}
+              disabled={savingTemplate}
+              className={cn(
+                'relative w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all sm:w-24',
+                activeMode === 'template'
+                  ? 'border-blue-500 ring-2 ring-blue-500/30'
+                  : 'border-muted hover:border-blue-300',
+              )}
+            >
+              <TemplateCard templateId={activeTemplate} {...partyData} preview />
+              {activeMode === 'template' && (
+                <div className="absolute inset-0 flex items-center justify-center bg-blue-500/20">
+                  <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
+                    ✓
+                  </span>
+                </div>
+              )}
+            </button>
+          )}
+
+          {/* AI image thumbnails */}
+          {images.map((img) => (
+            <button
+              key={img.id}
+              onClick={() => selectImage(img.id)}
+              disabled={selecting !== null}
+              className={cn(
+                'relative aspect-[3/4] w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all sm:w-24',
+                activeMode === 'ai' && img.isSelected
+                  ? 'border-blue-500 ring-2 ring-blue-500/30'
+                  : 'border-muted hover:border-blue-300',
+                selecting === img.id && 'opacity-50',
+              )}
+            >
+              <Image
+                src={img.imageUrl}
+                alt="AI-inbjudningsbild"
+                fill
+                className="object-cover"
+                sizes="96px"
+              />
+              {activeMode === 'ai' && img.isSelected && (
+                <div className="absolute inset-0 flex items-center justify-center bg-blue-500/20">
+                  <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
+                    ✓
+                  </span>
+                </div>
+              )}
+            </button>
+          ))}
+
+          {/* Generate new AI image */}
+          {canGenerate && (
+            <button
+              onClick={generateImage}
+              disabled={generating}
+              className="flex aspect-[3/4] w-20 flex-shrink-0 flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 text-muted-foreground transition-colors hover:border-muted-foreground/60 hover:text-foreground disabled:opacity-50 sm:w-24"
+            >
+              {generating ? (
+                <span className="text-[10px]">Genererar...</span>
+              ) : (
+                <>
+                  <span className="text-lg">+</span>
+                  <span className="text-[10px]">Ny AI-bild</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Switch template button */}
+          <button
+            onClick={() => setShowPicker(true)}
+            className="flex aspect-[3/4] w-20 flex-shrink-0 flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 text-muted-foreground transition-colors hover:border-muted-foreground/60 hover:text-foreground sm:w-24"
+          >
+            <span className="text-lg">🎨</span>
+            <span className="text-[10px]">Byt mall</span>
+          </button>
+        </div>
+      </CardContent>
     </Card>
   );
 }

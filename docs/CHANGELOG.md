@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Unified thumbnail gallery for invitations
+- Replaced separate template/AI flows with a single horizontal thumbnail strip
+- Thumbnail strip always visible — even when card is collapsed — showing all available options
+- Mall thumbnail, AI-image thumbnails, "+ Ny AI-bild" button, and "Byt mall" button in one row
+- Active selection shown with blue ring + check mark; only one active at a time
+- Collapsed state now shows header + thumbnail strip (no more blank collapsed view)
+- Expanded state shows full-size card above the thumbnail strip
+- "Byt mall" opens template picker overlay replacing the full-size card area
+- `select-image` API now clears `invitation_template` when selecting an AI image (mutual exclusivity)
+
 ### Added
 - Guest list page now shows sent invitations (email/SMS) with response status
 

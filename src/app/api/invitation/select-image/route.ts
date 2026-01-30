@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
   // Update party's invitation_image_url
   await supabase
     .from('parties')
-    .update({ invitation_image_url: image.image_url })
+    .update({ invitation_image_url: image.image_url, invitation_template: null })
     .eq('id', partyId);
 
   return NextResponse.json({ imageUrl: image.image_url });
