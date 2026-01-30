@@ -71,22 +71,25 @@ export function InvitationSection({
         return;
       }
 
-      if (data.imageUrl && data.imageId) {
-        const isFirst = images.length === 0;
-        const newImage: PartyImage = {
-          id: data.imageId,
-          imageUrl: data.imageUrl,
-          isSelected: isFirst,
-        };
-
-        if (isFirst) {
-          setCurrentImageUrl(data.imageUrl);
-          setImages([newImage]);
-        } else {
-          setImages((prev) => [...prev, newImage]);
-        }
-
+      if (data.imageUrl) {
+        setCurrentImageUrl(data.imageUrl);
         setExpanded(true);
+
+        // If imageId is returned, the gallery table exists — update gallery state
+        if (data.imageId) {
+          const isFirst = images.length === 0;
+          const newImage: PartyImage = {
+            id: data.imageId,
+            imageUrl: data.imageUrl,
+            isSelected: isFirst,
+          };
+
+          if (isFirst) {
+            setImages([newImage]);
+          } else {
+            setImages((prev) => [...prev, newImage]);
+          }
+        }
       }
     } catch {
       setError('Något gick fel vid bildgenerering');
