@@ -14,6 +14,20 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+#### Visuellt unika inbjudningsmallar
+- Redesigned all 9 templates to be visually distinct from each other
+- Before: 3 near-identical light greens, 2 similar pinks, 2 similar ambers — only Rymden stood out
+- After: each template has a unique color intensity and palette:
+  - Klassiskt kalas: light amber/gold with confetti dots
+  - Dinosaurier: medium lime-to-emerald with leaf-vein lines
+  - Prinsessor: saturated pink/magenta with shimmer sparkles
+  - Superhjältar: bold red→yellow→blue comic-book gradient with action lines
+  - Fotboll: deep green pitch with white center stripe
+  - Rymden: dark indigo/purple with stars (unchanged)
+  - Djungel: dark teal/emerald with gold accents
+  - Enhörningar: rainbow pastel gradient (pink→violet→cyan) with sparkle dots
+  - Pirater: dark brown/sepia parchment with treasure-map texture
+
 #### Unified thumbnail gallery for invitations
 - Replaced separate template/AI flows with a single horizontal thumbnail strip
 - Thumbnail strip always visible — even when card is collapsed — showing all available options
