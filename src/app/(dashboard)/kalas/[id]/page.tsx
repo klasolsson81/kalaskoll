@@ -69,6 +69,13 @@ export default async function PartyPage({ params }: PartyPageProps) {
         .eq('invitation_id', invitation.id)
     : { data: null };
 
+  // Normalize phone to E.164 for matching: "070..." → "+4670..."
+  function normalizePhone(phone: string): string {
+    const cleaned = phone.replace(/[\s\-()]/g, '');
+    if (cleaned.startsWith('07')) return '+46' + cleaned.slice(1);
+    return cleaned;
+  }
+
   const respondedEmails = new Set(
     (rsvpResponses ?? [])
       .map((r) => r.parent_email?.toLowerCase())
@@ -76,7 +83,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
   );
   const respondedPhones = new Set(
     (rsvpResponses ?? [])
-      .map((r) => r.parent_phone?.replace(/[\s\-()]/g, ''))
+      .map((r) => r.parent_phone ? normalizePhone(r.parent_phone) : null)
       .filter(Boolean),
   );
 
@@ -84,9 +91,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
     const isSms = g.invite_method === 'sms';
     let hasResponded = false;
     if (isSms && g.phone) {
-      // Match phone: normalize both sides
-      const normalized = g.phone.replace(/[\s\-()]/g, '');
-      hasResponded = respondedPhones.has(normalized);
+      hasResponded = respondedPhones.has(normalizePhone(g.phone));
     } else if (g.email) {
       hasResponded = respondedEmails.has(g.email.toLowerCase());
     }

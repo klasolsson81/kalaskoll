@@ -225,11 +225,9 @@ export function SendInvitationsSection({
 
         {result && (
           <div className="rounded-md bg-green-50 p-3 text-sm text-green-700">
-            Skickat till {result.sent} av {result.sent + result.failed}
-            {result.failed > 0 && ` (${result.failed} misslyckades)`}
-            {result.remainingSms !== undefined && !isAdmin && (
-              <> — {result.remainingSms} SMS kvar</>
-            )}
+            {result.failed === 0
+              ? `${result.sent} ${result.sent === 1 ? 'inbjudan skickad' : 'inbjudningar skickade'}`
+              : `${result.sent} av ${result.sent + result.failed} skickade (${result.failed} misslyckades)`}
           </div>
         )}
 
