@@ -58,6 +58,7 @@ export type Database = {
           description: string | null;
           theme: string | null;
           invitation_image_url: string | null;
+          invitation_template: string | null;
           rsvp_deadline: string | null;
           max_guests: number | null;
           created_at: string;
@@ -77,6 +78,7 @@ export type Database = {
           description?: string | null;
           theme?: string | null;
           invitation_image_url?: string | null;
+          invitation_template?: string | null;
           rsvp_deadline?: string | null;
           max_guests?: number | null;
           created_at?: string;
@@ -96,6 +98,7 @@ export type Database = {
           description?: string | null;
           theme?: string | null;
           invitation_image_url?: string | null;
+          invitation_template?: string | null;
           rsvp_deadline?: string | null;
           max_guests?: number | null;
           updated_at?: string;

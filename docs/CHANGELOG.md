@@ -7,6 +7,17 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Guest list page now shows sent invitations (email/SMS) with response status
 
+#### Gratis HTML/CSS inbjudningsmallar
+- 9 free CSS-based invitation templates (1 per theme + 1 default) with integrated text design
+- `TemplateCard` component: full-size printable invitation with themed borders, gradients, emoji decorations, and QR code
+- `TemplatePicker` component: responsive grid (2-3 columns) showing all templates with real party data preview
+- Theme configurations (`theme-configs.ts`): 9 distinct visual identities (default, dinosaurier, prinsessor, superhjältar, fotboll, rymden, djungel, enhörningar, pirater)
+- `POST /api/invitation/select-template` endpoint: saves template choice, clears AI image as active
+- `invitation_template` column on `parties` table (SQL migration 00011)
+- InvitationSection updated with three-state flow: template picker → template view → AI image view
+- "Byt mall" and "Byt till gratis mall" links for switching between template and AI modes
+- Templates are mutually exclusive with AI images (selecting one clears the other as active)
+
 ### Changed
 
 #### Dela inbjudan-hub

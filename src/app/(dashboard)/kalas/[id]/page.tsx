@@ -165,6 +165,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
             isSelected: img.is_selected,
           }))}
           isAdmin={isAdmin}
+          invitationTemplate={party.invitation_template ?? null}
         />
       )}
 
