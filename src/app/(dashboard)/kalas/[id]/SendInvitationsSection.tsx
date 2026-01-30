@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +36,7 @@ export function SendInvitationsSection({
   smsUsage,
   isAdmin,
 }: SendInvitationsSectionProps) {
+  const router = useRouter();
   const [method, setMethod] = useState<InviteMethod>('email');
   const [emailsText, setEmailsText] = useState('');
   const [phonesText, setPhonesText] = useState('');
@@ -75,6 +77,7 @@ export function SendInvitationsSection({
 
       setResult({ sent: data.sent, failed: data.failed });
       setEmailsText('');
+      router.refresh();
     } catch {
       setError('Kunde inte skicka inbjudningar');
     } finally {
@@ -113,6 +116,7 @@ export function SendInvitationsSection({
 
       setResult({ sent: data.sent, failed: data.failed, remainingSms: data.remainingSmsThisParty });
       setPhonesText('');
+      router.refresh();
     } catch {
       setError('Kunde inte skicka SMS');
     } finally {
