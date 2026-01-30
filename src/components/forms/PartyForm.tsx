@@ -34,10 +34,21 @@ interface PartyFormProps {
   submitLabel: string;
 }
 
+const CUSTOM_THEME_VALUE = '__custom__';
+
+function isPresetTheme(theme: string): boolean {
+  return PARTY_THEMES.some((t) => t.value === theme);
+}
+
 export function PartyForm({ action, defaultValues, savedChildren = [], submitLabel }: PartyFormProps) {
   const [state, formAction] = useActionState(action, {});
   const [selectedChildId, setSelectedChildId] = useState(defaultValues?.childId ?? '');
   const [partyDate, setPartyDate] = useState(defaultValues?.partyDate ?? '');
+
+  const defaultTheme = defaultValues?.theme ?? '';
+  const defaultIsCustom = defaultTheme !== '' && !isPresetTheme(defaultTheme);
+  const [themeSelect, setThemeSelect] = useState(defaultIsCustom ? CUSTOM_THEME_VALUE : defaultTheme);
+  const [customTheme, setCustomTheme] = useState(defaultIsCustom ? defaultTheme : '');
 
   const selectedChild = savedChildren.find((c) => c.id === selectedChildId);
   const isManual = !selectedChildId;
@@ -193,11 +204,16 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="theme">Tema</Label>
+            <Label htmlFor="themeSelect">Tema</Label>
             <select
-              id="theme"
-              name="theme"
-              defaultValue={defaultValues?.theme || ''}
+              id="themeSelect"
+              value={themeSelect}
+              onChange={(e) => {
+                setThemeSelect(e.target.value);
+                if (e.target.value !== CUSTOM_THEME_VALUE) {
+                  setCustomTheme('');
+                }
+              }}
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="">Inget tema</option>
@@ -206,7 +222,21 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                   {t.label}
                 </option>
               ))}
+              <option value={CUSTOM_THEME_VALUE}>Annat...</option>
             </select>
+            {themeSelect === CUSTOM_THEME_VALUE && (
+              <Input
+                id="customTheme"
+                placeholder="t.ex. Pokemon, Minecraft, Frozen"
+                value={customTheme}
+                onChange={(e) => setCustomTheme(e.target.value)}
+              />
+            )}
+            <input
+              type="hidden"
+              name="theme"
+              value={themeSelect === CUSTOM_THEME_VALUE ? customTheme : themeSelect}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Beskrivning (valfritt)</Label>
