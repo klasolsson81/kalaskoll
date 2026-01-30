@@ -25,6 +25,7 @@ interface InvitationSectionProps {
   venueName: string;
   venueAddress?: string | null;
   rsvpDeadline?: string | null;
+  description?: string | null;
   theme: string | null;
   token: string;
   images: PartyImage[];
@@ -42,6 +43,7 @@ export function InvitationSection({
   venueName,
   venueAddress,
   rsvpDeadline,
+  description,
   theme,
   token,
   images: initialImages,
@@ -82,6 +84,7 @@ export function InvitationSection({
     venueName,
     venueAddress,
     rsvpDeadline,
+    description,
     token,
   };
 
@@ -290,6 +293,7 @@ export function InvitationSection({
                 venueName={venueName}
                 venueAddress={venueAddress}
                 rsvpDeadline={rsvpDeadline}
+                description={description}
                 token={token}
               />
             </div>

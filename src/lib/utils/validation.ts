@@ -85,7 +85,7 @@ export const partySchema = z
     partyTimeEnd: z.string().optional(),
     venueName: z.string().min(1, 'Plats krävs').max(200),
     venueAddress: z.string().max(300).optional(),
-    description: z.string().max(1000).optional(),
+    description: z.string().max(200, 'Max 200 tecken').optional(),
     theme: z.string().optional(),
     rsvpDeadline: z.string().optional(),
     maxGuests: z.number().int().min(1).max(100).optional(),

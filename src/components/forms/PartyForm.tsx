@@ -243,15 +243,23 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Beskrivning (valfritt)</Label>
+            <Label htmlFor="description">Beskrivning (valfritt, visas på inbjudan)</Label>
             <textarea
               id="description"
               name="description"
               rows={3}
-              placeholder="Extra info till gästerna..."
+              maxLength={200}
+              placeholder="T.ex. Korv med bröd. Kalasrum först, lek sedan."
               defaultValue={defaultValues?.description}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              onInput={(e) => {
+                const counter = (e.target as HTMLTextAreaElement).nextElementSibling;
+                if (counter) counter.textContent = `${(e.target as HTMLTextAreaElement).value.length}/200`;
+              }}
             />
+            <p className="text-xs text-muted-foreground text-right">
+              {defaultValues?.description?.length ?? 0}/200
+            </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">

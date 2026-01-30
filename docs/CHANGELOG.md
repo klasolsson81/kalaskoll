@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Party description shown on invitation cards (both template and AI variants)
+- TemplateCard: description displayed as italic text between party details and QR section
+- InvitationCard: description displayed in the details overlay area
+- Description max length reduced from 1000 to 200 characters (fits on card without overflow)
+- Character counter on description textarea in PartyForm with maxLength enforcement
+- Label updated to clarify description appears on the invitation
+
 ### Fixed
 - Print: full-bleed invitation card fills entire page — no white margins to cut away
 - Print: `@page { margin: 0 }` removes browser page margins, card border/radius removed in print

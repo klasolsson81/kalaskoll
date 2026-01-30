@@ -157,6 +157,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
           venueName={party.venue_name}
           venueAddress={party.venue_address}
           rsvpDeadline={party.rsvp_deadline ? formatDate(party.rsvp_deadline) : null}
+          description={party.description}
           theme={party.theme}
           token={invitation.token}
           images={(partyImages ?? []).map((img) => ({

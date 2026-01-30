@@ -12,6 +12,7 @@ interface TemplatePickerProps {
   venueName: string;
   venueAddress?: string | null;
   rsvpDeadline?: string | null;
+  description?: string | null;
   token: string;
   selectedId: string | null;
   onSelect: (templateId: string) => void;
@@ -25,6 +26,7 @@ export function TemplatePicker({
   venueName,
   venueAddress,
   rsvpDeadline,
+  description,
   token,
   selectedId,
   onSelect,
@@ -51,6 +53,7 @@ export function TemplatePicker({
             venueName={venueName}
             venueAddress={venueAddress}
             rsvpDeadline={rsvpDeadline}
+            description={description}
             token={token}
             preview
           />

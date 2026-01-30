@@ -13,6 +13,7 @@ interface InvitationCardProps {
   venueName: string;
   venueAddress?: string | null;
   rsvpDeadline?: string | null;
+  description?: string | null;
   token: string;
 }
 
@@ -25,6 +26,7 @@ export function InvitationCard({
   venueName,
   venueAddress,
   rsvpDeadline,
+  description,
   token,
 }: InvitationCardProps) {
   return (
@@ -59,6 +61,11 @@ export function InvitationCard({
                 {rsvpDeadline && (
                   <p className="mt-1 text-xs text-muted-foreground">
                     OSA senast {rsvpDeadline}
+                  </p>
+                )}
+                {description && (
+                  <p className="mt-2 whitespace-pre-line text-sm italic text-muted-foreground">
+                    {description}
                   </p>
                 )}
                 <p className="mt-2 text-xs text-muted-foreground">

@@ -13,6 +13,7 @@ interface TemplateCardProps {
   venueName: string;
   venueAddress?: string | null;
   rsvpDeadline?: string | null;
+  description?: string | null;
   token: string;
   preview?: boolean;
 }
@@ -26,6 +27,7 @@ export function TemplateCard({
   venueName,
   venueAddress,
   rsvpDeadline,
+  description,
   token,
   preview = false,
 }: TemplateCardProps) {
@@ -124,6 +126,18 @@ export function TemplateCard({
         {rsvpDeadline && (
           <p className={cn('mt-4 text-sm font-medium', theme.detailColor)}>
             OSA senast {rsvpDeadline}
+          </p>
+        )}
+
+        {/* Description */}
+        {description && (
+          <p
+            className={cn(
+              'mt-4 max-w-xs whitespace-pre-line text-sm italic leading-relaxed',
+              theme.detailColor,
+            )}
+          >
+            {description}
           </p>
         )}
 

@@ -144,10 +144,10 @@ describe('partySchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects description over 1000 characters', () => {
+  it('rejects description over 200 characters', () => {
     const result = partySchema.safeParse({
       ...validParty,
-      description: 'A'.repeat(1001),
+      description: 'A'.repeat(201),
     });
     expect(result.success).toBe(false);
   });
