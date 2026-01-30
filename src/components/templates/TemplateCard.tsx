@@ -82,7 +82,7 @@ export function TemplateCard({
   return (
     <div
       className={cn(
-        'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none',
+        'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0',
         theme.bgGradient,
         theme.borderClass,
       )}
@@ -92,7 +92,7 @@ export function TemplateCard({
         <div className="absolute inset-0" style={theme.patternStyle} />
       )}
 
-      <div className="relative flex flex-col items-center px-6 py-8 text-center sm:px-8 sm:py-10">
+      <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-8 text-center sm:px-8 sm:py-10">
         {/* Top emoji decoration */}
         <p className="mb-4 text-2xl tracking-widest sm:text-3xl">
           {theme.emoji}

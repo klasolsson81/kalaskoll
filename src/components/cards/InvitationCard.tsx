@@ -28,7 +28,7 @@ export function InvitationCard({
   token,
 }: InvitationCardProps) {
   return (
-    <Card className="overflow-hidden print:shadow-none print:border-none">
+    <Card className="overflow-hidden print:shadow-none print:border-none print:rounded-none">
       <CardContent className="p-0">
         <div className="relative">
           {/* Invitation image */}

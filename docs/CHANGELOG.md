@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- Print: full-bleed invitation card fills entire page — no white margins to cut away
+- Print: `@page { margin: 0 }` removes browser page margins, card border/radius removed in print
+- Print: TemplateCard fills full page height with centered content and edge-to-edge gradient
 - Print: duplicate invitation card (2 pages) caused by `position: fixed` repeating on every printed page — changed to `position: absolute`
 - Print: missing background colors/gradients — added `print-color-adjust: exact` globally
 - Print: dashboard header, share section, and details/guests cards no longer leak into print output

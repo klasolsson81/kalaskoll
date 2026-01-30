@@ -126,6 +126,10 @@
 
 /* Print styles for invitation cards */
 @media print {
+  @page {
+    margin: 0;
+  }
+
   /* Force backgrounds and gradients to print */
   * {
     print-color-adjust: exact !important;
@@ -146,10 +150,21 @@
     top: 0;
     left: 0;
     width: 100%;
+    height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    padding: 1rem;
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Card inside print area fills the page */
+  [data-print-area] > * {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 }
