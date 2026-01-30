@@ -92,6 +92,8 @@ export default async function PartyPage({ params }: PartyPageProps) {
           partyDate={formatDate(party.party_date)}
           partyTime={formatTimeRange(party.party_time, party.party_time_end)}
           venueName={party.venue_name}
+          venueAddress={party.venue_address}
+          rsvpDeadline={party.rsvp_deadline ? formatDate(party.rsvp_deadline) : null}
           theme={party.theme}
           token={invitation.token}
         />

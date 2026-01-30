@@ -11,6 +11,8 @@ interface InvitationCardProps {
   partyDate: string;
   partyTime: string;
   venueName: string;
+  venueAddress?: string | null;
+  rsvpDeadline?: string | null;
   token: string;
 }
 
@@ -21,6 +23,8 @@ export function InvitationCard({
   partyDate,
   partyTime,
   venueName,
+  venueAddress,
+  rsvpDeadline,
   token,
 }: InvitationCardProps) {
   return (
@@ -49,6 +53,14 @@ export function InvitationCard({
                   {partyDate} kl {partyTime}
                 </p>
                 <p className="text-sm text-muted-foreground">{venueName}</p>
+                {venueAddress && (
+                  <p className="text-xs text-muted-foreground">{venueAddress}</p>
+                )}
+                {rsvpDeadline && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    OSA senast {rsvpDeadline}
+                  </p>
+                )}
                 <p className="mt-2 text-xs text-muted-foreground">
                   Scanna QR-koden för att OSA
                 </p>

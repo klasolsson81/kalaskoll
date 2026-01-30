@@ -11,6 +11,7 @@ interface PartyHeaderProps {
   venueAddress?: string | null;
   description?: string | null;
   theme?: string | null;
+  rsvpDeadline?: string | null;
 }
 
 export function PartyHeader({
@@ -23,6 +24,7 @@ export function PartyHeader({
   venueAddress,
   description,
   theme,
+  rsvpDeadline,
 }: PartyHeaderProps) {
   return (
     <Card>
@@ -44,6 +46,11 @@ export function PartyHeader({
         </div>
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
+        )}
+        {rsvpDeadline && (
+          <p className="text-sm text-muted-foreground">
+            OSA senast {formatDate(rsvpDeadline)}
+          </p>
         )}
         {theme && (
           <p className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium capitalize text-primary">

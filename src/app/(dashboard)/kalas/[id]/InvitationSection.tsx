@@ -13,6 +13,8 @@ interface InvitationSectionProps {
   partyDate: string;
   partyTime: string;
   venueName: string;
+  venueAddress?: string | null;
+  rsvpDeadline?: string | null;
   theme: string | null;
   token: string;
 }
@@ -25,6 +27,8 @@ export function InvitationSection({
   partyDate,
   partyTime,
   venueName,
+  venueAddress,
+  rsvpDeadline,
   theme,
   token,
 }: InvitationSectionProps) {
@@ -95,6 +99,8 @@ export function InvitationSection({
           partyDate={partyDate}
           partyTime={partyTime}
           venueName={venueName}
+          venueAddress={venueAddress}
+          rsvpDeadline={rsvpDeadline}
           token={token}
         />
       </div>
