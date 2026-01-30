@@ -69,7 +69,17 @@ export const partySchema = z
     childName: z.string().min(1, 'Barnets namn krävs').max(100),
     childAge: z.number().int().min(1).max(19),
     childId: z.string().uuid().optional().or(z.literal('')),
-    partyDate: z.string().min(1, 'Datum krävs'),
+    partyDate: z
+      .string()
+      .min(1, 'Datum krävs')
+      .refine(
+        (val) => {
+          const now = new Date();
+          const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+          return val >= todayStr;
+        },
+        { message: 'Kalasdatum kan inte vara i det förflutna' },
+      ),
     partyTime: z.string().min(1, 'Tid krävs'),
     partyTimeEnd: z.string().optional(),
     venueName: z.string().min(1, 'Plats krävs').max(200),

@@ -103,6 +103,15 @@ describe('partySchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('rejects party date in the past', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      partyDate: '2020-01-01',
+      rsvpDeadline: undefined,
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('rejects empty party time', () => {
     const result = partySchema.safeParse({
       ...validParty,

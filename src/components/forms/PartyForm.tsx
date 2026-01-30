@@ -156,6 +156,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 type="date"
                 value={partyDate}
                 onChange={(e) => setPartyDate(e.target.value)}
+                min={new Date().toISOString().slice(0, 10)}
                 required
               />
             </div>
