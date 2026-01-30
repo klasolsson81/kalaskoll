@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateInvitationImage } from '@/lib/ai/ideogram';
 import { generateInvitationImageFallback } from '@/lib/ai/openai';
+import { ADMIN_EMAILS } from '@/lib/constants';
 import type { PartyDetails } from '@/types';
 
 export async function POST(request: NextRequest) {
@@ -51,16 +52,21 @@ export async function POST(request: NextRequest) {
     theme: (theme || party.theme) ?? undefined,
   };
 
+  // Superadmins bypass mock mode and can always generate real AI images
+  const isAdmin = ADMIN_EMAILS.includes(user.email ?? '');
+  const aiOptions = isAdmin ? { forceLive: true } : undefined;
+
   let imageUrl: string;
 
   try {
-    imageUrl = await generateInvitationImage(theme || party.theme || 'default', partyDetails);
+    imageUrl = await generateInvitationImage(theme || party.theme || 'default', partyDetails, aiOptions);
   } catch {
     // Fallback to OpenAI
     try {
       imageUrl = await generateInvitationImageFallback(
         theme || party.theme || 'default',
         partyDetails,
+        aiOptions,
       );
     } catch {
       return NextResponse.json(

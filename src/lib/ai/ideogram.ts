@@ -12,8 +12,9 @@ const MOCK_IMAGES: Record<string, string> = {
 export async function generateInvitationImage(
   theme: string,
   _partyDetails: PartyDetails,
+  options?: { forceLive?: boolean },
 ): Promise<string> {
-  if (MOCK_MODE) {
+  if (MOCK_MODE && !options?.forceLive) {
     console.log('[MOCK] Returning placeholder image for theme:', theme);
     await new Promise((resolve) => setTimeout(resolve, 500));
     return MOCK_IMAGES[theme] || MOCK_IMAGES.default;

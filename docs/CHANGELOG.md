@@ -20,6 +20,11 @@ All notable changes to this project will be documented in this file.
 - 15 new tests: SMS validation (12) + formatDateShort (3)
 - SQL migration 00009 (sms_usage table, invited_guests SMS columns)
 
+#### Superadmin-roller
+- `ADMIN_EMAILS` bypass: superadmins skip SMS limits (15/party, 1 party/month)
+- `ADMIN_EMAILS` bypass: superadmins use real AI image generation even in mock mode (`forceLive`)
+- Configured admins: `klasolsson81@gmail.com`, `zeback_@hotmail.com`
+
 ### Fixed
 - Child birth date validation: reject future dates in schema + `max` attribute on date inputs
 - Party theme selector: add "Annat..." option with free-text input for custom themes

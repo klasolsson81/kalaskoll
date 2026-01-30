@@ -8,8 +8,9 @@ import type { PartyDetails } from '@/types';
 export async function generateInvitationImageFallback(
   theme: string,
   _partyDetails: PartyDetails,
+  options?: { forceLive?: boolean },
 ): Promise<string> {
-  if (MOCK_MODE) {
+  if (MOCK_MODE && !options?.forceLive) {
     console.log('[MOCK] OpenAI fallback - returning placeholder');
     return '/mock/invitation-default.jpg';
   }
