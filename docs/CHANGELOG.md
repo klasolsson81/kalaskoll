@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Child birth date validation: reject future dates in schema + `max` attribute on date inputs
 - Party theme selector: add "Annat..." option with free-text input for custom themes
+- Rename "Sista OSA-datum" to "Sista svarsdag" with helper text for clarity
 
 ### Added
 
