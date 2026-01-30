@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SubmitButton } from '@/components/forms/SubmitButton';
 import { PARTY_THEMES } from '@/lib/constants';
-import { calculateAge } from '@/lib/utils/format';
 
 interface SavedChild {
   id: string;
@@ -53,8 +52,12 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
   const selectedChild = savedChildren.find((c) => c.id === selectedChildId);
   const isManual = !selectedChildId;
 
-  function getChildAge(child: SavedChild, date?: string): number {
-    return calculateAge(child.birth_date, date || undefined);
+  function getBirthdayAge(child: SavedChild, partyDateStr?: string): number {
+    const birthYear = new Date(child.birth_date).getFullYear();
+    const partyYear = partyDateStr
+      ? new Date(partyDateStr).getFullYear()
+      : new Date().getFullYear();
+    return partyYear - birthYear;
   }
 
   return (
@@ -82,7 +85,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 <option value="">Ange manuellt</option>
                 {savedChildren.map((child) => (
                   <option key={child.id} value={child.id}>
-                    {child.name} ({getChildAge(child, partyDate || undefined)} år)
+                    {child.name} ({getBirthdayAge(child, partyDate || undefined)} år)
                   </option>
                 ))}
               </select>
@@ -118,7 +121,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
           ) : (
             selectedChild && (
               <p className="text-sm text-muted-foreground">
-                {selectedChild.name}, fyller {getChildAge(selectedChild, partyDate || undefined)} år
+                {selectedChild.name}, fyller {getBirthdayAge(selectedChild, partyDate || undefined)} år
                 {partyDate ? ' vid kalaset' : ''}
               </p>
             )
@@ -132,7 +135,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
               <input
                 type="hidden"
                 name="childAge"
-                value={getChildAge(selectedChild, partyDate || undefined)}
+                value={getBirthdayAge(selectedChild, partyDate || undefined)}
               />
             </>
           )}
