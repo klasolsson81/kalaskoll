@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Guest list shows icons for invite method (email vs SMS) with response status
 - 15 new tests: SMS validation (12) + formatDateShort (3)
 - SQL migration 00009 (sms_usage table, invited_guests SMS columns)
+- Pre-fill phone number in RSVP form when opened via SMS invitation link (`?phone=` query param)
 
 #### Superadmin-roller
 - `ADMIN_EMAILS` bypass: superadmins skip SMS limits (15/party, 1 party/month)

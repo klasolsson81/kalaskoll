@@ -7,6 +7,7 @@ import type { Database } from '@/types/database';
 
 interface RsvpPageProps {
   params: Promise<{ token: string }>;
+  searchParams: Promise<{ phone?: string }>;
 }
 
 // Use service role for public page (no auth)
@@ -17,8 +18,9 @@ function createServiceClient() {
   );
 }
 
-export default async function RsvpPage({ params }: RsvpPageProps) {
+export default async function RsvpPage({ params, searchParams }: RsvpPageProps) {
   const { token } = await params;
+  const { phone: phoneParam } = await searchParams;
   const supabase = createServiceClient();
 
   // Look up invitation
@@ -99,7 +101,11 @@ export default async function RsvpPage({ params }: RsvpPageProps) {
         )}
 
         {/* RSVP Form */}
-        <RsvpForm token={token} childName={party.child_name} />
+        <RsvpForm
+          token={token}
+          childName={party.child_name}
+          defaultValues={phoneParam ? { parentPhone: phoneParam } : undefined}
+        />
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground">

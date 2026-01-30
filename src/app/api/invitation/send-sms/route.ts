@@ -101,7 +101,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const rsvpUrl = `${APP_URL}/r/${invitation.token}`;
+  const baseRsvpUrl = `${APP_URL}/r/${invitation.token}`;
 
   // Save invited guests with phone + invite_method='sms'
   // Individual inserts because the partial unique index (party_id, phone WHERE phone IS NOT NULL)
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
         venueName: party.venue_name,
         venueAddress: party.venue_address,
         rsvpDeadline: party.rsvp_deadline,
-        rsvpUrl,
+        rsvpUrl: `${baseRsvpUrl}?phone=${encodeURIComponent(phone)}`,
       }),
     ),
   );
