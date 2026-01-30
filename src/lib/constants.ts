@@ -12,6 +12,13 @@ export const TEST_RSVP_URL = `${APP_URL}/r/${TEST_INVITATION_TOKEN}`;
 // Email
 export const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'KalasKoll <noreply@kalaskoll.se>';
 
+// SMS (46elks)
+export const SMS_SENDER_ID = 'KalasKoll';
+export const SMS_MAX_PER_PARTY = 15;
+
+// Admin emails – bypass all SMS limits
+export const ADMIN_EMAILS = ['klasolsson81@gmail.com', 'zeback_@hotmail.com'];
+
 // Swedish allergies commonly found at children's parties
 export const COMMON_ALLERGIES = [
   'Laktos',

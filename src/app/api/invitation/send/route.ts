@@ -63,6 +63,7 @@ export async function POST(request: Request) {
       party_id: partyId,
       email: e.email.toLowerCase(),
       name: e.name ?? null,
+      invite_method: 'email',
     })),
     { onConflict: 'party_id,email', ignoreDuplicates: true },
   );

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SMS_MAX_PER_PARTY } from '@/lib/constants';
 
 // Auth schemas
 export const loginSchema = z.object({
@@ -120,6 +121,36 @@ export const sendInvitationSchema = z.object({
     .max(50, 'Max 50 e-postadresser åt gången'),
 });
 
+// Normalize Swedish phone: 07x → +467x
+function normalizeSwedishPhone(phone: string): string {
+  const cleaned = phone.replace(/[\s\-()]/g, '');
+  if (cleaned.startsWith('07')) {
+    return '+46' + cleaned.slice(1);
+  }
+  return cleaned;
+}
+
+// Send SMS invitation schema
+export const sendSmsInvitationSchema = z.object({
+  partyId: z.string().uuid('Ogiltigt kalas-ID'),
+  phones: z
+    .array(
+      z
+        .string()
+        .transform(normalizeSwedishPhone)
+        .pipe(
+          z
+            .string()
+            .regex(
+              /^\+46[0-9]{8,10}$/,
+              'Ogiltigt svenskt telefonnummer (ex: 0701234567)',
+            ),
+        ),
+    )
+    .min(1, 'Minst ett telefonnummer krävs')
+    .max(SMS_MAX_PER_PARTY, `Max ${SMS_MAX_PER_PARTY} telefonnummer åt gången`),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type RsvpFormData = z.infer<typeof rsvpSchema>;
@@ -127,3 +158,4 @@ export type RsvpEditFormData = z.infer<typeof rsvpEditSchema>;
 export type ChildFormData = z.infer<typeof childSchema>;
 export type PartyFormData = z.infer<typeof partySchema>;
 export type SendInvitationFormData = z.infer<typeof sendInvitationSchema>;
+export type SendSmsInvitationFormData = z.infer<typeof sendSmsInvitationSchema>;

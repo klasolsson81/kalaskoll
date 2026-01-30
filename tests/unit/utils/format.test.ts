@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   formatPhoneNumber,
   formatDate,
+  formatDateShort,
   formatTime,
   formatTimeRange,
   calculateAge,
@@ -35,6 +36,27 @@ describe('formatDate', () => {
   it('accepts a Date object', () => {
     const result = formatDate(new Date(2026, 2, 27));
     expect(result).toContain('27');
+  });
+});
+
+describe('formatDateShort', () => {
+  it('formats a date as "day month" in Swedish', () => {
+    const result = formatDateShort('2026-03-15');
+    // Should contain "15" and "mar" (short month)
+    expect(result).toContain('15');
+    expect(result.toLowerCase()).toContain('mar');
+  });
+
+  it('accepts a Date object', () => {
+    const result = formatDateShort(new Date(2026, 5, 1)); // June 1
+    expect(result).toContain('1');
+    expect(result.toLowerCase()).toContain('jun');
+  });
+
+  it('formats January correctly', () => {
+    const result = formatDateShort('2026-01-29');
+    expect(result).toContain('29');
+    expect(result.toLowerCase()).toContain('jan');
   });
 });
 

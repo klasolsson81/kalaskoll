@@ -232,26 +232,76 @@ export type Database = {
         Row: {
           id: string;
           party_id: string;
-          email: string;
+          email: string | null;
+          phone: string | null;
+          invite_method: string;
           name: string | null;
           invited_at: string;
         };
         Insert: {
           id?: string;
           party_id: string;
-          email: string;
+          email?: string | null;
+          phone?: string | null;
+          invite_method?: string;
           name?: string | null;
           invited_at?: string;
         };
         Update: {
           id?: string;
           party_id?: string;
-          email?: string;
+          email?: string | null;
+          phone?: string | null;
+          invite_method?: string;
           name?: string | null;
         };
         Relationships: [
           {
             foreignKeyName: "invited_guests_party_id_fkey";
+            columns: ["party_id"];
+            isOneToOne: false;
+            referencedRelation: "parties";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      sms_usage: {
+        Row: {
+          id: string;
+          user_id: string;
+          party_id: string | null;
+          sms_count: number;
+          month: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          party_id?: string | null;
+          sms_count?: number;
+          month: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          party_id?: string | null;
+          sms_count?: number;
+          month?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "sms_usage_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sms_usage_party_id_fkey";
             columns: ["party_id"];
             isOneToOne: false;
             referencedRelation: "parties";

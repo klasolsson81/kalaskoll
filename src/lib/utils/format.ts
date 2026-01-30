@@ -48,6 +48,14 @@ export function formatTimeRange(start: string, end?: string | null): string {
 }
 
 /**
+ * Format a date in short Swedish format for SMS: "15 mar".
+ */
+export function formatDateShort(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }).replace('.', '');
+}
+
+/**
  * Calculate age in full years from a birth date.
  * If `atDate` is provided, calculates age at that date; otherwise uses today.
  */

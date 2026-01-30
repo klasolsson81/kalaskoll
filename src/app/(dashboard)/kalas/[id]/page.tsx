@@ -13,9 +13,18 @@ interface PartyPageProps {
   params: Promise<{ id: string }>;
 }
 
+function getCurrentMonth(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
 export default async function PartyPage({ params }: PartyPageProps) {
   const { id } = await params;
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data: party } = await supabase
     .from('parties')
@@ -44,28 +53,68 @@ export default async function PartyPage({ params }: PartyPageProps) {
     .eq('invitation_id', invitation?.id ?? '')
     .eq('attending', true);
 
-  // Fetch invited guests + match against RSVP responses
+  // Fetch invited guests with phone and invite_method
   const { data: invitedGuests } = await supabase
     .from('invited_guests')
-    .select('email, name, invited_at')
+    .select('email, phone, invite_method, name, invited_at')
     .eq('party_id', id)
     .order('invited_at', { ascending: true });
 
-  const { data: rsvpEmails } = invitation
+  // Fetch RSVP responses for matching
+  const { data: rsvpResponses } = invitation
     ? await supabase
         .from('rsvp_responses')
-        .select('parent_email')
+        .select('parent_email, parent_phone')
         .eq('invitation_id', invitation.id)
     : { data: null };
 
   const respondedEmails = new Set(
-    (rsvpEmails ?? []).map((r) => r.parent_email?.toLowerCase()),
+    (rsvpResponses ?? [])
+      .map((r) => r.parent_email?.toLowerCase())
+      .filter(Boolean),
+  );
+  const respondedPhones = new Set(
+    (rsvpResponses ?? [])
+      .map((r) => r.parent_phone?.replace(/[\s\-()]/g, ''))
+      .filter(Boolean),
   );
 
-  const invitedGuestsWithStatus = (invitedGuests ?? []).map((g) => ({
-    ...g,
-    hasResponded: respondedEmails.has(g.email.toLowerCase()),
-  }));
+  const invitedGuestsWithStatus = (invitedGuests ?? []).map((g) => {
+    const isSms = g.invite_method === 'sms';
+    let hasResponded = false;
+    if (isSms && g.phone) {
+      // Match phone: normalize both sides
+      const normalized = g.phone.replace(/[\s\-()]/g, '');
+      hasResponded = respondedPhones.has(normalized);
+    } else if (g.email) {
+      hasResponded = respondedEmails.has(g.email.toLowerCase());
+    }
+    return { ...g, hasResponded };
+  });
+
+  // Fetch SMS usage for current month
+  const currentMonth = getCurrentMonth();
+  const { data: smsUsageData } = user
+    ? await supabase
+        .from('sms_usage')
+        .select('party_id, sms_count')
+        .eq('user_id', user.id)
+        .eq('month', currentMonth)
+        .single()
+    : { data: null };
+
+  // Determine SMS availability
+  let smsUsage: { smsCount: number; allowed: boolean } | undefined;
+  if (smsUsageData) {
+    const isThisParty = smsUsageData.party_id === id;
+    smsUsage = {
+      smsCount: isThisParty ? smsUsageData.sms_count : 0,
+      allowed: isThisParty, // Only allowed if this party is the one that used SMS
+    };
+  } else {
+    // No usage this month – SMS is available
+    smsUsage = { smsCount: 0, allowed: true };
+  }
 
   return (
     <div className="space-y-6">
@@ -102,10 +151,11 @@ export default async function PartyPage({ params }: PartyPageProps) {
       {/* QR Code */}
       {invitation?.token && <QRCodeSection token={invitation.token} />}
 
-      {/* Send invitations via email */}
+      {/* Send invitations via email or SMS */}
       <SendInvitationsSection
         partyId={id}
         invitedGuests={invitedGuestsWithStatus}
+        smsUsage={smsUsage}
       />
 
       <div className="grid gap-6 sm:grid-cols-2">

@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### SMS-inbjudningar via 46elks
+- E-post/SMS toggle in SendInvitationsSection for choosing invite method
+- `POST /api/invitation/send-sms` endpoint with auth, ownership check, and SMS limits
+- 46elks SMS client (`src/lib/sms/elks.ts`) with auto-shortened message for 160-char limit
+- `sms_usage` table tracking SMS count per user per month (survives party deletion)
+- Anti-abuse: max 15 SMS per party, max 1 party with SMS per month per user
+- Admin bypass for SMS limits (configurable via `ADMIN_EMAILS` constant)
+- `invited_guests` extended with `phone`, `invite_method` columns (email now nullable)
+- Phone normalization (07x → +46x) in `sendSmsInvitationSchema` Zod validation
+- `formatDateShort()` utility for compact Swedish dates in SMS ("15 mar")
+- Guest list shows icons for invite method (email vs SMS) with response status
+- 15 new tests: SMS validation (12) + formatDateShort (3)
+- SQL migration 00009 (sms_usage table, invited_guests SMS columns)
+
 ### Fixed
 - Child birth date validation: reject future dates in schema + `max` attribute on date inputs
 - Party theme selector: add "Annat..." option with free-text input for custom themes

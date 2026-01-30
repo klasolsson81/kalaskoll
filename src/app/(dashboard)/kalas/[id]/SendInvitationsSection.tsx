@@ -4,29 +4,43 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SMS_MAX_PER_PARTY } from '@/lib/constants';
+
+type InviteMethod = 'email' | 'sms';
 
 interface InvitedGuest {
-  email: string;
+  email: string | null;
+  phone: string | null;
+  invite_method: string;
   name: string | null;
   invited_at: string;
   hasResponded: boolean;
 }
 
+interface SmsUsage {
+  smsCount: number;
+  allowed: boolean;
+}
+
 interface SendInvitationsSectionProps {
   partyId: string;
   invitedGuests: InvitedGuest[];
+  smsUsage?: SmsUsage;
 }
 
 export function SendInvitationsSection({
   partyId,
   invitedGuests,
+  smsUsage,
 }: SendInvitationsSectionProps) {
+  const [method, setMethod] = useState<InviteMethod>('email');
   const [emailsText, setEmailsText] = useState('');
+  const [phonesText, setPhonesText] = useState('');
   const [sending, setSending] = useState(false);
-  const [result, setResult] = useState<{ sent: number; failed: number } | null>(null);
+  const [result, setResult] = useState<{ sent: number; failed: number; remainingSms?: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSend() {
+  async function handleSendEmail() {
     setError(null);
     setResult(null);
 
@@ -66,29 +80,129 @@ export function SendInvitationsSection({
     }
   }
 
+  async function handleSendSms() {
+    setError(null);
+    setResult(null);
+
+    const raw = phonesText
+      .split(/[,\n]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (raw.length === 0) {
+      setError('Ange minst ett telefonnummer');
+      return;
+    }
+
+    setSending(true);
+    try {
+      const res = await fetch('/api/invitation/send-sms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partyId, phones: raw }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Något gick fel');
+        return;
+      }
+
+      setResult({ sent: data.sent, failed: data.failed, remainingSms: data.remainingSmsThisParty });
+      setPhonesText('');
+    } catch {
+      setError('Kunde inte skicka SMS');
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function handleSend() {
+    if (method === 'email') {
+      handleSendEmail();
+    } else {
+      handleSendSms();
+    }
+  }
+
+  const smsCount = smsUsage?.smsCount ?? 0;
+  const smsAllowed = smsUsage?.allowed ?? true;
+  const smsRemaining = SMS_MAX_PER_PARTY - smsCount;
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Skicka inbjudan via e-post</CardTitle>
+        <CardTitle>Skicka inbjudningar</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="inviteEmails">E-postadresser</Label>
-          <textarea
-            id="inviteEmails"
-            value={emailsText}
-            onChange={(e) => setEmailsText(e.target.value)}
-            rows={3}
-            placeholder="anna@example.com, erik@example.com&#10;Eller en per rad..."
-            className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          />
-          <p className="text-xs text-muted-foreground">
-            Separera med komma eller ny rad
-          </p>
+        {/* Method toggle */}
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant={method === 'email' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { setMethod('email'); setError(null); setResult(null); }}
+          >
+            E-post
+          </Button>
+          <Button
+            type="button"
+            variant={method === 'sms' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { setMethod('sms'); setError(null); setResult(null); }}
+            disabled={!smsAllowed}
+            title={!smsAllowed ? 'Du har redan använt SMS för ett annat kalas denna månad' : undefined}
+          >
+            SMS
+          </Button>
         </div>
 
+        {!smsAllowed && method === 'email' && (
+          <p className="text-xs text-muted-foreground">
+            SMS ej tillgängligt – redan använt för ett annat kalas denna månad.
+          </p>
+        )}
+
+        {method === 'email' ? (
+          <div className="space-y-2">
+            <Label htmlFor="inviteEmails">E-postadresser</Label>
+            <textarea
+              id="inviteEmails"
+              value={emailsText}
+              onChange={(e) => setEmailsText(e.target.value)}
+              rows={3}
+              placeholder="anna@example.com, erik@example.com&#10;Eller en per rad..."
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            />
+            <p className="text-xs text-muted-foreground">
+              Separera med komma eller ny rad
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Label htmlFor="invitePhones">Telefonnummer</Label>
+            <textarea
+              id="invitePhones"
+              value={phonesText}
+              onChange={(e) => setPhonesText(e.target.value)}
+              rows={3}
+              placeholder="0701234567, 0709876543&#10;Eller ett per rad..."
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            />
+            <p className="text-xs text-muted-foreground">
+              {smsCount} av {SMS_MAX_PER_PARTY} SMS använda för detta kalas
+              {smsRemaining > 0 && ` (${smsRemaining} kvar)`}
+            </p>
+          </div>
+        )}
+
         <Button onClick={handleSend} disabled={sending} className="w-full">
-          {sending ? 'Skickar...' : 'Skicka inbjudan'}
+          {sending
+            ? 'Skickar...'
+            : method === 'email'
+              ? 'Skicka inbjudan via e-post'
+              : 'Skicka inbjudan via SMS'}
         </Button>
 
         {error && (
@@ -101,6 +215,9 @@ export function SendInvitationsSection({
           <div className="rounded-md bg-green-50 p-3 text-sm text-green-700">
             Skickat till {result.sent} av {result.sent + result.failed}
             {result.failed > 0 && ` (${result.failed} misslyckades)`}
+            {result.remainingSms !== undefined && (
+              <> — {result.remainingSms} SMS kvar</>
+            )}
           </div>
         )}
 
@@ -108,22 +225,30 @@ export function SendInvitationsSection({
           <div className="space-y-2 pt-2">
             <p className="text-sm font-medium">Inbjudna ({invitedGuests.length})</p>
             <ul className="space-y-1.5">
-              {invitedGuests.map((g) => (
-                <li key={g.email} className="flex items-center gap-2 text-sm">
-                  <span
-                    className={`inline-block h-2 w-2 rounded-full ${
-                      g.hasResponded ? 'bg-green-500' : 'bg-gray-300'
-                    }`}
-                  />
-                  <span>{g.name || g.email}</span>
-                  {g.name && (
-                    <span className="text-muted-foreground">{g.email}</span>
-                  )}
-                  <span className="ml-auto text-xs text-muted-foreground">
-                    {g.hasResponded ? 'Svarat' : 'Ej svarat'}
-                  </span>
-                </li>
-              ))}
+              {invitedGuests.map((g) => {
+                const key = g.email ?? g.phone ?? g.invited_at;
+                const isSms = g.invite_method === 'sms';
+                const display = isSms ? g.phone : (g.name || g.email);
+                return (
+                  <li key={key} className="flex items-center gap-2 text-sm">
+                    <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
+                      {isSms ? '📱' : '✉️'}
+                    </span>
+                    <span
+                      className={`inline-block h-2 w-2 rounded-full ${
+                        g.hasResponded ? 'bg-green-500' : 'bg-gray-300'
+                      }`}
+                    />
+                    <span>{display}</span>
+                    {!isSms && g.name && g.email && (
+                      <span className="text-muted-foreground">{g.email}</span>
+                    )}
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      {g.hasResponded ? 'Svarat' : 'Ej svarat'}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}

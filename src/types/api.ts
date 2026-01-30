@@ -50,3 +50,14 @@ export interface SendInvitationResponse {
   sent: number;
   failed: number;
 }
+
+export interface SendSmsInvitationRequest {
+  partyId: string;
+  phones: string[];
+}
+
+export interface SendSmsInvitationResponse {
+  sent: number;
+  failed: number;
+  remainingSmsThisParty: number;
+}
