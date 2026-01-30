@@ -263,6 +263,8 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 name="rsvpDeadline"
                 type="date"
                 defaultValue={defaultValues?.rsvpDeadline}
+                min={new Date().toISOString().slice(0, 10)}
+                max={partyDate || undefined}
               />
             </div>
             <div className="space-y-2">

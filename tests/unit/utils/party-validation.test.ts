@@ -163,4 +163,36 @@ describe('partySchema', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it('accepts rsvpDeadline on party date', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      rsvpDeadline: '2026-03-27',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects rsvpDeadline after party date', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      rsvpDeadline: '2026-03-28',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects rsvpDeadline in the past', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      rsvpDeadline: '2020-01-01',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts party without rsvpDeadline', () => {
+    const result = partySchema.safeParse(validParty);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.rsvpDeadline).toBeUndefined();
+    }
+  });
 });

@@ -64,20 +64,37 @@ export const childSchema = z.object({
 });
 
 // Party schema
-export const partySchema = z.object({
-  childName: z.string().min(1, 'Barnets namn krävs').max(100),
-  childAge: z.number().int().min(1).max(19),
-  childId: z.string().uuid().optional().or(z.literal('')),
-  partyDate: z.string().min(1, 'Datum krävs'),
-  partyTime: z.string().min(1, 'Tid krävs'),
-  partyTimeEnd: z.string().optional(),
-  venueName: z.string().min(1, 'Plats krävs').max(200),
-  venueAddress: z.string().max(300).optional(),
-  description: z.string().max(1000).optional(),
-  theme: z.string().optional(),
-  rsvpDeadline: z.string().optional(),
-  maxGuests: z.number().int().min(1).max(100).optional(),
-});
+export const partySchema = z
+  .object({
+    childName: z.string().min(1, 'Barnets namn krävs').max(100),
+    childAge: z.number().int().min(1).max(19),
+    childId: z.string().uuid().optional().or(z.literal('')),
+    partyDate: z.string().min(1, 'Datum krävs'),
+    partyTime: z.string().min(1, 'Tid krävs'),
+    partyTimeEnd: z.string().optional(),
+    venueName: z.string().min(1, 'Plats krävs').max(200),
+    venueAddress: z.string().max(300).optional(),
+    description: z.string().max(1000).optional(),
+    theme: z.string().optional(),
+    rsvpDeadline: z.string().optional(),
+    maxGuests: z.number().int().min(1).max(100).optional(),
+  })
+  .refine(
+    (data) => {
+      if (!data.rsvpDeadline) return true;
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      return data.rsvpDeadline >= todayStr;
+    },
+    { message: 'Sista svarsdag kan inte vara i det förflutna', path: ['rsvpDeadline'] },
+  )
+  .refine(
+    (data) => {
+      if (!data.rsvpDeadline) return true;
+      return data.rsvpDeadline <= data.partyDate;
+    },
+    { message: 'Sista svarsdag kan inte vara efter kalaset', path: ['rsvpDeadline'] },
+  );
 
 // Send invitation email schema
 export const sendInvitationSchema = z.object({
