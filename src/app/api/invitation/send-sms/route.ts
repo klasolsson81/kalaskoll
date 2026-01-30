@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   // Verify ownership
   const { data: party } = await supabase
     .from('parties')
-    .select('id, owner_id, child_name, child_age, party_date, party_time, venue_name')
+    .select('id, owner_id, child_name, child_age, party_date, party_time, venue_name, venue_address, rsvp_deadline')
     .eq('id', partyId)
     .single();
 
@@ -123,6 +123,8 @@ export async function POST(request: Request) {
         partyDate: party.party_date,
         partyTime: party.party_time,
         venueName: party.venue_name,
+        venueAddress: party.venue_address,
+        rsvpDeadline: party.rsvp_deadline,
         rsvpUrl,
       }),
     ),

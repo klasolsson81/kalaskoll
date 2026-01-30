@@ -223,7 +223,7 @@ export function SendInvitationsSection({
           <div className="rounded-md bg-green-50 p-3 text-sm text-green-700">
             Skickat till {result.sent} av {result.sent + result.failed}
             {result.failed > 0 && ` (${result.failed} misslyckades)`}
-            {result.remainingSms !== undefined && (
+            {result.remainingSms !== undefined && !isAdmin && (
               <> — {result.remainingSms} SMS kvar</>
             )}
           </div>

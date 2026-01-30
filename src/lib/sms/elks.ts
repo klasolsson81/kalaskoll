@@ -8,6 +8,8 @@ interface SendPartySmsParams {
   partyDate: string; // ISO date
   partyTime: string; // HH:MM or HH:MM:SS
   venueName: string;
+  venueAddress?: string | null;
+  rsvpDeadline?: string | null; // ISO date
   rsvpUrl: string;
 }
 
@@ -18,25 +20,37 @@ interface ElksResponse {
 }
 
 function buildSmsMessage(params: SendPartySmsParams): string {
-  const { childName, childAge, partyDate, partyTime, venueName, rsvpUrl } = params;
+  const { childName, childAge, partyDate, partyTime, venueName, venueAddress, rsvpDeadline, rsvpUrl } = params;
   const date = formatDateShort(partyDate);
   const time = formatTime(partyTime);
 
-  const full = `${childName} fyller ${childAge}! Kalas ${date} kl ${time}, ${venueName}. OSA: ${rsvpUrl}`;
+  // Build venue string: "Leos Lekland, Storgatan 1" or just "Leos Lekland"
+  const venue = venueAddress ? `${venueName}, ${venueAddress}` : venueName;
 
-  // SMS is 160 chars for GSM-7. If over, use a shorter version.
+  // Build deadline string
+  const deadline = rsvpDeadline ? `\nSvara senast ${formatDateShort(rsvpDeadline)}.` : '';
+
+  // Full message with all details
+  const full = `Hej! Du ar bjuden till ${childName}s kalas. ${childName} fyller ${childAge}!\n${date} kl ${time}\n${venue}${deadline}\nOSA: ${rsvpUrl}`;
+
   if (full.length <= 160) {
     return full;
   }
 
-  // Fallback: shorter message without venue
-  const short = `${childName} fyller ${childAge}! Kalas ${date} kl ${time}. OSA: ${rsvpUrl}`;
-  if (short.length <= 160) {
-    return short;
+  // Without address
+  const noAddr = `Hej! Du ar bjuden till ${childName}s kalas. ${childName} fyller ${childAge}!\n${date} kl ${time}, ${venueName}${deadline}\nOSA: ${rsvpUrl}`;
+  if (noAddr.length <= 160) {
+    return noAddr;
   }
 
-  // Absolute fallback
-  return `${childName}s kalas ${date}. OSA: ${rsvpUrl}`;
+  // Without deadline
+  const noDeadline = `Hej! Du ar bjuden till ${childName}s kalas. ${childName} fyller ${childAge}!\n${date} kl ${time}, ${venueName}\nOSA: ${rsvpUrl}`;
+  if (noDeadline.length <= 160) {
+    return noDeadline;
+  }
+
+  // Minimal fallback
+  return `Du ar bjuden till ${childName}s kalas ${date} kl ${time}. OSA: ${rsvpUrl}`;
 }
 
 export async function sendPartySms(params: SendPartySmsParams): Promise<ElksResponse> {
