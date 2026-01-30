@@ -126,17 +126,26 @@
 
 /* Print styles for invitation cards */
 @media print {
+  /* Force backgrounds and gradients to print */
+  * {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
   body * {
     visibility: hidden;
   }
+
   [data-print-area],
   [data-print-area] * {
     visibility: visible;
   }
+
   [data-print-area] {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;

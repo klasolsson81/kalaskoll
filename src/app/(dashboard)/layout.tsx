@@ -22,7 +22,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen">
-      <header className="border-b">
+      <header className="border-b print:hidden">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
           <Link href="/dashboard" className="text-xl font-bold">
             KalasKoll

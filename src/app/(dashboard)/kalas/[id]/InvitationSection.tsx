@@ -248,9 +248,9 @@ export function InvitationSection({
   // --- State: Has something selected OR picker open ---
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 print:hidden">
         <CardTitle>Inbjudan</CardTitle>
-        <div className="flex gap-2 print:hidden">
+        <div className="flex gap-2">
           {activeMode && (
             <Button
               variant="ghost"

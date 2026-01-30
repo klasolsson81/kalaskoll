@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- Print: duplicate invitation card (2 pages) caused by `position: fixed` repeating on every printed page — changed to `position: absolute`
+- Print: missing background colors/gradients — added `print-color-adjust: exact` globally
+- Print: dashboard header, share section, and details/guests cards no longer leak into print output
+
 ### Changed
 
 #### Unified thumbnail gallery for invitations

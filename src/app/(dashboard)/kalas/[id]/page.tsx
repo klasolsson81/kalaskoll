@@ -132,7 +132,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between print:hidden">
         <h1 className="text-3xl font-bold">{party.child_name}s kalas</h1>
         <div className="flex gap-2">
           <Link href={`/kalas/${id}/edit`}>
@@ -170,18 +170,20 @@ export default async function PartyPage({ params }: PartyPageProps) {
       )}
 
       {/* Share & send invitations */}
-      {invitation?.token && (
-        <SendInvitationsSection
-          partyId={id}
-          token={invitation.token}
-          childName={party.child_name}
-          invitedGuests={invitedGuestsWithStatus}
-          smsUsage={smsUsage}
-          isAdmin={isAdmin}
-        />
-      )}
+      <div className="print:hidden">
+        {invitation?.token && (
+          <SendInvitationsSection
+            partyId={id}
+            token={invitation.token}
+            childName={party.child_name}
+            invitedGuests={invitedGuestsWithStatus}
+            smsUsage={smsUsage}
+            isAdmin={isAdmin}
+          />
+        )}
+      </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 print:hidden">
         <Card>
           <CardHeader>
             <CardTitle>Detaljer</CardTitle>
