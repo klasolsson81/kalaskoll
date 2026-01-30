@@ -9,15 +9,26 @@ export async function GET(request: Request) {
 
   const supabase = await createClient();
 
-  // PKCE flow: Supabase redirects with a code parameter
+  // Flow 1: PKCE code exchange (normal Supabase redirect flow)
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       return NextResponse.redirect(`${origin}/confirmed`);
     }
+    console.error('[auth/callback] exchangeCodeForSession failed:', error.message);
+
+    // Fallback: try as OTP token (some email templates send raw token as "code")
+    const { error: otpError } = await supabase.auth.verifyOtp({
+      token_hash: code,
+      type: 'signup',
+    });
+    if (!otpError) {
+      return NextResponse.redirect(`${origin}/confirmed`);
+    }
+    console.error('[auth/callback] verifyOtp fallback failed:', otpError.message);
   }
 
-  // Email verification flow: Supabase sends token_hash + type directly
+  // Flow 2: token_hash + type parameters (Supabase default email template)
   if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
@@ -26,8 +37,9 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(`${origin}/confirmed`);
     }
+    console.error('[auth/callback] verifyOtp failed:', error.message);
   }
 
-  // If both flows fail, redirect to login with error
+  // All flows failed
   return NextResponse.redirect(`${origin}/login?error=verification_failed`);
 }
