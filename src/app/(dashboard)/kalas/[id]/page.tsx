@@ -8,6 +8,7 @@ import { DeletePartyButton } from './DeletePartyButton';
 import { QRCodeSection } from './QRCodeSection';
 import { InvitationSection } from './InvitationSection';
 import { SendInvitationsSection } from './SendInvitationsSection';
+import { ADMIN_EMAILS } from '@/lib/constants';
 
 interface PartyPageProps {
   params: Promise<{ id: string }>;
@@ -103,6 +104,8 @@ export default async function PartyPage({ params }: PartyPageProps) {
         .single()
     : { data: null };
 
+  const isAdmin = ADMIN_EMAILS.includes(user?.email ?? '');
+
   // Determine SMS availability
   let smsUsage: { smsCount: number; allowed: boolean } | undefined;
   if (smsUsageData) {
@@ -156,6 +159,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
         partyId={id}
         invitedGuests={invitedGuestsWithStatus}
         smsUsage={smsUsage}
+        isAdmin={isAdmin}
       />
 
       <div className="grid gap-6 sm:grid-cols-2">

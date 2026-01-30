@@ -26,12 +26,14 @@ interface SendInvitationsSectionProps {
   partyId: string;
   invitedGuests: InvitedGuest[];
   smsUsage?: SmsUsage;
+  isAdmin?: boolean;
 }
 
 export function SendInvitationsSection({
   partyId,
   invitedGuests,
   smsUsage,
+  isAdmin,
 }: SendInvitationsSectionProps) {
   const [method, setMethod] = useState<InviteMethod>('email');
   const [emailsText, setEmailsText] = useState('');
@@ -151,14 +153,14 @@ export function SendInvitationsSection({
             variant={method === 'sms' ? 'default' : 'outline'}
             size="sm"
             onClick={() => { setMethod('sms'); setError(null); setResult(null); }}
-            disabled={!smsAllowed}
-            title={!smsAllowed ? 'Du har redan använt SMS för ett annat kalas denna månad' : undefined}
+            disabled={!smsAllowed && !isAdmin}
+            title={!smsAllowed && !isAdmin ? 'Du har redan använt SMS för ett annat kalas denna månad' : undefined}
           >
             SMS
           </Button>
         </div>
 
-        {!smsAllowed && method === 'email' && (
+        {!smsAllowed && !isAdmin && method === 'email' && (
           <p className="text-xs text-muted-foreground">
             SMS ej tillgängligt – redan använt för ett annat kalas denna månad.
           </p>
@@ -190,10 +192,16 @@ export function SendInvitationsSection({
               placeholder="0701234567, 0709876543&#10;Eller ett per rad..."
               className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
-            <p className="text-xs text-muted-foreground">
-              {smsCount} av {SMS_MAX_PER_PARTY} SMS använda för detta kalas
-              {smsRemaining > 0 && ` (${smsRemaining} kvar)`}
-            </p>
+            {isAdmin ? (
+              <p className="text-xs text-muted-foreground">
+                Superadmin — inga SMS-begränsningar
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {smsCount} av {SMS_MAX_PER_PARTY} SMS använda för detta kalas
+                {smsRemaining > 0 && ` (${smsRemaining} kvar)`}
+              </p>
+            )}
           </div>
         )}
 
