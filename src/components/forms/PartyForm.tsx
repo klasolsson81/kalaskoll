@@ -85,7 +85,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 <option value="">Ange manuellt</option>
                 {savedChildren.map((child) => (
                   <option key={child.id} value={child.id}>
-                    {child.name} ({getBirthdayAge(child, partyDate || undefined)} år)
+                    {child.name}
                   </option>
                 ))}
               </select>
