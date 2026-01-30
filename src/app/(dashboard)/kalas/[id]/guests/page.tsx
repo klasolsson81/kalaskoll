@@ -45,6 +45,41 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
         .in('rsvp_id', guestIds)
     : { data: [] };
 
+  // Fetch invited guests (email/SMS) with response matching
+  const { data: invitedGuests } = await supabase
+    .from('invited_guests')
+    .select('email, phone, invite_method, name, invited_at')
+    .eq('party_id', id)
+    .order('invited_at', { ascending: true });
+
+  function normalizePhone(phone: string): string {
+    const cleaned = phone.replace(/[\s\-()]/g, '');
+    if (cleaned.startsWith('07')) return '+46' + cleaned.slice(1);
+    return cleaned;
+  }
+
+  const respondedEmails = new Set(
+    (guests ?? [])
+      .map((r) => r.parent_email?.toLowerCase())
+      .filter(Boolean),
+  );
+  const respondedPhones = new Set(
+    (guests ?? [])
+      .map((r) => r.parent_phone ? normalizePhone(r.parent_phone) : null)
+      .filter(Boolean),
+  );
+
+  const invitedGuestsWithStatus = (invitedGuests ?? []).map((g) => {
+    const isSms = g.invite_method === 'sms';
+    let hasResponded = false;
+    if (isSms && g.phone) {
+      hasResponded = respondedPhones.has(normalizePhone(g.phone));
+    } else if (g.email) {
+      hasResponded = respondedEmails.has(g.email.toLowerCase());
+    }
+    return { ...g, hasResponded };
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -64,6 +99,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
             other_dietary: a.other_dietary,
           }))
         }
+        invitedGuests={invitedGuestsWithStatus}
       />
     </div>
   );

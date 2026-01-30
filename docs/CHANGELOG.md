@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Guest list page now shows sent invitations (email/SMS) with response status
+
 ### Changed
 
 #### Dela inbjudan-hub

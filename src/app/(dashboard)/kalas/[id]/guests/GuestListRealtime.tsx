@@ -21,16 +21,27 @@ interface AllergyInfo {
   other_dietary: string | null;
 }
 
+interface InvitedGuest {
+  email: string | null;
+  phone: string | null;
+  invite_method: string;
+  name: string | null;
+  invited_at: string;
+  hasResponded: boolean;
+}
+
 interface GuestListRealtimeProps {
   invitationId: string;
   initialGuests: Guest[];
   initialAllergies: AllergyInfo[];
+  invitedGuests: InvitedGuest[];
 }
 
 export function GuestListRealtime({
   invitationId,
   initialGuests,
   initialAllergies,
+  invitedGuests,
 }: GuestListRealtimeProps) {
   const [guests, setGuests] = useState<Guest[]>(initialGuests);
   const [allergies] = useState<AllergyInfo[]>(initialAllergies);
@@ -169,7 +180,43 @@ export function GuestListRealtime({
         </Card>
       )}
 
-      {guests.length === 0 && (
+      {invitedGuests.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Skickade inbjudningar ({invitedGuests.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {invitedGuests.map((g) => {
+                const key = g.email ?? g.phone ?? g.invited_at;
+                const isSms = g.invite_method === 'sms';
+                const display = isSms ? g.phone : (g.name || g.email);
+                return (
+                  <li key={key} className="flex items-center gap-2 text-sm border-b pb-2 last:border-0 last:pb-0">
+                    <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
+                      {isSms ? '📱' : '✉️'}
+                    </span>
+                    <span
+                      className={`inline-block h-2 w-2 rounded-full shrink-0 ${
+                        g.hasResponded ? 'bg-green-500' : 'bg-gray-300'
+                      }`}
+                    />
+                    <span className="truncate">{display}</span>
+                    {!isSms && g.name && g.email && (
+                      <span className="text-muted-foreground truncate">{g.email}</span>
+                    )}
+                    <span className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
+                      {g.hasResponded ? 'Svarat' : 'Ej svarat'}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {guests.length === 0 && invitedGuests.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center">
             <p className="text-muted-foreground">
