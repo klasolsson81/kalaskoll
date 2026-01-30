@@ -309,6 +309,37 @@ export type Database = {
           },
         ];
       };
+      party_images: {
+        Row: {
+          id: string;
+          party_id: string;
+          image_url: string;
+          is_selected: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          party_id: string;
+          image_url: string;
+          is_selected?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          party_id?: string;
+          image_url?: string;
+          is_selected?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "party_images_party_id_fkey";
+            columns: ["party_id"];
+            isOneToOne: false;
+            referencedRelation: "parties";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       allergy_data: {
         Row: {
           id: string;

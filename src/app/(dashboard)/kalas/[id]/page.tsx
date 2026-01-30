@@ -54,6 +54,13 @@ export default async function PartyPage({ params }: PartyPageProps) {
     .eq('invitation_id', invitation?.id ?? '')
     .eq('attending', true);
 
+  // Fetch party images for gallery
+  const { data: partyImages } = await supabase
+    .from('party_images')
+    .select('id, image_url, is_selected')
+    .eq('party_id', id)
+    .order('created_at', { ascending: true });
+
   // Fetch invited guests with phone and invite_method
   const { data: invitedGuests } = await supabase
     .from('invited_guests')
@@ -153,6 +160,12 @@ export default async function PartyPage({ params }: PartyPageProps) {
           rsvpDeadline={party.rsvp_deadline ? formatDate(party.rsvp_deadline) : null}
           theme={party.theme}
           token={invitation.token}
+          images={(partyImages ?? []).map((img) => ({
+            id: img.id,
+            imageUrl: img.image_url,
+            isSelected: img.is_selected,
+          }))}
+          isAdmin={isAdmin}
         />
       )}
 

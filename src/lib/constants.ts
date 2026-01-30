@@ -16,6 +16,9 @@ export const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'KalasKoll <no
 export const SMS_SENDER_ID = 'KalasKoll';
 export const SMS_MAX_PER_PARTY = 15;
 
+// AI image generation
+export const AI_MAX_IMAGES_PER_PARTY = 5;
+
 // Admin emails – bypass all SMS limits
 export const ADMIN_EMAILS = ['klasolsson81@gmail.com', 'zeback_@hotmail.com'];
 

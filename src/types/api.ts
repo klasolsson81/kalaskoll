@@ -39,6 +39,18 @@ export interface GenerateInvitationRequest {
 
 export interface GenerateInvitationResponse {
   imageUrl: string;
+  imageId: string;
+  imageCount: number;
+  maxImages: number;
+}
+
+export interface SelectImageRequest {
+  partyId: string;
+  imageId: string;
+}
+
+export interface SelectImageResponse {
+  imageUrl: string;
 }
 
 export interface SendInvitationRequest {

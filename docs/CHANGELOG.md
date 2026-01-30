@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Kollapsbar inbjudan + AI-bildgalleri
+- Collapsible InvitationSection: collapsed by default, expand to see image + gallery
+- `party_images` table for storing multiple AI-generated images per party
+- Image gallery: generate up to 5 images, select the best one as active
+- `POST /api/invitation/select-image` endpoint for choosing active image
+- Generate route now inserts into `party_images` and returns `imageId`/`imageCount`
+- Admins bypass image limit (unlimited generations)
+- Thumbnail grid with selection indicator and dashed "+" button for new images
+- SQL migration 00010 (party_images table with RLS)
+- `AI_MAX_IMAGES_PER_PARTY` constant (5)
+
 #### SMS-inbjudningar via 46elks
 - E-post/SMS toggle in SendInvitationsSection for choosing invite method
 - `POST /api/invitation/send-sms` endpoint with auth, ownership check, and SMS limits
