@@ -1,7 +1,7 @@
 # CLAUDE.md – KalasKoll
 
 > **Instruktionsfil för Claude Code**
-> Senast uppdaterad: 2026-01-29
+> Senast uppdaterad: 2026-01-30
 
 ---
 
@@ -41,6 +41,8 @@ Förenkla kalasplanering för svenska föräldrar genom att eliminera kaos med p
 | Auth | Supabase Auth | – |
 | QR-koder | qrcode.react | latest |
 | AI-bilder | Ideogram API / OpenAI | – |
+| SMS | 46elks API | – |
+| E-post | Resend | – |
 | Hosting | Vercel | – |
 | Testing | Vitest + Playwright | – |
 
@@ -84,7 +86,9 @@ kalaskoll/
 │   │   ├── api/
 │   │   │   ├── rsvp/route.ts
 │   │   │   ├── invitation/
-│   │   │   │   └── generate/route.ts
+│   │   │   │   ├── generate/route.ts
+│   │   │   │   ├── send/route.ts      # Skicka e-postinbjudningar
+│   │   │   │   └── send-sms/route.ts  # Skicka SMS-inbjudningar (46elks)
 │   │   │   └── webhooks/
 │   │   │       └── supabase/route.ts
 │   │   ├── layout.tsx             # Root layout med metadata
@@ -118,6 +122,10 @@ kalaskoll/
 │   │   ├── ai/
 │   │   │   ├── ideogram.ts        # Ideogram API wrapper
 │   │   │   └── openai.ts          # OpenAI fallback
+│   │   ├── sms/
+│   │   │   └── elks.ts            # 46elks SMS client
+│   │   ├── email/
+│   │   │   └── resend.ts          # Resend e-postklient
 │   │   ├── utils/
 │   │   │   ├── format.ts          # Datum, telefon etc
 │   │   │   ├── validation.ts      # Zod schemas
@@ -306,12 +314,49 @@ CREATE TABLE allergy_data (
   UNIQUE(rsvp_id)
 );
 
+-- invited_guests (spårar skickade inbjudningar)
+CREATE TABLE invited_guests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  party_id UUID REFERENCES parties(id) ON DELETE CASCADE NOT NULL,
+  email TEXT,                          -- nullable (SMS-gäster har inget email)
+  phone TEXT,                          -- E.164 format, t.ex. +46701234567
+  invite_method TEXT NOT NULL DEFAULT 'email', -- 'email' | 'sms'
+  name TEXT,
+  invited_at TIMESTAMPTZ DEFAULT NOW(),
+  CHECK (email IS NOT NULL OR phone IS NOT NULL)
+);
+
+-- sms_usage (SMS-förbrukning per användare/månad)
+CREATE TABLE sms_usage (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  party_id UUID REFERENCES parties(id) ON DELETE SET NULL,
+  sms_count INTEGER NOT NULL DEFAULT 0,
+  month VARCHAR(7) NOT NULL,           -- YYYY-MM format
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, month)
+);
+
+-- children (sparade barn per användare)
+CREATE TABLE children (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  birth_date DATE NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Indexes
 CREATE INDEX idx_parties_owner ON parties(owner_id);
 CREATE INDEX idx_invitations_party ON invitations(party_id);
 CREATE INDEX idx_invitations_token ON invitations(token);
 CREATE INDEX idx_rsvp_invitation ON rsvp_responses(invitation_id);
 CREATE INDEX idx_allergy_delete ON allergy_data(auto_delete_at);
+CREATE INDEX idx_sms_usage_user_month ON sms_usage(user_id, month);
+CREATE UNIQUE INDEX idx_invited_guests_party_phone
+  ON invited_guests(party_id, phone) WHERE phone IS NOT NULL;
 ```
 
 ### Row Level Security (RLS)
@@ -377,6 +422,27 @@ CREATE POLICY "Only owners can read allergy data"
 CREATE POLICY "Anyone can insert allergy data with consent"
   ON allergy_data FOR INSERT
   WITH CHECK (consent_given_at IS NOT NULL);
+
+-- invited_guests: ägare kan hantera
+ALTER TABLE invited_guests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Owners can manage invited_guests"
+  ON invited_guests FOR ALL
+  USING (auth.uid() = (SELECT owner_id FROM parties WHERE id = party_id));
+
+-- sms_usage: användare ser bara sin egen
+ALTER TABLE sms_usage ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own sms_usage"
+  ON sms_usage FOR ALL
+  USING (auth.uid() = user_id);
+
+-- children: ägare har full access
+ALTER TABLE children ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Owners can CRUD own children"
+  ON children FOR ALL
+  USING (auth.uid() = owner_id);
 ```
 
 ### Scheduled Cleanup (Supabase Edge Function)
@@ -711,6 +777,10 @@ NEXT_PUBLIC_MOCK_AI=true
 RESEND_API_KEY=your-resend-api-key
 RESEND_FROM_EMAIL=KalasKoll <noreply@kalaskoll.se>
 
+# 46elks SMS
+ELKS_API_USERNAME=your-46elks-username
+ELKS_API_PASSWORD=your-46elks-password
+
 # Analytics (optional)
 NEXT_PUBLIC_POSTHOG_KEY=
 NEXT_PUBLIC_POSTHOG_HOST=
@@ -725,6 +795,8 @@ NEXT_PUBLIC_POSTHOG_HOST=
 | `OPENAI_API_KEY` | Production, Preview | Fallback AI |
 | `RESEND_API_KEY` | Production, Preview | E-postutskick (Resend) |
 | `RESEND_FROM_EMAIL` | Production, Preview | Avsändaradress för e-post |
+| `ELKS_API_USERNAME` | Production, Preview | 46elks API-användarnamn (SMS) |
+| `ELKS_API_PASSWORD` | Production, Preview | 46elks API-lösenord (SMS) |
 
 > ⚠️ **ALDRIG** commita `.env.local` eller faktiska secrets!
 
@@ -932,7 +1004,7 @@ pnpm analyze                # Bundle analyzer
 8. **ALLTID** commita med konventionella commit-meddelanden
 9. **ALLTID** push till GitHub efter varje betydande milestone
 10. **ALLTID** verifiera att Vercel-preview fungerar
-11. **🎭 ALDRIG** anropa riktiga AI-APIer under utveckling – använd MOCK_MODE!
+11. **🎭 ALDRIG** anropa riktiga AI-APIer under utveckling – använd MOCK_MODE! (undantag: superadmins, se 👑 Superadmin-roller)
 12. **🎭 FÖRST** när alla features är klara och UI godkänt → byt till riktiga API-anrop
 
 ---
@@ -1093,6 +1165,38 @@ Om alla är ✅ → Byt till NEXT_PUBLIC_MOCK_AI=false
 | Utveckling med mock | 0 | 0 kr |
 | Sluttest | 5-10 bilder | ~1,50-17 kr |
 | **Besparing** | | **~58-323 kr** |
+
+---
+
+## 👑 Superadmin-roller
+
+> **Superadmins har inga begränsningar** gällande SMS eller AI-genererade bilder.
+
+### Konfiguration
+
+Superadmins definieras i `src/lib/constants.ts`:
+
+```typescript
+export const ADMIN_EMAILS = ['klasolsson81@gmail.com', 'zeback_@hotmail.com'];
+```
+
+### Vad superadmins kan göra
+
+| Funktion | Vanlig användare | Superadmin |
+|----------|-----------------|------------|
+| SMS per kalas | Max 15 | Obegränsat |
+| SMS-kalas per månad | Max 1 | Obegränsat |
+| AI-bilder (mock mode) | Returnerar placeholder | Riktiga API-anrop (Ideogram/OpenAI) |
+
+### Implementation
+
+- **SMS**: `POST /api/invitation/send-sms` hoppar över `sms_usage`-kontroll om `user.email` finns i `ADMIN_EMAILS`
+- **AI-bilder**: `POST /api/invitation/generate` skickar `{ forceLive: true }` till `generateInvitationImage()` och `generateInvitationImageFallback()`
+- **UI**: `SendInvitationsSection` visar "Superadmin — inga SMS-begränsningar" istället för räknaren
+
+### Lägga till ny superadmin
+
+Lägg till e-postadressen i `ADMIN_EMAILS`-arrayen i `src/lib/constants.ts`.
 
 ---
 
