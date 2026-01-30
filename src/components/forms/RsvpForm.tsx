@@ -108,6 +108,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
           <p className="mt-4 text-sm text-muted-foreground">
             Kolla din e-post för en bekräftelse och länk att ändra ditt svar.
           </p>
+          <p className="mt-6 text-xs text-muted-foreground">
+            Du kan nu stänga den här sidan.
+          </p>
         </CardContent>
       </Card>
     );
