@@ -251,7 +251,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="rsvpDeadline">Sista svarsdag (valfritt)</Label>
+              <Label htmlFor="rsvpDeadline">Sista OSA-datum (valfritt)</Label>
               <p className="text-xs text-muted-foreground">
                 Sista datum gästerna kan anmäla sig
               </p>

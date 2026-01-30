@@ -145,7 +145,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
             )}
             {party.rsvp_deadline && (
               <div>
-                <p className="text-sm text-muted-foreground">Sista svarsdag</p>
+                <p className="text-sm text-muted-foreground">Sista OSA</p>
                 <p className="font-medium">{formatDate(party.rsvp_deadline)}</p>
               </div>
             )}
