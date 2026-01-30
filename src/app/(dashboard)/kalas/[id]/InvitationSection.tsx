@@ -175,7 +175,10 @@ export function InvitationSection({
   }
 
   function handlePrint() {
+    const prev = document.title;
+    document.title = `Inbjudan – ${childName}s kalas`;
     window.print();
+    document.title = prev;
   }
 
   // Party data shared across template and picker
@@ -294,7 +297,7 @@ export function InvitationSection({
             {error && <p className="text-sm text-red-600">{error}</p>}
 
             {/* Full-size template card */}
-            <div className="print:fixed print:inset-0 print:z-50 print:flex print:items-center print:justify-center print:bg-white">
+            <div data-print-area>
               <TemplateCard templateId={activeTemplate} {...partyData} />
             </div>
 
@@ -349,7 +352,7 @@ export function InvitationSection({
 
           {/* Selected invitation card (large) */}
           {currentImageUrl && (
-            <div className="print:fixed print:inset-0 print:z-50 print:bg-white">
+            <div data-print-area>
               <InvitationCard
                 imageUrl={currentImageUrl}
                 childName={childName}
