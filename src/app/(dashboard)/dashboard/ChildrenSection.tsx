@@ -20,6 +20,10 @@ interface Child {
   birth_date: string;
 }
 
+function todayString(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 interface ChildrenSectionProps {
   savedChildren: Child[];
 }
@@ -39,7 +43,7 @@ function AddChildForm({ onDone }: { onDone: () => void }) {
       </div>
       <div className="space-y-1">
         <Label htmlFor="new-child-birth">Födelsedatum</Label>
-        <Input id="new-child-birth" name="birthDate" type="date" required />
+        <Input id="new-child-birth" name="birthDate" type="date" max={todayString()} required />
       </div>
       <SubmitButton size="sm">Spara</SubmitButton>
       <Button type="button" variant="ghost" size="sm" onClick={onDone}>
@@ -76,6 +80,7 @@ function EditChildForm({ child, onDone }: { child: Child; onDone: () => void }) 
           name="birthDate"
           type="date"
           defaultValue={child.birth_date}
+          max={todayString()}
           required
         />
       </div>

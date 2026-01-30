@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- Child birth date validation: reject future dates in schema + `max` attribute on date inputs
+
 ### Added
 
 #### Sparade barn på profilen

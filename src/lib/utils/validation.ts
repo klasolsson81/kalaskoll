@@ -50,7 +50,17 @@ export const rsvpEditSchema = z.object({
 // Child schema
 export const childSchema = z.object({
   name: z.string().min(1, 'Barnets namn krävs').max(100),
-  birthDate: z.string().min(1, 'Födelsedatum krävs'),
+  birthDate: z
+    .string()
+    .min(1, 'Födelsedatum krävs')
+    .refine(
+      (val) => {
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        return val <= todayStr;
+      },
+      { message: 'Födelsedatum kan inte vara i framtiden' },
+    ),
 });
 
 // Party schema

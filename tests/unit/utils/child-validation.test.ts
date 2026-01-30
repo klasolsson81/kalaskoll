@@ -21,4 +21,19 @@ describe('childSchema', () => {
     const result = childSchema.safeParse({ name: 'Klas', birthDate: '' });
     expect(result.success).toBe(false);
   });
+
+  it('rejects future birth date', () => {
+    const future = new Date();
+    future.setFullYear(future.getFullYear() + 1);
+    const futureStr = future.toISOString().slice(0, 10);
+    const result = childSchema.safeParse({ name: 'Klas', birthDate: futureStr });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts today as birth date', () => {
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const result = childSchema.safeParse({ name: 'Klas', birthDate: todayStr });
+    expect(result.success).toBe(true);
+  });
 });
