@@ -104,13 +104,16 @@ export async function POST(request: Request) {
   const rsvpUrl = `${APP_URL}/r/${invitation.token}`;
 
   // Save invited guests with phone + invite_method='sms'
-  await supabase.from('invited_guests').upsert(
-    phones.map((phone) => ({
-      party_id: partyId,
-      phone,
-      invite_method: 'sms' as const,
-    })),
-    { onConflict: 'party_id,phone', ignoreDuplicates: true },
+  // Individual inserts because the partial unique index (party_id, phone WHERE phone IS NOT NULL)
+  // is not supported by Supabase upsert's onConflict parameter
+  await Promise.allSettled(
+    phones.map((phone) =>
+      supabase.from('invited_guests').insert({
+        party_id: partyId,
+        phone,
+        invite_method: 'sms',
+      }),
+    ),
   );
 
   // Send SMS in parallel
