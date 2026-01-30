@@ -142,4 +142,25 @@ describe('partySchema', () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it('accepts party without childId', () => {
+    const result = partySchema.safeParse(validParty);
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts party with valid uuid childId', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts party with empty string childId', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      childId: '',
+    });
+    expect(result.success).toBe(true);
+  });
 });

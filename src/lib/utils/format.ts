@@ -46,3 +46,26 @@ export function formatTimeRange(start: string, end?: string | null): string {
   if (!end) return s;
   return `${s}–${formatTime(end)}`;
 }
+
+/**
+ * Calculate age in full years from a birth date.
+ * If `atDate` is provided, calculates age at that date; otherwise uses today.
+ */
+export function calculateAge(
+  birthDate: Date | string,
+  atDate?: Date | string,
+): number {
+  const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
+  const at = atDate
+    ? typeof atDate === 'string'
+      ? new Date(atDate)
+      : atDate
+    : new Date();
+
+  let age = at.getFullYear() - birth.getFullYear();
+  const monthDiff = at.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && at.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}

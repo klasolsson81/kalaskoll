@@ -1,17 +1,25 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useState, useActionState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SubmitButton } from '@/components/forms/SubmitButton';
 import { PARTY_THEMES } from '@/lib/constants';
+import { calculateAge } from '@/lib/utils/format';
+
+interface SavedChild {
+  id: string;
+  name: string;
+  birth_date: string;
+}
 
 interface PartyFormProps {
   action: (prev: { error?: string }, formData: FormData) => Promise<{ error?: string }>;
   defaultValues?: {
     childName?: string;
     childAge?: number;
+    childId?: string;
     partyDate?: string;
     partyTime?: string;
     partyTimeEnd?: string;
@@ -22,11 +30,21 @@ interface PartyFormProps {
     rsvpDeadline?: string;
     maxGuests?: number;
   };
+  savedChildren?: SavedChild[];
   submitLabel: string;
 }
 
-export function PartyForm({ action, defaultValues, submitLabel }: PartyFormProps) {
+export function PartyForm({ action, defaultValues, savedChildren = [], submitLabel }: PartyFormProps) {
   const [state, formAction] = useActionState(action, {});
+  const [selectedChildId, setSelectedChildId] = useState(defaultValues?.childId ?? '');
+  const [partyDate, setPartyDate] = useState(defaultValues?.partyDate ?? '');
+
+  const selectedChild = savedChildren.find((c) => c.id === selectedChildId);
+  const isManual = !selectedChildId;
+
+  function getChildAge(child: SavedChild, date?: string): number {
+    return calculateAge(child.birth_date, date || undefined);
+  }
 
   return (
     <form action={formAction} className="space-y-6">
@@ -41,31 +59,72 @@ export function PartyForm({ action, defaultValues, submitLabel }: PartyFormProps
           <CardTitle>Om barnet</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          {savedChildren.length > 0 && (
             <div className="space-y-2">
-              <Label htmlFor="childName">Barnets namn</Label>
-              <Input
-                id="childName"
-                name="childName"
-                placeholder="t.ex. Klas"
-                defaultValue={defaultValues?.childName}
-                required
-              />
+              <Label htmlFor="childSelect">Välj barn</Label>
+              <select
+                id="childSelect"
+                value={selectedChildId}
+                onChange={(e) => setSelectedChildId(e.target.value)}
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <option value="">Ange manuellt</option>
+                {savedChildren.map((child) => (
+                  <option key={child.id} value={child.id}>
+                    {child.name} ({getChildAge(child, partyDate || undefined)} år)
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="childAge">Ålder (fyller)</Label>
-              <Input
-                id="childAge"
+          )}
+
+          {isManual ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="childName">Barnets namn</Label>
+                <Input
+                  id="childName"
+                  name="childName"
+                  placeholder="t.ex. Klas"
+                  defaultValue={defaultValues?.childName}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="childAge">Ålder (fyller)</Label>
+                <Input
+                  id="childAge"
+                  name="childAge"
+                  type="number"
+                  min={1}
+                  max={19}
+                  placeholder="t.ex. 7"
+                  defaultValue={defaultValues?.childAge}
+                  required
+                />
+              </div>
+            </div>
+          ) : (
+            selectedChild && (
+              <p className="text-sm text-muted-foreground">
+                {selectedChild.name}, fyller {getChildAge(selectedChild, partyDate || undefined)} år
+                {partyDate ? ' vid kalaset' : ''}
+              </p>
+            )
+          )}
+
+          {/* Hidden inputs ensure FormData always has childName, childAge, childId */}
+          {!isManual && selectedChild && (
+            <>
+              <input type="hidden" name="childId" value={selectedChild.id} />
+              <input type="hidden" name="childName" value={selectedChild.name} />
+              <input
+                type="hidden"
                 name="childAge"
-                type="number"
-                min={1}
-                max={19}
-                placeholder="t.ex. 7"
-                defaultValue={defaultValues?.childAge}
-                required
+                value={getChildAge(selectedChild, partyDate || undefined)}
               />
-            </div>
-          </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -81,7 +140,8 @@ export function PartyForm({ action, defaultValues, submitLabel }: PartyFormProps
                 id="partyDate"
                 name="partyDate"
                 type="date"
-                defaultValue={defaultValues?.partyDate}
+                value={partyDate}
+                onChange={(e) => setPartyDate(e.target.value)}
                 required
               />
             </div>

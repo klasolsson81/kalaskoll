@@ -11,11 +11,13 @@ export default async function EditPartyPage({ params }: EditPartyPageProps) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: party } = await supabase
-    .from('parties')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const [{ data: party }, { data: children }] = await Promise.all([
+    supabase.from('parties').select('*').eq('id', id).single(),
+    supabase
+      .from('children')
+      .select('id, name, birth_date')
+      .order('name', { ascending: true }),
+  ]);
 
   if (!party) {
     notFound();
@@ -29,9 +31,11 @@ export default async function EditPartyPage({ params }: EditPartyPageProps) {
       <PartyForm
         action={boundAction}
         submitLabel="Spara ändringar"
+        savedChildren={children ?? []}
         defaultValues={{
           childName: party.child_name,
           childAge: party.child_age,
+          childId: party.child_id ?? undefined,
           partyDate: party.party_date,
           partyTime: party.party_time,
           partyTimeEnd: party.party_time_end ?? undefined,

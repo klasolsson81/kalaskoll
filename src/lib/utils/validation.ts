@@ -47,10 +47,17 @@ export const rsvpEditSchema = z.object({
   allergyConsent: z.boolean().optional(),
 });
 
+// Child schema
+export const childSchema = z.object({
+  name: z.string().min(1, 'Barnets namn krävs').max(100),
+  birthDate: z.string().min(1, 'Födelsedatum krävs'),
+});
+
 // Party schema
 export const partySchema = z.object({
   childName: z.string().min(1, 'Barnets namn krävs').max(100),
   childAge: z.number().int().min(1).max(19),
+  childId: z.string().uuid().optional().or(z.literal('')),
   partyDate: z.string().min(1, 'Datum krävs'),
   partyTime: z.string().min(1, 'Tid krävs'),
   partyTimeEnd: z.string().optional(),
@@ -80,5 +87,6 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type RsvpFormData = z.infer<typeof rsvpSchema>;
 export type RsvpEditFormData = z.infer<typeof rsvpEditSchema>;
+export type ChildFormData = z.infer<typeof childSchema>;
 export type PartyFormData = z.infer<typeof partySchema>;
 export type SendInvitationFormData = z.infer<typeof sendInvitationSchema>;

@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Sparade barn på profilen
+- `children` table with RLS for saving children (name + birth date) per user
+- `child_id` optional FK on parties (backwards-compatible, ON DELETE SET NULL)
+- `ChildrenSection` dashboard component: add, edit, delete children inline
+- `calculateAge(birthDate, atDate)` utility for dynamic age calculation
+- `childSchema` Zod validation for child form data
+- `childId` field on `partySchema` (optional UUID or empty string)
+- PartyForm child selector dropdown: choose saved child or enter manually
+- Age auto-recalculates when party date changes
+- Server actions: `createChild`, `updateChild`, `deleteChild`
+- Children fetched and passed to PartyForm on new/edit pages
+- SQL migration 00008 (children table + child_id on parties)
+- 15 new tests: `calculateAge` (8), `childSchema` (4), `childId` validation (3)
+
 #### Sluttid, gästlista & inbjudningsmail
 - Optional end time (`party_time_end`) on parties with `formatTimeRange()` display
 - End time shown across all views: detail, dashboard, RSVP, edit, invitation card

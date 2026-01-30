@@ -49,6 +49,7 @@ export type Database = {
           owner_id: string;
           child_name: string;
           child_age: number;
+          child_id: string | null;
           party_date: string;
           party_time: string;
           party_time_end: string | null;
@@ -67,6 +68,7 @@ export type Database = {
           owner_id: string;
           child_name: string;
           child_age: number;
+          child_id?: string | null;
           party_date: string;
           party_time: string;
           party_time_end?: string | null;
@@ -85,6 +87,7 @@ export type Database = {
           owner_id?: string;
           child_name?: string;
           child_age?: number;
+          child_id?: string | null;
           party_date?: string;
           party_time?: string;
           party_time_end?: string | null;
@@ -100,6 +103,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "parties_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "parties_child_id_fkey";
+            columns: ["child_id"];
+            isOneToOne: false;
+            referencedRelation: "children";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      children: {
+        Row: {
+          id: string;
+          owner_id: string;
+          name: string;
+          birth_date: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          name: string;
+          birth_date: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          name?: string;
+          birth_date?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "children_owner_id_fkey";
             columns: ["owner_id"];
             isOneToOne: false;
             referencedRelation: "profiles";

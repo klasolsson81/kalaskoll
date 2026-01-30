@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { formatPhoneNumber, formatDate, formatTime, formatTimeRange } from '@/lib/utils/format';
+import {
+  formatPhoneNumber,
+  formatDate,
+  formatTime,
+  formatTimeRange,
+  calculateAge,
+} from '@/lib/utils/format';
 
 describe('formatPhoneNumber', () => {
   it('formats +46 numbers correctly', () => {
@@ -65,5 +71,50 @@ describe('formatTimeRange', () => {
 
   it('handles full time strings with seconds', () => {
     expect(formatTimeRange('14:00:00', '16:30:00')).toBe('14:00\u201316:30');
+  });
+});
+
+describe('calculateAge', () => {
+  it('calculates age when birthday has passed this year', () => {
+    // Born 2019-01-15, checked on 2026-03-27 → 7
+    expect(calculateAge('2019-01-15', '2026-03-27')).toBe(7);
+  });
+
+  it('calculates age when birthday has not yet passed this year', () => {
+    // Born 2019-06-15, checked on 2026-03-27 → still 6
+    expect(calculateAge('2019-06-15', '2026-03-27')).toBe(6);
+  });
+
+  it('calculates age on exact birthday', () => {
+    // Born 2019-03-27, checked on 2026-03-27 → 7
+    expect(calculateAge('2019-03-27', '2026-03-27')).toBe(7);
+  });
+
+  it('returns 0 for infants', () => {
+    // Born 2026-01-01, checked on 2026-06-01 → 0
+    expect(calculateAge('2026-01-01', '2026-06-01')).toBe(0);
+  });
+
+  it('accepts Date objects', () => {
+    expect(calculateAge(new Date(2019, 0, 15), new Date(2026, 2, 27))).toBe(7);
+  });
+
+  it('accepts string birth date and Date atDate', () => {
+    expect(calculateAge('2019-01-15', new Date(2026, 2, 27))).toBe(7);
+  });
+
+  it('accepts Date birth date and string atDate', () => {
+    expect(calculateAge(new Date(2019, 0, 15), '2026-03-27')).toBe(7);
+  });
+
+  it('uses today when no atDate provided', () => {
+    // Born exactly 5 years ago
+    const today = new Date();
+    const fiveYearsAgo = new Date(
+      today.getFullYear() - 5,
+      today.getMonth(),
+      today.getDate(),
+    );
+    expect(calculateAge(fiveYearsAgo)).toBe(5);
   });
 });

@@ -13,6 +13,7 @@ function parsePartyForm(formData: FormData) {
   return {
     childName: formData.get('childName') as string,
     childAge: Number(formData.get('childAge')),
+    childId: (formData.get('childId') as string) || '',
     partyDate: formData.get('partyDate') as string,
     partyTime: formData.get('partyTime') as string,
     partyTimeEnd: (formData.get('partyTimeEnd') as string) || undefined,
@@ -51,6 +52,7 @@ export async function createParty(
       owner_id: user.id,
       child_name: parsed.data.childName,
       child_age: parsed.data.childAge,
+      child_id: parsed.data.childId || null,
       party_date: parsed.data.partyDate,
       party_time: parsed.data.partyTime,
       party_time_end: parsed.data.partyTimeEnd ?? null,
@@ -97,6 +99,7 @@ export async function updateParty(
     .update({
       child_name: parsed.data.childName,
       child_age: parsed.data.childAge,
+      child_id: parsed.data.childId || null,
       party_date: parsed.data.partyDate,
       party_time: parsed.data.partyTime,
       party_time_end: parsed.data.partyTimeEnd ?? null,

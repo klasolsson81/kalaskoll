@@ -3,14 +3,15 @@ import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
+import { ChildrenSection } from './ChildrenSection';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  const { data: parties } = await supabase
-    .from('parties')
-    .select('*')
-    .order('party_date', { ascending: true });
+  const [{ data: parties }, { data: children }] = await Promise.all([
+    supabase.from('parties').select('*').order('party_date', { ascending: true }),
+    supabase.from('children').select('*').order('name', { ascending: true }),
+  ]);
 
   // Fetch guest counts for all parties
   const guestCounts: Record<string, { attending: number; total: number }> = {};
@@ -55,6 +56,10 @@ export default async function DashboardPage() {
 
   return (
     <div>
+      <div className="mb-8">
+        <ChildrenSection savedChildren={children ?? []} />
+      </div>
+
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Mina kalas</h1>
         <Link href="/kalas/new">
