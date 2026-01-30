@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SMS_MAX_PER_PARTY } from '@/lib/constants';
+import { QRCode } from '@/components/shared/QRCode';
+import { APP_URL, SMS_MAX_PER_PARTY } from '@/lib/constants';
 
 type InviteMethod = 'email' | 'sms';
 
@@ -25,6 +26,8 @@ interface SmsUsage {
 
 interface SendInvitationsSectionProps {
   partyId: string;
+  token: string;
+  childName: string;
   invitedGuests: InvitedGuest[];
   smsUsage?: SmsUsage;
   isAdmin?: boolean;
@@ -32,6 +35,8 @@ interface SendInvitationsSectionProps {
 
 export function SendInvitationsSection({
   partyId,
+  token,
+  childName,
   invitedGuests,
   smsUsage,
   isAdmin,
@@ -43,6 +48,37 @@ export function SendInvitationsSection({
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<{ sent: number; failed: number; remainingSms?: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [showQR, setShowQR] = useState(false);
+
+  const rsvpUrl = `${APP_URL}/r/${token}`;
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(rsvpUrl);
+    } catch {
+      const input = document.createElement('input');
+      input.value = rsvpUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function handleShare() {
+    try {
+      await navigator.share({
+        title: `${childName}s kalas`,
+        text: `Du är inbjuden till ${childName}s kalas! Svara här:`,
+        url: rsvpUrl,
+      });
+    } catch {
+      // User cancelled or share failed – no action needed
+    }
+  }
 
   async function handleSendEmail() {
     setError(null);
@@ -136,12 +172,52 @@ export function SendInvitationsSection({
   const smsAllowed = smsUsage?.allowed ?? true;
   const smsRemaining = SMS_MAX_PER_PARTY - smsCount;
 
+  const canShare = typeof navigator !== 'undefined' && !!navigator.share;
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Skicka inbjudningar</CardTitle>
+        <CardTitle>Dela inbjudan</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Quick share buttons */}
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={copyLink} className="flex items-center gap-1.5">
+            <span className="text-base">🔗</span>
+            {copied ? 'Kopierad!' : 'Kopiera länk'}
+          </Button>
+          <Button
+            variant={showQR ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowQR(!showQR)}
+            className="flex items-center gap-1.5"
+          >
+            <span className="text-base">▣</span>
+            QR-kod
+          </Button>
+          {canShare && (
+            <Button variant="outline" size="sm" onClick={handleShare} className="flex items-center gap-1.5">
+              <span className="text-base">📤</span>
+              Dela...
+            </Button>
+          )}
+        </div>
+
+        {/* Inline QR code (toggled) */}
+        {showQR && (
+          <div className="flex flex-col items-center gap-3 rounded-lg border p-4">
+            <QRCode token={token} size={180} />
+            <code className="rounded bg-muted px-3 py-1.5 text-xs sm:text-sm break-all text-center">
+              {rsvpUrl}
+            </code>
+          </div>
+        )}
+
+        {/* Divider */}
+        <div className="border-t pt-4">
+          <p className="text-sm font-medium mb-2">Skicka inbjudan:</p>
+        </div>
+
         {/* Method toggle */}
         <div className="flex gap-2">
           <Button

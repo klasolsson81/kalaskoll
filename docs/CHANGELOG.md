@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Dela inbjudan-hub
+- Replaced separate QR code card with unified "Dela inbjudan" section
+- Quick-share buttons: copy link, toggle QR code, native share (Web Share API)
+- QR code shown inline as collapsible panel within the share section
+- Removed `QRCodeSection.tsx` (functionality absorbed into `SendInvitationsSection`)
+
 ### Added
 
 #### Kollapsbar inbjudan + AI-bildgalleri

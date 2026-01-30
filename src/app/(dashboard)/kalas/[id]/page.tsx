@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { DeletePartyButton } from './DeletePartyButton';
-import { QRCodeSection } from './QRCodeSection';
 import { InvitationSection } from './InvitationSection';
 import { SendInvitationsSection } from './SendInvitationsSection';
 import { ADMIN_EMAILS } from '@/lib/constants';
@@ -169,16 +168,17 @@ export default async function PartyPage({ params }: PartyPageProps) {
         />
       )}
 
-      {/* QR Code */}
-      {invitation?.token && <QRCodeSection token={invitation.token} />}
-
-      {/* Send invitations via email or SMS */}
-      <SendInvitationsSection
-        partyId={id}
-        invitedGuests={invitedGuestsWithStatus}
-        smsUsage={smsUsage}
-        isAdmin={isAdmin}
-      />
+      {/* Share & send invitations */}
+      {invitation?.token && (
+        <SendInvitationsSection
+          partyId={id}
+          token={invitation.token}
+          childName={party.child_name}
+          invitedGuests={invitedGuestsWithStatus}
+          smsUsage={smsUsage}
+          isAdmin={isAdmin}
+        />
+      )}
 
       <div className="grid gap-6 sm:grid-cols-2">
         <Card>
