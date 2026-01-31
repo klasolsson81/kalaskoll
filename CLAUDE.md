@@ -35,12 +35,12 @@ Förenkla kalasplanering för svenska föräldrar genom att eliminera kaos med p
 |--------|-----------|---------|
 | Framework | Next.js (App Router) | 16.x |
 | Språk | TypeScript | 5.x |
-| Styling | Tailwind CSS | 3.x |
+| Styling | Tailwind CSS | 4.x |
 | UI-komponenter | shadcn/ui | latest |
 | Databas | Supabase (PostgreSQL) | – |
 | Auth | Supabase Auth | – |
 | QR-koder | qrcode.react | latest |
-| AI-bilder | Ideogram API / OpenAI | – |
+| AI-bilder | Replicate Flux / OpenAI | – |
 | SMS | 46elks API | – |
 | E-post | Resend | – |
 | Hosting | Vercel | – |
@@ -92,22 +92,42 @@ kalaskoll/
 │   │   │   │   ├── actions.ts           # Kalas CRUD server actions
 │   │   │   │   ├── [id]/page.tsx
 │   │   │   │   ├── [id]/edit/page.tsx
+│   │   │   │   ├── [id]/AiColumn.tsx          # AI/Guldkalas-kolumn
+│   │   │   │   ├── [id]/AiGenerateDialog.tsx  # Stil/motiv-väljare modal
+│   │   │   │   ├── [id]/InvitationPreview.tsx # Fullstor förhandsvisning
+│   │   │   │   ├── [id]/InvitationSection.tsx # Orkestrerare
+│   │   │   │   ├── [id]/PhotoUploadSection.tsx
+│   │   │   │   ├── [id]/TemplateColumn.tsx    # Gratis-mallar-kolumn
+│   │   │   │   ├── [id]/SendInvitationsSection.tsx
+│   │   │   │   ├── [id]/DeletePartyButton.tsx
 │   │   │   │   ├── [id]/guests/
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   ├── GuestListRealtime.tsx
 │   │   │   │   │   └── actions.ts       # Manuell gäst CRUD
 │   │   │   │   └── new/page.tsx
+│   │   │   ├── profile/
+│   │   │   │   ├── page.tsx             # Redigera profil
+│   │   │   │   ├── password/page.tsx    # Byt lösenord
+│   │   │   │   └── actions.ts
 │   │   │   ├── DeleteAccountButton.tsx # Tillfällig – för testning
 │   │   │   └── layout.tsx
 │   │   ├── r/[token]/page.tsx     # Publik RSVP-sida
+│   │   ├── r/[token]/edit/page.tsx # Redigera OSA-svar
 │   │   ├── api/
 │   │   │   ├── rsvp/route.ts
+│   │   │   ├── rsvp/edit/route.ts     # Redigera OSA-svar
 │   │   │   ├── invitation/
-│   │   │   │   ├── generate/route.ts
-│   │   │   │   ├── send/route.ts      # Skicka e-postinbjudningar
-│   │   │   │   └── send-sms/route.ts  # Skicka SMS-inbjudningar (46elks)
-│   │   │   └── webhooks/
-│   │   │       └── supabase/route.ts
+│   │   │   │   ├── generate/route.ts        # AI-bildgenerering
+│   │   │   │   ├── select-image/route.ts    # Välj AI-bild
+│   │   │   │   ├── select-template/route.ts # Välj mall
+│   │   │   │   ├── upload-photo/route.ts    # Ladda upp barnfoto
+│   │   │   │   ├── send/route.ts            # Skicka e-postinbjudningar
+│   │   │   │   └── send-sms/route.ts        # Skicka SMS-inbjudningar (46elks)
+│   │   │   ├── children/
+│   │   │   │   └── upload-photo/route.ts    # Ladda upp barnfoto (profil)
+│   │   │   └── auth/
+│   │   │       ├── logout/route.ts
+│   │   │       └── delete-account/route.ts
 │   │   ├── layout.tsx             # Root layout med metadata
 │   │   ├── page.tsx               # Landing page
 │   │   ├── sitemap.ts             # Dynamisk sitemap
@@ -120,7 +140,9 @@ kalaskoll/
 │   │   │   ├── AllergyCheckboxes.tsx
 │   │   │   └── SubmitButton.tsx
 │   │   ├── cards/
-│   │   │   └── InvitationCard.tsx     # AI-bildbaserat inbjudningskort
+│   │   │   ├── InvitationCard.tsx     # AI-bildbaserat inbjudningskort (legacy)
+│   │   │   ├── AiInvitationCard.tsx   # Fullbleed AI-kort med textöverlägg
+│   │   │   └── PartyHeader.tsx        # Delade kalasdetaljer (RSVP/edit)
 │   │   ├── templates/
 │   │   │   ├── TemplateCard.tsx       # Illustrerat inbjudningskort (9 teman)
 │   │   │   ├── TemplatePicker.tsx     # Mallväljare (rutnät)
@@ -133,7 +155,10 @@ kalaskoll/
 │   │   └── shared/
 │   │       ├── QRCode.tsx
 │   │       ├── LoadingSpinner.tsx
-│   │       └── ErrorBoundary.tsx
+│   │       ├── ErrorBoundary.tsx
+│   │       ├── PhotoFrame.tsx         # Dekorativa fotoramar (cirkel/stjärna/hjärta/diamant)
+│   │       ├── PhotoCropDialog.tsx    # Zoom/beskär-dialog för foton
+│   │       └── DevBadge.tsx           # Mock-mode indikator
 │   ├── lib/
 │   │   ├── supabase/
 │   │   │   ├── client.ts          # Browser client
@@ -142,8 +167,10 @@ kalaskoll/
 │   │   │   ├── middleware.ts      # Auth middleware
 │   │   │   └── types.ts           # Generated types
 │   │   ├── ai/
-│   │   │   ├── ideogram.ts        # Ideogram API wrapper
-│   │   │   └── openai.ts          # OpenAI fallback
+│   │   │   ├── replicate.ts       # Replicate Flux Schnell (primär)
+│   │   │   ├── openai.ts          # OpenAI DALL-E 3 (fallback)
+│   │   │   ├── prompts.ts         # Promptbyggare (stil + tema → prompt)
+│   │   │   └── ideogram.ts        # @deprecated — mock-only
 │   │   ├── sms/
 │   │   │   └── elks.ts            # 46elks SMS client
 │   │   ├── email/
@@ -289,13 +316,18 @@ CREATE TABLE parties (
   owner_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   child_name TEXT NOT NULL,
   child_age INTEGER NOT NULL CHECK (child_age > 0 AND child_age < 20),
+  child_id UUID REFERENCES children(id) ON DELETE SET NULL,
   party_date DATE NOT NULL,
   party_time TIME NOT NULL,
+  party_time_end TIME,                 -- valfri sluttid
   venue_name TEXT NOT NULL,
   venue_address TEXT,
   description TEXT,
   theme TEXT,                          -- dinosaurier, prinsessor, etc
   invitation_image_url TEXT,           -- AI-genererad bild
+  invitation_template TEXT,            -- mallnamn (t.ex. 'dinosaurier')
+  child_photo_url TEXT,                -- barnfoto (base64 data-URL)
+  child_photo_frame TEXT DEFAULT 'circle', -- ram: circle/star/heart/diamond
   rsvp_deadline DATE,
   max_guests INTEGER,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -366,8 +398,19 @@ CREATE TABLE children (
   owner_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
   birth_date DATE NOT NULL,
+  photo_url TEXT,                      -- barnfoto (base64 data-URL)
+  photo_frame TEXT DEFAULT 'circle',   -- ram: circle/star/heart/diamond
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- party_images (AI-genererade bilder per kalas)
+CREATE TABLE party_images (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  party_id UUID REFERENCES parties(id) ON DELETE CASCADE NOT NULL,
+  image_url TEXT NOT NULL,
+  is_selected BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Indexes
@@ -465,6 +508,13 @@ ALTER TABLE children ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Owners can CRUD own children"
   ON children FOR ALL
   USING (auth.uid() = owner_id);
+
+-- party_images: ägare kan hantera
+ALTER TABLE party_images ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Owners can manage party_images"
+  ON party_images FOR ALL
+  USING (auth.uid() = (SELECT owner_id FROM parties WHERE id = party_id));
 ```
 
 ### Scheduled Cleanup (Supabase Edge Function)
@@ -785,8 +835,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # AI APIs
-IDEOGRAM_API_KEY=your-ideogram-key
+REPLICATE_API_TOKEN=your-replicate-api-token
 OPENAI_API_KEY=your-openai-key
+IDEOGRAM_API_KEY=your-ideogram-key          # @deprecated
 
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -813,8 +864,8 @@ NEXT_PUBLIC_POSTHOG_HOST=
 | Variable | Environment | Beskrivning |
 |----------|-------------|-------------|
 | `SUPABASE_SERVICE_ROLE_KEY` | Production, Preview | Server-side Supabase access |
-| `IDEOGRAM_API_KEY` | Production, Preview | AI-bildgenerering |
-| `OPENAI_API_KEY` | Production, Preview | Fallback AI |
+| `REPLICATE_API_TOKEN` | Production, Preview | AI-bildgenerering (Flux Schnell) |
+| `OPENAI_API_KEY` | Production, Preview | Fallback AI (DALL-E 3) |
 | `RESEND_API_KEY` | Production, Preview | E-postutskick (Resend) |
 | `RESEND_FROM_EMAIL` | Production, Preview | Avsändaradress för e-post |
 | `ELKS_API_USERNAME` | Production, Preview | 46elks API-användarnamn (SMS) |
@@ -917,11 +968,12 @@ NEXT_PUBLIC_POSTHOG_HOST=
 - [ ] 8.3 Lighthouse audit (mål: 90+ alla kategorier)
 - [ ] 8.4 Säkerhetsgranskning
 - [ ] 8.5 Uppdatera all dokumentation
-- [ ] 8.6 🎭→🚀 BYT TILL RIKTIGA AI-ANROP:
-      - [ ] Sätt NEXT_PUBLIC_MOCK_AI=false i Vercel
-      - [ ] Testa Ideogram API med 3-5 riktiga genereringar
-      - [ ] Verifiera bildkvalitet och text-rendering
-      - [ ] Testa fallback till OpenAI om Ideogram misslyckas
+- [x] 8.6 🎭→🚀 BYT TILL RIKTIGA AI-ANROP:
+      - [x] Sätt NEXT_PUBLIC_MOCK_AI=false i Vercel
+      - [x] Testa Replicate Flux Schnell med riktiga genereringar
+      - [x] Verifiera bildkvalitet (4 stilar: tecknat, 3D, akvarell, fotorealistisk)
+      - [x] Testa fallback till OpenAI DALL-E 3 om Replicate misslyckas
+      - [x] Verifiera att bilder persisteras till Supabase Storage
 - [ ] 8.7 Merge till main
 - [ ] 8.8 Verifiera produktionsdeploy
 - [ ] 8.9 Commita: "chore: prepare v1.0.0 release"
@@ -1039,7 +1091,7 @@ pnpm analyze                # Bundle analyzer
 
 | Anledning | Beskrivning |
 |-----------|-------------|
-| 💰 **Kostnad** | Ideogram/OpenAI kostar ~0,30-1,70 kr per bild |
+| 💰 **Kostnad** | Replicate/OpenAI kostar ~0,03-1,70 kr per bild |
 | ⚡ **Hastighet** | Mockar är instant, API-anrop tar 5-30 sekunder |
 | 🔄 **Iteration** | Kan testa UI hundratals gånger utan kostnad |
 | 🧪 **Tester** | Unit/integration-tester ska aldrig anropa externa API:er |
@@ -1049,33 +1101,34 @@ pnpm analyze                # Bundle analyzer
 #### 1. Placeholder-bilder för inbjudningar
 
 ```typescript
-// lib/ai/invitation-generator.ts
+// lib/ai/replicate.ts
 
 const MOCK_MODE = process.env.NEXT_PUBLIC_MOCK_AI === 'true';
 
-// Placeholder-bilder (lokala eller från Unsplash)
 const MOCK_IMAGES: Record<string, string> = {
-  dinosaurier: '/mock/invitation-dino.jpg',
-  prinsessor: '/mock/invitation-princess.jpg',
-  superhjältar: '/mock/invitation-superhero.jpg',
-  fotboll: '/mock/invitation-football.jpg',
-  default: '/mock/invitation-default.jpg',
+  dinosaurier: '/mock/invitation-dino.svg',
+  prinsessor: '/mock/invitation-princess.svg',
+  'superhjältar': '/mock/invitation-superhero.svg',
+  fotboll: '/mock/invitation-football.svg',
+  default: '/mock/invitation-default.svg',
 };
 
-export async function generateInvitationImage(
-  theme: string,
-  partyDetails: PartyDetails
-): Promise<string> {
+export async function generateWithReplicate({
+  theme, style, customPrompt, forceLive,
+}: GenerateWithReplicateOptions): Promise<string> {
   // 🎭 MOCK MODE: Returnera placeholder direkt
-  if (MOCK_MODE) {
-    console.log('[MOCK] Returning placeholder image for theme:', theme);
-    // Simulera lite latency för realistisk UX-testning
-    await new Promise(resolve => setTimeout(resolve, 500));
+  if (MOCK_MODE && !forceLive) {
+    await new Promise(resolve => setTimeout(resolve, 800));
     return MOCK_IMAGES[theme] || MOCK_IMAGES.default;
   }
 
-  // 🚀 PRODUCTION: Anropa riktig API
-  return await ideogramGenerate(theme, partyDetails);
+  // 🚀 PRODUCTION: Replicate Flux Schnell
+  const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
+  const prompt = buildPrompt({ style, theme, customPrompt });
+  const output = await replicate.run('black-forest-labs/flux-schnell', {
+    input: { prompt, aspect_ratio: '3:4', num_outputs: 1 },
+  });
+  // ... extract URL from FileOutput object
 }
 ```
 
@@ -1109,12 +1162,11 @@ Lägg dessa i `/public/mock/`:
 ```
 public/
 └── mock/
-    ├── invitation-default.jpg    # Generisk kalas-bild
-    ├── invitation-dino.jpg       # Dinosaurie-tema
-    ├── invitation-princess.jpg   # Prinsess-tema
-    ├── invitation-superhero.jpg  # Superhjälte-tema
-    ├── invitation-football.jpg   # Fotbolls-tema
-    └── qr-placeholder.svg        # QR-kod placeholder
+    ├── invitation-default.svg    # Generisk kalas-bild
+    ├── invitation-dino.svg       # Dinosaurie-tema
+    ├── invitation-princess.svg   # Prinsess-tema
+    ├── invitation-superhero.svg  # Superhjälte-tema
+    └── invitation-football.svg   # Fotbolls-tema
 ```
 
 > 💡 **Tips:** Använd gratis bilder från Unsplash eller generera några testbilder en gång och återanvänd.
@@ -1183,10 +1235,10 @@ Om alla är ✅ → Byt till NEXT_PUBLIC_MOCK_AI=false
 
 | Scenario | Antal bilder | Kostnad |
 |----------|--------------|---------|
-| Utveckling utan mock | ~200 iterationer | ~60-340 kr |
+| Utveckling utan mock | ~200 iterationer | ~6-340 kr |
 | Utveckling med mock | 0 | 0 kr |
-| Sluttest | 5-10 bilder | ~1,50-17 kr |
-| **Besparing** | | **~58-323 kr** |
+| Sluttest | 5-10 bilder | ~0,15-17 kr |
+| **Besparing** | | **~6-323 kr** |
 
 ---
 
@@ -1208,12 +1260,12 @@ export const ADMIN_EMAILS = ['klasolsson81@gmail.com', 'zeback_@hotmail.com'];
 |----------|-----------------|------------|
 | SMS per kalas | Max 15 | Obegränsat |
 | SMS-kalas per månad | Max 1 | Obegränsat |
-| AI-bilder (mock mode) | Returnerar placeholder | Riktiga API-anrop (Ideogram/OpenAI) |
+| AI-bilder (mock mode) | Returnerar placeholder | Riktiga API-anrop (Replicate/OpenAI) |
 
 ### Implementation
 
 - **SMS**: `POST /api/invitation/send-sms` hoppar över `sms_usage`-kontroll om `user.email` finns i `ADMIN_EMAILS`
-- **AI-bilder**: `POST /api/invitation/generate` skickar `{ forceLive: true }` till `generateInvitationImage()` och `generateInvitationImageFallback()`
+- **AI-bilder**: `POST /api/invitation/generate` skickar `{ forceLive: true }` till `generateWithReplicate()` och `generateInvitationImageFallback()`
 - **UI**: `SendInvitationsSection` visar "Superadmin — inga SMS-begränsningar" istället för räknaren
 
 ### Lägga till ny superadmin
@@ -1225,9 +1277,10 @@ Lägg till e-postadressen i `ADMIN_EMAILS`-arrayen i `src/lib/constants.ts`.
 ## 🔗 Länkar
 
 - **GitHub**: https://github.com/klasolsson81/kalaskoll
-- **Vercel**: (sätts upp efter första deploy)
-- **Supabase**: (sätts upp i Fas 1)
-- **Ideogram API**: https://ideogram.ai/api
+- **Vercel**: kalaskoll.vercel.app
+- **Supabase**: (EU region)
+- **Replicate**: https://replicate.com (Flux Schnell)
+- **OpenAI**: https://platform.openai.com (DALL-E 3 fallback)
 - **shadcn/ui**: https://ui.shadcn.com
 
 ---

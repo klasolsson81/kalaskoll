@@ -1,6 +1,6 @@
 # API-dokumentation
 
-> Senast uppdaterad: 2026-01-30
+> Senast uppdaterad: 2026-01-31
 
 Alla API-endpoints finns under `src/app/api/`. Autentisering sker via Supabase Auth (session cookie).
 
@@ -112,6 +112,7 @@ Skicka inbjudningar via e-post. **Kräver auth + kalas-ägarskap.**
 - Sparar gäster i `invited_guests` (med `invite_method: 'email'`)
 - Skickar HTML-mail via Resend parallellt
 - Upsert på `(party_id, email)` — duplicater ignoreras
+- RSVP-länken i mailet innehåller `?email=` — gästens e-post blir förifyld och låst i OSA-formuläret
 
 ---
 
@@ -154,25 +155,98 @@ Skicka inbjudningar via SMS (46elks). **Kräver auth + kalas-ägarskap.**
 
 ### POST /api/invitation/generate
 
-Generera AI-inbjudningsbild. **Kräver auth.**
+Generera AI-inbjudningsbild. **Kräver auth + kalas-ägarskap.**
 
 | Fält | Typ | Krävs | Beskrivning |
 |------|-----|-------|-------------|
-| `partyId` | string | Ja | Kalas-ID |
-| `theme` | string | Nej | Tema (override av partyns tema) |
+| `partyId` | UUID | Ja | Kalas-ID |
+| `theme` | string | Nej | Motiv/tema (override av partyns tema) |
+| `style` | string | Nej | `cartoon` (default), `3d`, `watercolor`, `photorealistic` |
+| `customPrompt` | string | Nej | Fritext-beskrivning (max 200 tecken) |
 
 **Svar:**
 ```json
 {
-  "imageUrl": "https://..."
+  "imageUrl": "https://...",
+  "imageId": "uuid",
+  "imageCount": 3,
+  "maxImages": 5
 }
 ```
 
+**Begränsningar:** Max 5 bilder per kalas (admins obegränsade).
+
 **Beteende:**
 - Mock mode (`NEXT_PUBLIC_MOCK_AI=true`): returnerar SVG-placeholder
-- Superadmins: alltid riktiga API-anrop (Ideogram/OpenAI) oavsett mock mode
-- Försöker Ideogram API först, fallback till OpenAI DALL-E
-- Sparar genererad bild-URL på kalaset
+- Superadmins: alltid riktiga API-anrop (`forceLive: true`) oavsett mock mode
+- Försöker Replicate Flux Schnell först, fallback till OpenAI DALL-E 3
+- Sparar genererad bild permanent i Supabase Storage (`ai-images` bucket)
+- Sparar i `party_images`-tabellen; första bilden sätts som aktiv
+- Prompt byggs av `buildPrompt()`: stil + tema + fritext → ingen text i bilden
+
+---
+
+### POST /api/invitation/select-image
+
+Välj en AI-genererad bild som aktiv inbjudan. **Kräver auth + kalas-ägarskap.**
+
+| Fält | Typ | Krävs | Beskrivning |
+|------|-----|-------|-------------|
+| `partyId` | UUID | Ja | Kalas-ID |
+| `imageId` | UUID | Ja | Bild-ID från `party_images` |
+
+**Svar:** `{ imageUrl: "https://..." }`
+
+**Beteende:**
+- Sätter vald bild som `is_selected` i `party_images`
+- Uppdaterar `invitation_image_url` på kalaset
+- Rensar `invitation_template` (mall och AI är ömsesidigt uteslutande)
+
+---
+
+### POST /api/invitation/select-template
+
+Välj en gratis inbjudningsmall. **Kräver auth + kalas-ägarskap.**
+
+| Fält | Typ | Krävs | Beskrivning |
+|------|-----|-------|-------------|
+| `partyId` | UUID | Ja | Kalas-ID |
+| `templateId` | string | Ja | Mallnamn (t.ex. `dinosaurier`) |
+
+**Svar:** `{ success: true }`
+
+**Beteende:**
+- Sätter `invitation_template` på kalaset
+- Rensar `invitation_image_url` (mall och AI är ömsesidigt uteslutande)
+- Avmarkerar alla `party_images`
+
+---
+
+### POST /api/invitation/upload-photo
+
+Ladda upp barnfoto till inbjudningskort. **Kräver auth + kalas-ägarskap.**
+
+| Fält | Typ | Krävs | Beskrivning |
+|------|-----|-------|-------------|
+| `partyId` | UUID | Ja | Kalas-ID |
+| `photoData` | string\|null | Ja | Base64 data-URL (null = ta bort) |
+| `frame` | string | Nej | `circle` (default), `star`, `heart`, `diamond` |
+
+**Svar:** `{ success: true }`
+
+---
+
+### POST /api/children/upload-photo
+
+Ladda upp barnfoto till sparad barnprofil. **Kräver auth + barn-ägarskap.**
+
+| Fält | Typ | Krävs | Beskrivning |
+|------|-----|-------|-------------|
+| `childId` | UUID | Ja | Barn-ID |
+| `photoData` | string\|null | Ja | Base64 data-URL (null = ta bort) |
+| `frame` | string | Nej | `circle` (default), `star`, `heart`, `diamond` |
+
+**Svar:** `{ success: true }`
 
 ---
 
