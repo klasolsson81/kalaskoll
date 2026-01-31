@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { logAudit } from '@/lib/utils/audit';
 
 export async function POST() {
   const supabase = await createClient();
@@ -14,6 +15,12 @@ export async function POST() {
 
   try {
     const admin = createAdminClient();
+    await logAudit(supabase, {
+      userId: user.id,
+      action: 'account.delete',
+      resourceType: 'profile',
+      resourceId: user.id,
+    });
     await admin.auth.admin.deleteUser(user.id);
     await supabase.auth.signOut();
     return NextResponse.json({ success: true });

@@ -7,6 +7,7 @@ import { formatDate, formatTime } from '@/lib/utils/format';
 import { APP_URL } from '@/lib/constants';
 import { isRateLimited } from '@/lib/utils/rate-limit';
 import { encryptAllergyData } from '@/lib/utils/crypto';
+import { logAudit } from '@/lib/utils/audit';
 import type { Database } from '@/types/database';
 
 function createServiceClient() {
@@ -170,6 +171,14 @@ export async function POST(request: NextRequest) {
       console.error('Failed to send RSVP confirmation email:', err);
     });
   }
+
+  // Audit log (fire-and-forget)
+  logAudit(supabase, {
+    action: 'rsvp.submit',
+    resourceType: 'rsvp_response',
+    resourceId: rsvpId,
+    metadata: { attending: parsed.data.attending, invitationId: invitation.id },
+  });
 
   return NextResponse.json({ success: true, rsvpId });
 }

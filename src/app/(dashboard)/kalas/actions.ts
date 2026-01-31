@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { partySchema } from '@/lib/utils/validation';
+import { logAudit } from '@/lib/utils/audit';
 import { TEMPLATE_IDS } from '@/components/templates/theme-configs';
 
 export interface PartyActionResult {
@@ -109,6 +110,13 @@ export async function createParty(
       .update(postInsertUpdate)
       .eq('id', party.id);
   }
+
+  logAudit(supabase, {
+    userId: user.id,
+    action: 'party.create',
+    resourceType: 'party',
+    resourceId: party.id,
+  });
 
   redirect(`/kalas/${party.id}`);
 }
