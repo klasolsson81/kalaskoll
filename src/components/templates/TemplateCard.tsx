@@ -166,8 +166,8 @@ export function TemplateCard({
               src={childPhotoUrl}
               alt={`Foto på ${childName}`}
               shape={(childPhotoFrame as PhotoFrameType) || 'circle'}
-              size={80}
-              className="w-20 h-20 shrink-0 print:w-28 print:h-28"
+              size={100}
+              className="w-[100px] h-[100px] shrink-0 print:w-36 print:h-36"
             />
             <p className={cn('italic', theme.subtitleClass, theme.subtitleColor)}>
               Hipp hipp hurra!
@@ -228,7 +228,7 @@ export function TemplateCard({
         </p>
 
         <div className={cn('rounded-xl p-2', theme.qrBgClass)}>
-          <QRCode token={token} size={110} />
+          <QRCode token={token} size={80} />
         </div>
         <p className={cn('mt-1.5 text-xs', theme.detailColor)}>
           Scanna för att OSA
