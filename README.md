@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KalasKoll
 
-## Getting Started
+Svensk webapp for att hantera barnkalas-inbjudningar med illustrerade inbjudningskort, QR-kod-baserad OSA-hantering och allergiinformation.
 
-First, run the development server:
+## Funktioner
+
+- **Illustrerade inbjudningsmallar** — 9 teman (dinosaurier, prinsessor, rymden m.fl.) med AI-genererade bakgrundsbilder och CSS-textoverlay
+- **AI-genererade inbjudningar** — Ideogram/OpenAI-genererade bilder som alternativ till mallar
+- **QR-kod OSA** — Skriv ut inbjudan med QR-kod, gasterna skannar och svarar via mobilen
+- **Realtids-gastlista** — Se svar live via Supabase Realtime
+- **Manuell gasthantering** — Lagg till, redigera och ta bort gaster direkt pa gastlistan
+- **Allergihantering** — GDPR-kompatibel lagring med samtycke och auto-radering
+- **E-post och SMS** — Skicka inbjudningar via Resend (e-post) eller 46elks (SMS)
+- **Sparade barn** — Spara barn pa profilen for snabbt kalasskapande
+
+## Tech Stack
+
+| Omrade | Teknologi |
+|--------|-----------|
+| Framework | Next.js 16 (App Router) |
+| Sprak | TypeScript 5 |
+| Styling | Tailwind CSS 4 |
+| UI | shadcn/ui |
+| Databas | Supabase (PostgreSQL) |
+| Auth | Supabase Auth |
+| AI-bilder | Ideogram API / OpenAI |
+| SMS | 46elks API |
+| E-post | Resend |
+| Hosting | Vercel |
+| Tester | Vitest + Playwright |
+
+## Kom igang
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Installera beroenden
+pnpm install
+
+# Kopiera environment-variabler
+cp .env.example .env.local
+# Fyll i dina Supabase/API-nycklar i .env.local
+
+# Starta dev-server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Oppna [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Kommandon
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm dev          # Utvecklingsserver
+pnpm build        # Produktionsbygge
+pnpm lint         # ESLint
+pnpm test         # Vitest (unit + integration)
+pnpm test:e2e     # Playwright E2E
+```
 
-## Learn More
+## Projektstruktur
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/
+    (auth)/          # Login, register, check-email, confirmed
+    (dashboard)/     # Dashboard, kalas CRUD, gastlista
+    api/             # RSVP, invitation generate/send, auth
+    r/[token]/       # Publik RSVP-sida (mobil)
+  components/
+    templates/       # TemplateCard, TemplatePicker, theme-configs
+    cards/           # InvitationCard (AI-bilder)
+    forms/           # RsvpForm, PartyForm, AllergyCheckboxes
+  lib/
+    supabase/        # Client, server, admin, middleware
+    ai/              # Ideogram + OpenAI
+    sms/             # 46elks
+    email/           # Resend
+    utils/           # Validation (Zod), format, SEO
+public/
+  assets/templates/  # 9 illustrerade bakgrundsbilder (PNG)
+tests/
+  unit/              # 122 tester (validation, format, schemas)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Dokumentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [CLAUDE.md](./CLAUDE.md) — Fullstandig projektinstruktion for Claude Code
+- [docs/CHANGELOG.md](./docs/CHANGELOG.md) — Alla andringar
+- [docs/API.md](./docs/API.md) — API-dokumentation
+- [docs/DATABASE.md](./docs/DATABASE.md) — Databasschema och RLS
 
-## Deploy on Vercel
+## Licens
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Privat projekt.

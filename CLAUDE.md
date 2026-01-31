@@ -1,7 +1,7 @@
 # CLAUDE.md – KalasKoll
 
 > **Instruktionsfil för Claude Code**
-> Senast uppdaterad: 2026-01-30
+> Senast uppdaterad: 2026-01-31
 
 ---
 
@@ -33,7 +33,7 @@ Förenkla kalasplanering för svenska föräldrar genom att eliminera kaos med p
 
 | Område | Teknologi | Version |
 |--------|-----------|---------|
-| Framework | Next.js (App Router) | 15.x |
+| Framework | Next.js (App Router) | 16.x |
 | Språk | TypeScript | 5.x |
 | Styling | Tailwind CSS | 3.x |
 | UI-komponenter | shadcn/ui | latest |
@@ -61,6 +61,17 @@ kalaskoll/
 │   ├── DATABASE.md                # Databasschema och RLS
 │   └── DEPLOYMENT.md              # Deploy-instruktioner
 ├── public/
+│   ├── assets/
+│   │   └── templates/             # 9 illustrerade inbjudningsbilder (Gemini AI)
+│   │       ├── default.png        # Klassiskt kalas (ballonger, konfetti)
+│   │       ├── dinosaurier.png    # Djungelblad, vänliga dinos
+│   │       ├── prinsessor.png     # Slott, rosor, kronor
+│   │       ├── superhjaltar.png   # Serietidningsstil, mantlar
+│   │       ├── fotboll.png        # Fotbollsplan, pokaler
+│   │       ├── rymden.png         # Planeter, raket, stjärnor
+│   │       ├── djungel.png        # Tropiska blad, djur
+│   │       ├── enhorningar.png    # Regnbåge, pastellmoln
+│   │       └── pirater.png        # Skattkarta, skepp, kompass
 │   ├── og-image.png               # Open Graph bild
 │   └── favicon.ico
 ├── src/
@@ -75,10 +86,16 @@ kalaskoll/
 │   │   │   └── callback/route.ts      # Hanterar e-postverifieringslänk
 │   │   ├── (dashboard)/
 │   │   │   ├── dashboard/page.tsx
+│   │   │   ├── children/
+│   │   │   │   └── actions.ts           # Barn CRUD server actions
 │   │   │   ├── kalas/
+│   │   │   │   ├── actions.ts           # Kalas CRUD server actions
 │   │   │   │   ├── [id]/page.tsx
 │   │   │   │   ├── [id]/edit/page.tsx
-│   │   │   │   ├── [id]/guests/page.tsx
+│   │   │   │   ├── [id]/guests/
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   ├── GuestListRealtime.tsx
+│   │   │   │   │   └── actions.ts       # Manuell gäst CRUD
 │   │   │   │   └── new/page.tsx
 │   │   │   ├── DeleteAccountButton.tsx # Tillfällig – för testning
 │   │   │   └── layout.tsx
@@ -100,10 +117,15 @@ kalaskoll/
 │   │   ├── forms/
 │   │   │   ├── RsvpForm.tsx
 │   │   │   ├── PartyForm.tsx
-│   │   │   └── AllergyCheckboxes.tsx
+│   │   │   ├── AllergyCheckboxes.tsx
+│   │   │   └── SubmitButton.tsx
 │   │   ├── cards/
-│   │   │   ├── InvitationCard.tsx
-│   │   │   └── GuestCard.tsx
+│   │   │   └── InvitationCard.tsx     # AI-bildbaserat inbjudningskort
+│   │   ├── templates/
+│   │   │   ├── TemplateCard.tsx       # Illustrerat inbjudningskort (9 teman)
+│   │   │   ├── TemplatePicker.tsx     # Mallväljare (rutnät)
+│   │   │   ├── theme-configs.ts       # Temakonfigurationer (färger, bilder)
+│   │   │   └── index.ts
 │   │   ├── layout/
 │   │   │   ├── Header.tsx
 │   │   │   ├── Footer.tsx
