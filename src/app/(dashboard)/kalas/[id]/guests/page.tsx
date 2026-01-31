@@ -90,6 +90,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
       </div>
 
       <GuestListRealtime
+        partyId={id}
         invitationId={invitationId}
         initialGuests={guests ?? []}
         initialAllergies={

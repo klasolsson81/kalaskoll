@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Manual guest management: add, edit, and delete guests directly on the guest list
+- "Lägg till gäst" inline form on guest list page (name, attending, parent info, message)
+- Edit and delete buttons on each guest row with inline edit form and delete confirmation
+- `manualGuestSchema` Zod validation for manual guest data
+- Server actions: `createGuest`, `updateGuest`, `deleteGuest` in guests/actions.ts
+- 16 unit tests for manual guest validation schema
 - Party description shown on invitation cards (both template and AI variants)
 - TemplateCard: description displayed as italic text between party details and QR section
 - InvitationCard: description displayed in the details overlay area

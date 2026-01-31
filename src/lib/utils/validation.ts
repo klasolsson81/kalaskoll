@@ -151,11 +151,26 @@ export const sendSmsInvitationSchema = z.object({
     .max(SMS_MAX_PER_PARTY, `Max ${SMS_MAX_PER_PARTY} telefonnummer åt gången`),
 });
 
+// Manual guest schema (for adding/editing guests directly on the guest list)
+export const manualGuestSchema = z.object({
+  childName: z.string().min(1, 'Barnets namn krävs').max(100),
+  attending: z.enum(['yes', 'no'], { message: 'Välj om barnet kommer eller inte' }),
+  parentName: z.string().max(100).optional().or(z.literal('')),
+  parentPhone: z
+    .string()
+    .regex(/^(\+46|0)[0-9]{6,12}$/, 'Ogiltigt telefonnummer')
+    .optional()
+    .or(z.literal('')),
+  parentEmail: z.string().email('Ogiltig e-postadress').optional().or(z.literal('')),
+  message: z.string().max(500).optional().or(z.literal('')),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type RsvpFormData = z.infer<typeof rsvpSchema>;
 export type RsvpEditFormData = z.infer<typeof rsvpEditSchema>;
 export type ChildFormData = z.infer<typeof childSchema>;
 export type PartyFormData = z.infer<typeof partySchema>;
+export type ManualGuestFormData = z.infer<typeof manualGuestSchema>;
 export type SendInvitationFormData = z.infer<typeof sendInvitationSchema>;
 export type SendSmsInvitationFormData = z.infer<typeof sendSmsInvitationSchema>;
