@@ -224,14 +224,14 @@ export function TemplateCard({
             theme.subtitleColor,
           )}
         >
-          Välkomna!
+          Kan du komma?
         </p>
 
         <div className={cn('rounded-xl p-2', theme.qrBgClass)}>
           <QRCode token={token} size={80} />
         </div>
         <p className={cn('mt-1.5 text-xs', theme.detailColor)}>
-          Scanna för att OSA
+          Scanna och tacka ja eller nej
         </p>
 
         {/* Bottom emoji decoration (fallback only) */}

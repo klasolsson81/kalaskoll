@@ -134,7 +134,7 @@ export function AiInvitationCard({
           className="mb-3 text-lg font-semibold text-white sm:text-xl"
           style={{ textShadow }}
         >
-          Välkomna!
+          Kan du komma?
         </p>
 
         <div className="rounded-xl bg-white p-2">
@@ -144,7 +144,7 @@ export function AiInvitationCard({
           className="mt-1.5 text-xs text-white"
           style={{ textShadow }}
         >
-          Scanna för att OSA
+          Scanna och tacka ja eller nej
         </p>
       </div>
     </div>

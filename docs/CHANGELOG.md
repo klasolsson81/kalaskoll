@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Prompt builder (`buildPrompt`) falls back to raw theme text for custom themes not in THEME_DESCRIPTION
 - Animated loading card in AI column: shimmer effect with rotating status messages during generation
 - Success notification banner ("Din AI-bild är klar!") after image generation, auto-dismisses after 4 seconds
+- Invitation card QR text clarified: "Välkomna!" → "Kan du komma?", "Scanna för att OSA" → "Scanna och tacka ja eller nej" (both AI and template cards)
 
 ### Added
 
