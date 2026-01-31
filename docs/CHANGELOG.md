@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Inbjudnings-sektionen — Tvåkolumnslayout med Guldkalas-branding
+- Replaced flat thumbnail strip with two-column layout: "Gratis-mallar" (left) and "AI-kort / Guldkalas" (right)
+- Template 3×3 grid always visible — no more "Byt mall" overlay toggle
+- AI column shows Guldkalas badge, generation counter (X/5), and upgrade text when limit reached
+- Admin users see "Superadmin — inga begränsningar" instead of counter
+- Extracted `InvitationPreview`, `PhotoUploadSection`, `TemplateColumn`, `AiColumn` sub-components from monolithic InvitationSection (605 → ~250 lines orchestrator)
+- Columns stack vertically on mobile (md:grid-cols-2)
+- PartyForm: added Guldkalas info box under theme selector explaining AI cards are available after party creation
+- `createParty`: new parties without a matching theme template now default to 'default' (Klassiskt kalas)
+
 ### Added
 
 #### Barnfoto — foto på sparade barn + auto-kopiera till kalas

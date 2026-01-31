@@ -259,6 +259,17 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
               value={themeSelect === CUSTOM_THEME_VALUE ? customTheme : themeSelect}
             />
           </div>
+          <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium text-amber-800">
+              AI-genererade kort
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
+                Guldkalas
+              </span>
+            </p>
+            <p className="mt-1 text-xs text-amber-600">
+              Skapa unika inbjudningskort med AI. Tillgängligt efter att kalaset skapats.
+            </p>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="description">Beskrivning (valfritt, visas på inbjudan)</Label>
             <textarea

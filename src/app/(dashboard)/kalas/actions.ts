@@ -84,6 +84,8 @@ export async function createParty(
 
   if (theme && TEMPLATE_IDS.includes(theme)) {
     postInsertUpdate.invitation_template = theme;
+  } else if (!postInsertUpdate.invitation_template) {
+    postInsertUpdate.invitation_template = 'default';
   }
 
   // Auto-copy child photo to party when a saved child is selected
