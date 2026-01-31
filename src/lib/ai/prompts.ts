@@ -59,12 +59,17 @@ export function buildPrompt({ style, theme, customPrompt }: BuildPromptOptions):
   const quality = STYLE_QUALITY[style];
 
   const parts = [
-    `${prefix} of a children's birthday party invitation background`,
-    `featuring ${themeDesc}.`,
+    `${prefix} of a children's birthday party invitation background.`,
   ];
 
   if (customPrompt) {
-    parts.push(`Also include: ${customPrompt}.`);
+    // Custom prompt is the PRIMARY instruction — theme is secondary context
+    parts.push(
+      `The scene MUST prominently show: ${customPrompt}.`,
+      `Use these as supporting theme elements: ${themeDesc}.`,
+    );
+  } else {
+    parts.push(`Featuring ${themeDesc}.`);
   }
 
   parts.push(
