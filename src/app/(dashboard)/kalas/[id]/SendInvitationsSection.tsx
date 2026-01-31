@@ -242,15 +242,15 @@ export function SendInvitationsSection({
             size="sm"
             onClick={() => { setMethod('sms'); setError(null); setResult(null); }}
             disabled={!smsAllowed && !isAdmin}
-            title={!smsAllowed && !isAdmin ? 'Du har redan använt SMS för ett annat kalas denna månad' : undefined}
+            title={!smsAllowed && !isAdmin ? 'Köp Guldpaket för SMS-aviseringar' : undefined}
           >
             SMS
           </Button>
         </div>
 
-        {!smsAllowed && !isAdmin && method === 'email' && (
+        {!smsAllowed && !isAdmin && (
           <p className="text-xs text-muted-foreground">
-            SMS ej tillgängligt – redan använt för ett annat kalas denna månad.
+            Köp Guldpaket för att få tillgång till SMS-aviseringar.
           </p>
         )}
 

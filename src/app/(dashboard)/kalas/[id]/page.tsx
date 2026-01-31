@@ -119,12 +119,14 @@ export default async function PartyPage({ params }: PartyPageProps) {
   const isAdmin = ADMIN_EMAILS.includes(user?.email ?? '');
 
   // Determine SMS availability
+  // allowed = true when: no usage yet, same party, or party was deleted (reusable quota)
   let smsUsage: { smsCount: number; allowed: boolean } | undefined;
   if (smsUsageData) {
     const isThisParty = smsUsageData.party_id === id;
+    const isDeletedParty = smsUsageData.party_id === null;
     smsUsage = {
-      smsCount: isThisParty ? smsUsageData.sms_count : 0,
-      allowed: isThisParty,
+      smsCount: (isThisParty || isDeletedParty) ? smsUsageData.sms_count : 0,
+      allowed: isThisParty || isDeletedParty,
     };
   } else {
     smsUsage = { smsCount: 0, allowed: true };
