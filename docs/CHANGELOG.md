@@ -6,9 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+#### Könsneutral färgpalett och profilmeny
+- Replaced pink/purple color palette with gender-neutral Festblå (primary), Ballong Turkos (secondary), Celebration Amber (accent)
+- Gradient celebration now blue-to-indigo instead of pink-to-purple
+- Shadow tints updated from pink to blue for warm/lifted shadows
+- Confetti colors updated to blue, teal, gold, orange, green (no pink/purple)
+- Landing page hero gradient text uses indigo instead of purple
+- New ProfileDropdown component replaces inline nav buttons (logout, delete account)
+- Dropdown menu with: Ändra profil, Ändra lösenord, Köp Guldkalas (premium, disabled), Radera konto, Logga ut
+- Added shadcn DropdownMenu component (Radix UI)
+- User avatar initial and email shown in dropdown header
+
 #### UI/UX Refaktor: Festlig Skandinavisk Minimalism
 - Complete visual redesign based on "Festlig Skandinavisk Minimalism" design philosophy
-- New color palette: Konfetti Rosa (primary), Ballong Turkos (secondary), Celebration Gold (accent) with warm off-white background
+- New color palette: Festblå (primary), Ballong Turkos (secondary), Celebration Amber (accent) with warm off-white background
 - Switched from Geist Sans to Inter font for better Swedish character support
 - New warm shadow utilities: `shadow-soft`, `shadow-warm`, `shadow-lifted`
 - Gradient celebration buttons with `gradient-celebration` utility

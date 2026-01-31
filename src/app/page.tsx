@@ -113,7 +113,7 @@ export default function HomePage() {
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
                 Smarta inbjudningar
                 <br />
-                <span className="bg-gradient-to-r from-primary via-purple-500 to-secondary bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-primary via-indigo-400 to-secondary bg-clip-text text-transparent">
                   för barnkalas
                 </span>
               </h1>

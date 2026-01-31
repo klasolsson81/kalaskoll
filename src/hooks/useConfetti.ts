@@ -1,6 +1,6 @@
 import confetti from 'canvas-confetti';
 
-const COLORS = ['#F25C84', '#2DB3A3', '#F4C430', '#8B5CF6', '#3B82F6'];
+const COLORS = ['#3B82F6', '#2DB3A3', '#F4C430', '#F97316', '#10B981'];
 
 export function useConfetti() {
   const fireConfetti = () => {

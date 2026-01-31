@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { LogoutButton } from './LogoutButton';
-import { DeleteAccountButton } from './DeleteAccountButton';
+import { ProfileDropdown } from './ProfileDropdown';
 
 export default async function DashboardLayout({
   children,
@@ -18,7 +17,8 @@ export default async function DashboardLayout({
     redirect('/login');
   }
 
-  const displayName = user.user_metadata?.full_name || user.email;
+  const displayName = user.user_metadata?.full_name || user.email || '';
+  const email = user.email || '';
 
   return (
     <div className="min-h-screen">
@@ -36,9 +36,7 @@ export default async function DashboardLayout({
             >
               Mina kalas
             </Link>
-            <span className="text-sm font-medium text-foreground">{displayName}</span>
-            <LogoutButton />
-            <DeleteAccountButton />
+            <ProfileDropdown displayName={displayName} email={email} />
           </nav>
         </div>
       </header>
