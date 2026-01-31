@@ -178,8 +178,8 @@ function ChildRow({ child }: { child: Child }) {
 
   return (
     <div className="space-y-1">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2.5 mr-auto">
           {child.photo_url && (
             <PhotoFrame
               src={child.photo_url}
@@ -192,7 +192,7 @@ function ChildRow({ child }: { child: Child }) {
             {child.name} &bull; {age} år
           </span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-1">
           {mode === 'confirm-delete' ? (
             <>
               <span className="text-sm text-muted-foreground">Säker?</span>
