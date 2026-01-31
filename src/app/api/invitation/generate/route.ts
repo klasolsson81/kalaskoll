@@ -67,25 +67,25 @@ export async function POST(request: NextRequest) {
   const resolvedStyle: AiStyle = style;
   const forceLive = isAdmin;
 
-  // Generate: fal.ai -> OpenAI -> error
+  // Generate: OpenAI (primary) -> fal.ai (fallback) -> error
   let imageUrl: string | null = null;
 
   try {
-    imageUrl = await generateWithFal({
-      theme: resolvedTheme,
-      style: resolvedStyle,
-      forceLive,
-    });
-  } catch (falError) {
-    console.error('[AI] fal.ai failed:', falError);
+    imageUrl = await generateInvitationImageFallback(
+      resolvedTheme,
+      resolvedStyle,
+      { forceLive },
+    );
+  } catch (openaiError) {
+    console.error('[AI] OpenAI failed:', openaiError);
     try {
-      imageUrl = await generateInvitationImageFallback(
-        resolvedTheme,
-        resolvedStyle,
-        { forceLive },
-      );
-    } catch (openaiError) {
-      console.error('[AI] OpenAI fallback failed:', openaiError);
+      imageUrl = await generateWithFal({
+        theme: resolvedTheme,
+        style: resolvedStyle,
+        forceLive,
+      });
+    } catch (falError) {
+      console.error('[AI] fal.ai fallback failed:', falError);
     }
   }
 
