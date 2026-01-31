@@ -11,6 +11,11 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
+export interface SendResult {
+  success: boolean;
+  error?: string;
+}
+
 function getResendClient() {
   return new Resend(process.env.RESEND_API_KEY);
 }
@@ -35,7 +40,7 @@ export async function sendRsvpConfirmation({
   partyDate,
   partyTime,
   venueName,
-}: SendRsvpConfirmationParams): Promise<void> {
+}: SendRsvpConfirmationParams): Promise<SendResult> {
   const statusText = attending ? 'JA – ni kommer!' : 'NEJ – ni kan tyvärr inte komma';
   const statusEmoji = attending ? '🎉' : '😢';
   const subject = attending
@@ -106,12 +111,26 @@ export async function sendRsvpConfirmation({
 
   const resend = getResendClient();
 
-  await resend.emails.send({
-    from: RESEND_FROM_EMAIL,
-    to,
-    subject,
-    html,
-  });
+  try {
+    const { error } = await resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to,
+      subject,
+      html,
+    });
+
+    if (error) {
+      console.error('[Email] RSVP confirmation failed:', { to, error: error.message });
+      return { success: false, error: error.message };
+    }
+
+    console.log('[Email] RSVP confirmation sent:', { to });
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Email] RSVP confirmation error:', { to, error: msg });
+    return { success: false, error: msg };
+  }
 }
 
 interface SendPartyInvitationParams {
@@ -142,7 +161,7 @@ export async function sendPartyInvitation({
   description,
   rsvpUrl,
   imageUrl,
-}: SendPartyInvitationParams): Promise<void> {
+}: SendPartyInvitationParams): Promise<SendResult> {
   const subject = `Du är inbjuden till ${partyChildName}s ${childAge}-årskalas!`;
   const timeDisplay = formatTimeRange(partyTime, partyTimeEnd);
   const dateDisplay = formatDate(partyDate);
@@ -233,10 +252,24 @@ export async function sendPartyInvitation({
 
   const resend = getResendClient();
 
-  await resend.emails.send({
-    from: RESEND_FROM_EMAIL,
-    to,
-    subject,
-    html,
-  });
+  try {
+    const { error } = await resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to,
+      subject,
+      html,
+    });
+
+    if (error) {
+      console.error('[Email] Invitation failed:', { to, error: error.message });
+      return { success: false, error: error.message };
+    }
+
+    console.log('[Email] Invitation sent:', { to, child: partyChildName });
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Email] Invitation error:', { to, error: msg });
+    return { success: false, error: msg };
+  }
 }
