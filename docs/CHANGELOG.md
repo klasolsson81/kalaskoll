@@ -11,12 +11,14 @@ All notable changes to this project will be documented in this file.
 - **Per-user AI rate limiting** (MI-06): Factory-based rate limiter in `rate-limit.ts`. AI generation limited to 10 req/hour per user (admins exempt). RSVP limiter unchanged (backward-compatible).
 - **Composite index** (LO-04): `parties(owner_id, party_date DESC)` for faster dashboard queries (migration `00018`)
 - **CI/CD improvements** (LO-03): Coverage reporting with artifact upload, E2E job (Playwright on PRs) with artifact upload
+- **Supabase security fixes**: Migration `00019` — immutable `search_path` on `update_updated_at`, tightened INSERT policies on `audit_log` and `rsvp_responses`
 
 ### Changed
 
 #### Code Review Fixes (HI-10, MI-03, MI-05, MI-06, MI-09, MI-10)
 - **Delete party modal** (MI-10): Replaced browser `confirm()` with accessible modal dialog (`role="dialog"`, `aria-modal`, Escape key, backdrop click, loading/error states)
 - **SMS quota reuse** (MI-05): Users can now reuse SMS quota for a new party after the previous one is deleted, respecting the remaining count limit
+- **SMS text for non-gold users**: Changed "SMS ej tillgängligt" to "Köp Guldpaket för att få tillgång till SMS-aviseringar"
 
 ### Fixed
 
@@ -26,6 +28,9 @@ All notable changes to this project will be documented in this file.
 - **Visual consistency** (LO-01): Standardized QR background to `bg-white` across all templates, replaced hardcoded `blue-500` with `primary` in TemplatePicker and PhotoCropDialog, textarea styling now matches Input component pattern
 - **Magic number comments** (LO-05): Documented Bézier circle constant (0.5523), star inner radius (0.38), and heart path control points in PhotoCropDialog
 - **Lint warnings** (LO-06): Suppressed 2 `no-unused-vars` warnings for intentional destructuring-to-omit pattern in test file
+- **CI coverage dependency**: Added `@vitest/coverage-v8` for `pnpm test:coverage` in CI pipeline
+- **SMS superadmin bypass**: Fixed client-side SMS availability logic when previous party was deleted (party_id IS NULL)
+- **Mobile child buttons**: Action buttons in "Mina barn" now wrap on mobile instead of overflowing
 
 #### Tech Debt Sprint (TD-01 till TD-19)
 - **AES-256-GCM allergy encryption** (TD-08): All allergy data encrypted at rest with AES-256-GCM. `src/lib/utils/crypto.ts` with `encrypt`/`decrypt`, `encryptAllergyData`/`decryptAllergyData`. Graceful fallback for legacy unencrypted data and missing `ALLERGY_ENCRYPTION_KEY`.
