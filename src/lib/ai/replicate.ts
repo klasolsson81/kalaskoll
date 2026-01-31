@@ -1,12 +1,7 @@
-import { fal } from '@fal-ai/client';
+import Replicate from 'replicate';
 import { MOCK_MODE } from '@/lib/constants';
 import type { AiStyle } from '@/lib/constants';
 import { buildPrompt } from './prompts';
-
-// Configure fal.ai with server-side API key
-fal.config({
-  credentials: () => process.env.FAL_KEY ?? '',
-});
 
 const MOCK_IMAGES: Record<string, string> = {
   dinosaurier: '/mock/invitation-dino.svg',
@@ -16,39 +11,44 @@ const MOCK_IMAGES: Record<string, string> = {
   default: '/mock/invitation-default.svg',
 };
 
-interface GenerateWithFalOptions {
+interface GenerateWithReplicateOptions {
   theme: string;
   style: AiStyle;
   forceLive?: boolean;
 }
 
-export async function generateWithFal({
+export async function generateWithReplicate({
   theme,
   style,
   forceLive,
-}: GenerateWithFalOptions): Promise<string> {
+}: GenerateWithReplicateOptions): Promise<string> {
   if (MOCK_MODE && !forceLive) {
-    console.log('[MOCK] fal.ai — returning placeholder for theme:', theme);
+    console.log('[MOCK] Replicate — returning placeholder for theme:', theme);
     await new Promise((resolve) => setTimeout(resolve, 800));
     return MOCK_IMAGES[theme] || MOCK_IMAGES.default;
   }
 
+  const replicate = new Replicate({
+    auth: process.env.REPLICATE_API_TOKEN,
+  });
+
   const prompt = buildPrompt(style, theme);
 
-  const result = await fal.subscribe('fal-ai/flux/schnell', {
+  const output = await replicate.run('black-forest-labs/flux-schnell', {
     input: {
       prompt,
-      image_size: { width: 768, height: 1024 },
-      num_images: 1,
-      num_inference_steps: 4,
-      enable_safety_checker: true,
+      aspect_ratio: '3:4',
+      num_outputs: 1,
+      output_format: 'webp',
+      output_quality: 90,
     },
   });
 
-  const images = result.data?.images;
-  if (!images || images.length === 0) {
-    throw new Error('fal.ai returned no images');
+  // Flux Schnell returns an array of file URLs
+  const urls = output as string[];
+  if (!urls || urls.length === 0) {
+    throw new Error('Replicate returned no images');
   }
 
-  return images[0].url;
+  return urls[0];
 }

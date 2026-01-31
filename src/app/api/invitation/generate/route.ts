@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { generateWithFal } from '@/lib/ai/fal';
+import { generateWithReplicate } from '@/lib/ai/replicate';
 import { generateInvitationImageFallback } from '@/lib/ai/openai';
 import { ADMIN_EMAILS, AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
 import type { AiStyle } from '@/lib/constants';
@@ -67,25 +67,25 @@ export async function POST(request: NextRequest) {
   const resolvedStyle: AiStyle = style;
   const forceLive = isAdmin;
 
-  // Generate: OpenAI (primary) -> fal.ai (fallback) -> error
+  // Generate: Replicate Flux (primary) -> OpenAI DALL-E 3 (fallback) -> error
   let imageUrl: string | null = null;
 
   try {
-    imageUrl = await generateInvitationImageFallback(
-      resolvedTheme,
-      resolvedStyle,
-      { forceLive },
-    );
-  } catch (openaiError) {
-    console.error('[AI] OpenAI failed:', openaiError);
+    imageUrl = await generateWithReplicate({
+      theme: resolvedTheme,
+      style: resolvedStyle,
+      forceLive,
+    });
+  } catch (replicateError) {
+    console.error('[AI] Replicate failed:', replicateError);
     try {
-      imageUrl = await generateWithFal({
-        theme: resolvedTheme,
-        style: resolvedStyle,
-        forceLive,
-      });
-    } catch (falError) {
-      console.error('[AI] fal.ai fallback failed:', falError);
+      imageUrl = await generateInvitationImageFallback(
+        resolvedTheme,
+        resolvedStyle,
+        { forceLive },
+      );
+    } catch (openaiError) {
+      console.error('[AI] OpenAI fallback failed:', openaiError);
     }
   }
 
