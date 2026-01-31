@@ -20,6 +20,18 @@ export async function uploadPhotoToStorage(
     const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
     const base64 = match[2];
     const buffer = Buffer.from(base64, 'base64');
+
+    // Validate magic bytes to ensure buffer is actually an image
+    const MAGIC: Record<string, number[]> = {
+      jpeg: [0xFF, 0xD8, 0xFF],
+      png:  [0x89, 0x50, 0x4E, 0x47],
+      webp: [0x52, 0x49, 0x46, 0x46],
+    };
+    const expected = MAGIC[ext === 'jpg' ? 'jpeg' : ext];
+    if (!expected?.every((b, i) => buffer[i] === b)) {
+      return null;
+    }
+
     const path = `${userId}/${resourceId}.${ext}`;
 
     const { error } = await supabase.storage
