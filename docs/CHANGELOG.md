@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Profilsidor
+- New `/profile` page for editing name and phone number
+- New `/profile/password` page for changing password
+- Server actions: `updateProfile` (updates auth metadata + profiles table) and `updatePassword` (Supabase auth)
+- Zod validation schemas: `profileSchema` and `passwordSchema`
+- ProfileDropdown now navigates to profile and password pages
+
 ### Changed
 
 #### Könsneutral färgpalett och profilmeny

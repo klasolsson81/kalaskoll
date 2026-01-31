@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { User, KeyRound, Crown, Trash2, LogOut, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
@@ -18,6 +19,7 @@ interface ProfileDropdownProps {
 }
 
 export function ProfileDropdown({ displayName, email }: ProfileDropdownProps) {
+  const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -84,15 +86,11 @@ export function ProfileDropdown({ displayName, email }: ProfileDropdownProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => { /* TODO: navigate to profile page */ }}
-          >
+          <DropdownMenuItem onClick={() => router.push('/profile')}>
             <User />
             Ändra profil
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => { /* TODO: navigate to change password */ }}
-          >
+          <DropdownMenuItem onClick={() => router.push('/profile/password')}>
             <KeyRound />
             Ändra lösenord
           </DropdownMenuItem>

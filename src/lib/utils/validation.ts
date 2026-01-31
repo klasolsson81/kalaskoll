@@ -178,6 +178,27 @@ export const uploadPhotoSchema = z.object({
 
 export type UploadPhotoFormData = z.infer<typeof uploadPhotoSchema>;
 
+// Profile schema
+export const profileSchema = z.object({
+  fullName: z.string().min(1, 'Namn krävs').max(100),
+  phone: z
+    .string()
+    .regex(/^(\+46|0)[0-9]{6,12}$/, 'Ogiltigt telefonnummer')
+    .optional()
+    .or(z.literal('')),
+});
+
+// Password change schema
+export const passwordSchema = z
+  .object({
+    newPassword: z.string().min(6, 'Lösenordet måste vara minst 6 tecken'),
+    confirmPassword: z.string().min(1, 'Bekräfta lösenordet'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Lösenorden matchar inte',
+    path: ['confirmPassword'],
+  });
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type RsvpFormData = z.infer<typeof rsvpSchema>;
@@ -187,3 +208,5 @@ export type PartyFormData = z.infer<typeof partySchema>;
 export type ManualGuestFormData = z.infer<typeof manualGuestSchema>;
 export type SendInvitationFormData = z.infer<typeof sendInvitationSchema>;
 export type SendSmsInvitationFormData = z.infer<typeof sendSmsInvitationSchema>;
+export type ProfileFormData = z.infer<typeof profileSchema>;
+export type PasswordFormData = z.infer<typeof passwordSchema>;
