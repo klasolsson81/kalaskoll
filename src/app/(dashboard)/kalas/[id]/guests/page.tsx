@@ -42,8 +42,9 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
   const { data: allergies } = guestIds.length > 0
     ? await supabase
         .from('allergy_data')
-        .select('rsvp_id, allergies, other_dietary')
+        .select('rsvp_id, allergies, other_dietary, consent_given_at')
         .in('rsvp_id', guestIds)
+        .not('consent_given_at', 'is', null)
     : { data: [] };
 
   // Fetch invited guests (email/SMS) with response matching
