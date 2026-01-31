@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { uploadChildPhotoSchema } from '@/lib/utils/validation';
+import { uploadPhotoToStorage, deletePhotoFromStorage } from '@/lib/utils/storage';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -41,11 +42,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Barn hittades inte' }, { status: 404 });
   }
 
+  let photoUrl: string | null = null;
+
+  if (photoData) {
+    const storageUrl = await uploadPhotoToStorage(supabase, user.id, `child-${childId}`, photoData);
+    photoUrl = storageUrl ?? photoData;
+  } else {
+    await deletePhotoFromStorage(supabase, user.id, `child-${childId}`);
+  }
+
   // Update photo and frame
   const { error: updateError } = await supabase
     .from('children')
     .update({
-      photo_url: photoData,
+      photo_url: photoUrl,
       photo_frame: frame,
     })
     .eq('id', childId);

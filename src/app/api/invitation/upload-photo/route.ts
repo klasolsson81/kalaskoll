@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { uploadPhotoSchema } from '@/lib/utils/validation';
+import { uploadPhotoToStorage, deletePhotoFromStorage } from '@/lib/utils/storage';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -45,11 +46,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Åtkomst nekad' }, { status: 403 });
   }
 
+  let photoUrl: string | null = null;
+
+  if (photoData) {
+    // Try uploading to Supabase Storage first
+    const storageUrl = await uploadPhotoToStorage(supabase, user.id, partyId, photoData);
+    photoUrl = storageUrl ?? photoData; // Fallback to base64 if storage unavailable
+  } else {
+    // Photo removal — clean up storage
+    await deletePhotoFromStorage(supabase, user.id, partyId);
+  }
+
   // Update photo and frame
   const { error: updateError } = await supabase
     .from('parties')
     .update({
-      child_photo_url: photoData,
+      child_photo_url: photoUrl,
       child_photo_frame: frame,
     })
     .eq('id', partyId);
@@ -58,5 +70,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Kunde inte spara foto' }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true, frame });
+  return NextResponse.json({ success: true, frame, photoUrl });
 }

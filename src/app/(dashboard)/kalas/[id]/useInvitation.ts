@@ -177,7 +177,7 @@ export function useInvitation({
         setError(data.error || 'Kunde inte ladda upp foto');
         return;
       }
-      setPhotoUrl(dataUrl);
+      setPhotoUrl(data.photoUrl ?? dataUrl);
       setPhotoFrame(frame);
     } catch {
       setError('Något gick fel vid uppladdning');
