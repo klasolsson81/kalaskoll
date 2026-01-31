@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InvitationCard } from '@/components/cards/InvitationCard';
 import { TemplateCard, TemplatePicker } from '@/components/templates';
-import { InvitationPreviewDialog } from './InvitationPreviewDialog';
 import { AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
@@ -61,7 +60,6 @@ export function InvitationSection({
   const [activeTemplate, setActiveTemplate] = useState<string | null>(invitationTemplate);
   const [showPicker, setShowPicker] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
 
   // Determine active mode
   const activeMode: 'template' | 'ai' | null = activeTemplate
@@ -266,15 +264,6 @@ export function InvitationSection({
             </Button>
           )}
           {activeMode && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPreviewOpen(true)}
-            >
-              Förhandsgranska
-            </Button>
-          )}
-          {activeMode && (
             <Button variant="outline" size="sm" onClick={handlePrint}>
               Skriv ut
             </Button>
@@ -282,10 +271,10 @@ export function InvitationSection({
         </div>
       </CardHeader>
 
-      {/* Full-size card — visible when expanded, or hidden but in DOM for print when preview dialog is open */}
-      {(expanded || previewOpen) && !showPicker && activeMode && (
-        <CardContent className={cn('pb-2', !expanded && 'hidden print:block')}>
-          {error && expanded && <p className="mb-2 text-sm text-red-600">{error}</p>}
+      {/* Full-size card — only when expanded */}
+      {expanded && !showPicker && activeMode && (
+        <CardContent className="pb-2">
+          {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
 
           {activeMode === 'template' && activeTemplate && (
             <div data-print-area>
@@ -443,27 +432,6 @@ export function InvitationSection({
           </button>
         </div>
       </CardContent>
-
-      {/* Preview dialog */}
-      {activeMode && (
-        <InvitationPreviewDialog
-          open={previewOpen}
-          onOpenChange={setPreviewOpen}
-          onPrint={handlePrint}
-          activeMode={activeMode}
-          templateId={activeTemplate}
-          imageUrl={currentImageUrl}
-          childName={childName}
-          childAge={childAge}
-          partyDate={partyDate}
-          partyTime={partyTime}
-          venueName={venueName}
-          venueAddress={venueAddress}
-          rsvpDeadline={rsvpDeadline}
-          description={description}
-          token={token}
-        />
-      )}
     </Card>
   );
 }

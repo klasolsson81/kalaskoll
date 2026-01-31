@@ -4,13 +4,6 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Added
-- Print preview dialog: "Förhandsgranska" button on invitation section opens a dialog showing the card in A4 print layout
-- A4 aspect ratio (210/297) preview container simulates the printed page
-- Print directly from the preview dialog via "Skriv ut" button
-- `previewMode` prop on TemplateCard and InvitationCard for print-like rendering (no borders, absolute positioning)
-- Print works correctly even when the card is collapsed but the preview dialog is open
-
 ### Changed
 
 #### Illustrerade inbjudningsmallar (Gemini AI)
