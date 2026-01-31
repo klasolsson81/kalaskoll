@@ -14,12 +14,14 @@ const MOCK_IMAGES: Record<string, string> = {
 interface GenerateWithReplicateOptions {
   theme: string;
   style: AiStyle;
+  customPrompt?: string;
   forceLive?: boolean;
 }
 
 export async function generateWithReplicate({
   theme,
   style,
+  customPrompt,
   forceLive,
 }: GenerateWithReplicateOptions): Promise<string> {
   if (MOCK_MODE && !forceLive) {
@@ -32,7 +34,7 @@ export async function generateWithReplicate({
     auth: process.env.REPLICATE_API_TOKEN,
   });
 
-  const prompt = buildPrompt(style, theme);
+  const prompt = buildPrompt({ style, theme, customPrompt });
 
   const output = await replicate.run('black-forest-labs/flux-schnell', {
     input: {

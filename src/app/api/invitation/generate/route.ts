@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { partyId, theme: requestTheme, style } = parsed.data;
+  const { partyId, theme: requestTheme, style, customPrompt } = parsed.data;
 
   // Fetch party details
   const { data: party, error: partyError } = await supabase
@@ -122,6 +122,7 @@ export async function POST(request: NextRequest) {
     tempImageUrl = await generateWithReplicate({
       theme: resolvedTheme,
       style: resolvedStyle,
+      customPrompt,
       forceLive,
     });
   } catch (replicateError) {
@@ -130,7 +131,7 @@ export async function POST(request: NextRequest) {
       tempImageUrl = await generateInvitationImageFallback(
         resolvedTheme,
         resolvedStyle,
-        { forceLive },
+        { customPrompt, forceLive },
       );
     } catch (openaiError) {
       console.error('[AI] OpenAI fallback failed:', openaiError);

@@ -28,6 +28,14 @@ const THEME_DESCRIPTION: Record<string, string> = {
     'magical unicorns, rainbow arcs, pastel clouds, glittering stars',
   pirater:
     'a pirate treasure map, wooden ship, compass rose, treasure chest, ocean waves',
+  cirkus:
+    'a colorful circus tent, acrobats, juggling balls, popcorn, carnival lights',
+  safari:
+    'African savanna with friendly lions, giraffes, elephants, acacia trees, sunset sky',
+  blommor:
+    'a lush garden with colorful wildflowers, butterflies, ladybugs, green meadow',
+  'regnbåge':
+    'a bright rainbow arching across a blue sky with fluffy clouds and sunshine',
   default:
     'colorful balloons, confetti, streamers, wrapped presents, party hats',
 };
@@ -39,18 +47,33 @@ const STYLE_QUALITY: Record<AiStyle, string> = {
   photorealistic: 'sharp focus, professional studio lighting, bokeh background',
 };
 
-export function buildPrompt(style: AiStyle, theme: string): string {
+interface BuildPromptOptions {
+  style: AiStyle;
+  theme: string;
+  customPrompt?: string;
+}
+
+export function buildPrompt({ style, theme, customPrompt }: BuildPromptOptions): string {
   const prefix = STYLE_PREFIX[style];
   const themeDesc = THEME_DESCRIPTION[theme] || THEME_DESCRIPTION.default;
   const quality = STYLE_QUALITY[style];
 
-  return [
+  const parts = [
     `${prefix} of a children's birthday party invitation background`,
     `featuring ${themeDesc}.`,
+  ];
+
+  if (customPrompt) {
+    parts.push(`Also include: ${customPrompt}.`);
+  }
+
+  parts.push(
     'Leave the center area relatively clear for text overlay.',
     'No text, no letters, no numbers, no words anywhere in the image.',
     'Vertical portrait orientation.',
     'Joyful, festive, and child-friendly mood.',
     quality,
-  ].join(' ');
+  );
+
+  return parts.join(' ');
 }

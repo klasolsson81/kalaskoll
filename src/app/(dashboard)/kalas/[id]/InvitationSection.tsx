@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PhotoCropDialog } from '@/components/shared/PhotoCropDialog';
 import { AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
-import type { PhotoFrame as PhotoFrameType, AiStyle } from '@/lib/constants';
+import type { PhotoFrame as PhotoFrameType } from '@/lib/constants';
 
 import { InvitationPreview } from './InvitationPreview';
 import { PhotoUploadSection } from './PhotoUploadSection';
 import { TemplateColumn } from './TemplateColumn';
 import { AiColumn } from './AiColumn';
 import { AiGenerateDialog } from './AiGenerateDialog';
+import type { AiGenerateOptions } from './AiGenerateDialog';
 
 interface PartyImage {
   id: string;
@@ -130,7 +131,7 @@ export function InvitationSection({
     }
   }
 
-  async function generateImage(style: AiStyle = 'cartoon') {
+  async function generateImage(options: AiGenerateOptions) {
     setGenerating(true);
     setShowGenerateDialog(false);
     setError(null);
@@ -138,7 +139,12 @@ export function InvitationSection({
       const res = await fetch('/api/invitation/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partyId, theme: theme || 'default', style }),
+        body: JSON.stringify({
+          partyId,
+          theme: options.theme,
+          style: options.style,
+          customPrompt: options.customPrompt || undefined,
+        }),
       });
 
       const data = await res.json();
@@ -364,9 +370,9 @@ export function InvitationSection({
       {/* AI style picker dialog */}
       {showGenerateDialog && (
         <AiGenerateDialog
-          theme={theme}
+          partyTheme={theme}
           generating={generating}
-          onGenerate={(style) => generateImage(style)}
+          onGenerate={generateImage}
           onCancel={() => setShowGenerateDialog(false)}
         />
       )}

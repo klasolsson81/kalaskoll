@@ -4,19 +4,19 @@ import { buildPrompt } from './prompts';
 
 /**
  * Fallback image generation via OpenAI DALL-E 3.
- * Used if fal.ai fails.
+ * Used if Replicate fails.
  */
 export async function generateInvitationImageFallback(
   theme: string,
   style: AiStyle,
-  options?: { forceLive?: boolean },
+  options?: { customPrompt?: string; forceLive?: boolean },
 ): Promise<string> {
   if (MOCK_MODE && !options?.forceLive) {
     console.log('[MOCK] OpenAI fallback - returning placeholder');
     return '/mock/invitation-default.svg';
   }
 
-  const prompt = buildPrompt(style, theme);
+  const prompt = buildPrompt({ style, theme, customPrompt: options?.customPrompt });
 
   const response = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',

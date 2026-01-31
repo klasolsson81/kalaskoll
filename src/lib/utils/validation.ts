@@ -170,6 +170,7 @@ export const generateImageSchema = z.object({
   partyId: z.string().uuid('Ogiltigt kalas-ID'),
   theme: z.string().optional(),
   style: z.enum(['cartoon', '3d', 'watercolor', 'photorealistic']).default('cartoon'),
+  customPrompt: z.string().max(200).optional(),
 });
 
 export type GenerateImageFormData = z.infer<typeof generateImageSchema>;
