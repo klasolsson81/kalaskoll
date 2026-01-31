@@ -93,16 +93,17 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
           <h3 className="mb-1 font-bold text-foreground">3. Hälsodata och allergier</h3>
           <p>
             Allergiinformation klassas som hälsodata under GDPR artikel 9 och kräver uttryckligt
-            samtycke. Vi lagrar allergidata separat från övrig information. All allergidata raderas
-            automatiskt 7 dagar efter kalasets datum.
+            samtycke. Vi lagrar allergidata separat från övrig information och krypterar den med
+            AES-256-GCM. All allergidata raderas automatiskt 7 dagar efter kalasets datum.
           </p>
         </section>
         <section>
           <h3 className="mb-1 font-bold text-foreground">4. Datalagring</h3>
           <p>
             All data lagras inom EU via Supabase (PostgreSQL). Vi använder krypterade anslutningar
-            (TLS) och Row Level Security för att säkerställa att data bara är tillgänglig för
-            behöriga användare.
+            (TLS), AES-256-GCM-kryptering för hälsodata och Row Level Security för att säkerställa
+            att data bara är tillgänglig för behöriga användare. Foton lagras i Supabase Storage
+            med åtkomstkontroll.
           </p>
         </section>
         <section>

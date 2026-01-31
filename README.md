@@ -11,7 +11,7 @@ Svensk webapp for att hantera barnkalas-inbjudningar med AI-genererade inbjudnin
 - **QR-kod OSA** — Skriv ut inbjudan med QR-kod, gasterna skannar och svarar via mobilen
 - **Realtids-gastlista** — Se svar live via Supabase Realtime
 - **Manuell gasthantering** — Lagg till, redigera och ta bort gaster direkt pa gastlistan
-- **Allergihantering** — GDPR-kompatibel lagring med samtycke och auto-radering
+- **Allergihantering** — GDPR-kompatibel lagring med AES-256-GCM kryptering, samtycke och auto-radering
 - **E-post och SMS** — Skicka inbjudningar via Resend (e-post) eller 46elks (SMS), med automatisk forifyld e-post/telefon i OSA-formularet
 - **Sparade barn** — Spara barn pa profilen med foto, auto-kopieras till nya kalas
 - **Profilhantering** — Redigera namn, telefon och losenord
@@ -77,11 +77,11 @@ src/
     ai/              # Replicate Flux + OpenAI DALL-E + promptbyggare
     sms/             # 46elks
     email/           # Resend
-    utils/           # Validation (Zod), format, SEO
+    utils/           # Validation (Zod), format, SEO, crypto, audit, storage
 public/
   assets/templates/  # 9 illustrerade bakgrundsbilder (PNG)
 tests/
-  unit/              # 122 tester (validation, format, schemas)
+  unit/              # 133 tester (validation, format, crypto, SMS, schemas)
 ```
 
 ## Dokumentation

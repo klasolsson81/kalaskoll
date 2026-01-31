@@ -1,6 +1,6 @@
 # API-dokumentation
 
-> Senast uppdaterad: 2026-01-31
+> Senast uppdaterad: 2026-01-31 (Tech Debt Sprint)
 
 Alla API-endpoints finns under `src/app/api/`. Autentisering sker via Supabase Auth (session cookie).
 
@@ -33,8 +33,10 @@ Skicka OSA-svar (publikt, ingen auth krävs).
 
 **Beteende:**
 - Genererar kryptografisk `edit_token` (64 hex-tecken)
+- Krypterar allergidata med AES-256-GCM innan lagring
 - Sparar allergidata separat med auto-radering (kalasdatum + 7 dagar)
 - Skickar bekräftelsemail via Resend (fire-and-forget)
+- Loggar `rsvp.submit` till audit_log
 - En unik kombination av `invitation_id + parent_email`
 
 ---
@@ -82,6 +84,8 @@ Request body: samma som `POST /api/rsvp` men med `editToken` istället för `tok
 
 **Beteende:**
 - Uppdaterar befintligt svar (tar bort gammal allergidata, lägger till ny)
+- Krypterar allergidata med AES-256-GCM
+- Dekrypterar befintlig data vid GET (stöder legacy okrypterad data)
 - Skickar ny bekräftelsemail
 
 ---
@@ -232,7 +236,12 @@ Ladda upp barnfoto till inbjudningskort. **Kräver auth + kalas-ägarskap.**
 | `photoData` | string\|null | Ja | Base64 data-URL (null = ta bort) |
 | `frame` | string | Nej | `circle` (default), `star`, `heart`, `diamond` |
 
-**Svar:** `{ success: true }`
+**Svar:** `{ success: true, frame: string, photoUrl: string | null }`
+
+**Beteende:**
+- Laddar upp till Supabase Storage (`child-photos` bucket) om tillgängligt
+- Faller tillbaka till base64 data-URL om Storage ej konfigurerat
+- Vid `photoData: null` raderas foto från Storage
 
 ---
 
@@ -246,7 +255,12 @@ Ladda upp barnfoto till sparad barnprofil. **Kräver auth + barn-ägarskap.**
 | `photoData` | string\|null | Ja | Base64 data-URL (null = ta bort) |
 | `frame` | string | Nej | `circle` (default), `star`, `heart`, `diamond` |
 
-**Svar:** `{ success: true }`
+**Svar:** `{ success: true, frame: string }`
+
+**Beteende:**
+- Laddar upp till Supabase Storage (`child-photos` bucket) om tillgängligt
+- Faller tillbaka till base64 data-URL om Storage ej konfigurerat
+- Vid `photoData: null` raderas foto från Storage
 
 ---
 
@@ -273,6 +287,7 @@ Ta bort användarkonto. **Kräver auth.** (Tillfällig endpoint för testning.)
 - `401` — `{ error: "Not authenticated" }`
 
 **Beteende:**
+- Loggar `account.delete` till audit_log innan radering
 - Raderar användare via Supabase admin-klient
 - Loggar ut användare efter radering
 - CASCADE: all data (profil, kalas, inbjudningar, OSA-svar) raderas automatiskt

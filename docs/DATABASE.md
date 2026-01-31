@@ -1,6 +1,6 @@
 # Databasschema och RLS
 
-> Senast uppdaterad: 2026-01-30
+> Senast uppdaterad: 2026-01-31
 >
 > Databas: Supabase (PostgreSQL), EU-region
 
@@ -34,6 +34,8 @@ Sparade barn per användare (återanvänds vid kalas-skapande).
 | `owner_id` | UUID (FK) | Nej | Refererar till `profiles(id)`, CASCADE |
 | `name` | TEXT | Nej | Barnets namn |
 | `birth_date` | DATE | Nej | Födelsedatum |
+| `photo_url` | TEXT | Ja | Barnfoto (Supabase Storage URL eller base64 data-URL) |
+| `photo_frame` | TEXT | Ja | Ram: `circle`, `star`, `heart`, `diamond` (default: `circle`) |
 | `created_at` | TIMESTAMPTZ | Nej | Auto |
 | `updated_at` | TIMESTAMPTZ | Nej | Auto |
 
@@ -62,6 +64,9 @@ Kalas. Ägs av en användare.
 | `description` | TEXT | Ja | Beskrivning |
 | `theme` | TEXT | Ja | Tema (dinosaurier, prinsessor etc) |
 | `invitation_image_url` | TEXT | Ja | AI-genererad inbjudningsbild |
+| `invitation_template` | TEXT | Ja | Mallnamn (t.ex. `dinosaurier`) |
+| `child_photo_url` | TEXT | Ja | Barnfoto (Supabase Storage URL eller base64 data-URL) |
+| `child_photo_frame` | TEXT | Ja | Ram: `circle`, `star`, `heart`, `diamond` (default: `circle`) |
 | `rsvp_deadline` | DATE | Ja | Sista OSA-datum |
 | `max_guests` | INTEGER | Ja | Max antal gäster |
 | `created_at` | TIMESTAMPTZ | Nej | Auto |
@@ -142,7 +147,46 @@ GDPR-skyddad hälsodata. Separat tabell med auto-radering.
 
 **Index:** `idx_allergy_delete` på `auto_delete_at`.
 
-**GDPR:** Raderas automatiskt via schemalagd Supabase Edge Function efter `auto_delete_at`.
+**GDPR:**
+- Krypteras med AES-256-GCM vid insättning (`src/lib/utils/crypto.ts`)
+- Raderas automatiskt via pg_cron jobb dagligen kl 03:00 UTC (migration `00014`)
+- Edge Function fallback finns som backup
+
+---
+
+### party_images
+
+AI-genererade bilder per kalas. Max 5 per kalas (admins obegränsade).
+
+| Kolumn | Typ | Nullable | Beskrivning |
+|--------|-----|----------|-------------|
+| `id` | UUID (PK) | Nej | Auto-genererad |
+| `party_id` | UUID (FK) | Nej | Refererar till `parties(id)`, CASCADE |
+| `image_url` | TEXT | Nej | URL till genererad bild |
+| `is_selected` | BOOLEAN | Nej | Om bilden är aktiv (default: `false`) |
+| `created_at` | TIMESTAMPTZ | Nej | Auto |
+
+**RLS:** Ägare kan hantera (ALL via JOIN parties).
+
+---
+
+### audit_log
+
+Händelselogg för säkerhet och felsökning. Rensas automatiskt efter 90 dagar.
+
+| Kolumn | Typ | Nullable | Beskrivning |
+|--------|-----|----------|-------------|
+| `id` | UUID (PK) | Nej | Auto-genererad |
+| `user_id` | UUID | Ja | Användare (null för anonyma händelser) |
+| `action` | TEXT | Nej | Händelse (t.ex. `rsvp.submit`, `party.create`) |
+| `resource_type` | TEXT | Ja | Resurstyp (t.ex. `rsvp`, `party`) |
+| `resource_id` | TEXT | Ja | Resurs-ID |
+| `metadata` | JSONB | Ja | Extra data |
+| `created_at` | TIMESTAMPTZ | Nej | Auto |
+
+**RLS:** Användare kan läsa egna loggposter. Alla kan infoga.
+
+**Cleanup:** pg_cron jobb raderar poster äldre än 90 dagar dagligen kl 04:00 UTC.
 
 ---
 
@@ -211,6 +255,14 @@ Spårar SMS-förbrukning per användare och månad. Överlever kalas-radering (`
 | 7 | `00007_create_invited_guests.sql` | invited_guests-tabell, RLS |
 | 8 | `00008_create_children.sql` | children-tabell, child_id FK på parties |
 | 9 | `00009_add_sms_support.sql` | sms_usage-tabell, phone/invite_method på invited_guests |
+| 10 | `00010_create_party_images.sql` | party_images-tabell med RLS |
+| 11 | `00011_add_invitation_template.sql` | invitation_template kolumn på parties |
+| 12 | `00012_party_child_photo.sql` | child_photo_url + child_photo_frame på parties |
+| 13 | `00013_child_photo.sql` | photo_url + photo_frame på children |
+| 14 | `00014_allergy_auto_delete_cron.sql` | pg_cron jobb för allergidata-radering (03:00 UTC) |
+| 15 | `00015_tighten_rsvp_update_rls.sql` | Striktare UPDATE RLS-policy på rsvp_responses |
+| 16 | `00016_audit_log.sql` | audit_log-tabell, RLS, pg_cron cleanup (90 dagar) |
+| 17 | `00017_child_photo_storage.sql` | child-photos Storage bucket med RLS-policies |
 
 ---
 
@@ -226,11 +278,14 @@ profiles ──── children (1:N)
 parties ──── invitations (1:1)
     │              │
     │              ▼ (1:N)
-    │         rsvp_responses ──── allergy_data (1:1)
+    │         rsvp_responses ──── allergy_data (1:1, krypterad)
     │
+    ├──── party_images (1:N)
     ├──── invited_guests (1:N)
     │
     └──── sms_usage (via user_id, N:1 till profiles)
+
+audit_log (fristående, 90 dagars retention)
 ```
 
 ---

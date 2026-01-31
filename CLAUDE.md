@@ -39,6 +39,8 @@ Förenkla kalasplanering för svenska föräldrar genom att eliminera kaos med p
 | UI-komponenter | shadcn/ui | latest |
 | Databas | Supabase (PostgreSQL) | – |
 | Auth | Supabase Auth | – |
+| Storage | Supabase Storage | – |
+| Rate Limiting | Upstash Redis | – |
 | QR-koder | qrcode.react | latest |
 | AI-bilder | Replicate Flux / OpenAI | – |
 | SMS | 46elks API | – |
@@ -95,14 +97,19 @@ kalaskoll/
 │   │   │   │   ├── [id]/AiColumn.tsx          # AI/Guldkalas-kolumn
 │   │   │   │   ├── [id]/AiGenerateDialog.tsx  # Stil/motiv-väljare modal
 │   │   │   │   ├── [id]/InvitationPreview.tsx # Fullstor förhandsvisning
-│   │   │   │   ├── [id]/InvitationSection.tsx # Orkestrerare
+│   │   │   │   ├── [id]/InvitationSection.tsx # Orkestrerare (tunn render-layer)
+│   │   │   │   ├── [id]/useInvitation.ts     # Hook: all state + API logic
 │   │   │   │   ├── [id]/PhotoUploadSection.tsx
 │   │   │   │   ├── [id]/TemplateColumn.tsx    # Gratis-mallar-kolumn
 │   │   │   │   ├── [id]/SendInvitationsSection.tsx
 │   │   │   │   ├── [id]/DeletePartyButton.tsx
 │   │   │   │   ├── [id]/guests/
 │   │   │   │   │   ├── page.tsx
-│   │   │   │   │   ├── GuestListRealtime.tsx
+│   │   │   │   │   ├── GuestListRealtime.tsx  # Orkestrerare (~160 rader)
+│   │   │   │   │   ├── AddGuestForm.tsx       # Extraherad subkomponent
+│   │   │   │   │   ├── EditGuestForm.tsx      # Extraherad subkomponent
+│   │   │   │   │   ├── GuestRow.tsx           # Extraherad subkomponent
+│   │   │   │   │   ├── types.ts              # Delade typer (Guest, AllergyInfo, InvitedGuest)
 │   │   │   │   │   └── actions.ts       # Manuell gäst CRUD
 │   │   │   │   └── new/page.tsx
 │   │   │   ├── profile/
@@ -150,7 +157,8 @@ kalaskoll/
 │   │   │   └── index.ts
 │   │   ├── layout/
 │   │   │   ├── Header.tsx
-│   │   │   ├── Footer.tsx
+│   │   │   ├── Footer.tsx           # Sitewide footer med modaler (5 policies)
+│   │   │   ├── FooterModal.tsx      # Återanvändbar modal-shell
 │   │   │   └── Sidebar.tsx
 │   │   └── shared/
 │   │       ├── QRCode.tsx
@@ -178,6 +186,10 @@ kalaskoll/
 │   │   ├── utils/
 │   │   │   ├── format.ts          # Datum, telefon etc
 │   │   │   ├── validation.ts      # Zod schemas
+│   │   │   ├── crypto.ts          # AES-256-GCM kryptering (allergidata)
+│   │   │   ├── audit.ts           # Fire-and-forget audit logging
+│   │   │   ├── storage.ts         # Supabase Storage upload/delete
+│   │   │   ├── rate-limit.ts      # Upstash Redis rate limiting
 │   │   │   └── seo.ts             # SEO helpers
 │   │   └── constants.ts           # App-wide constants
 │   ├── hooks/
@@ -191,7 +203,7 @@ kalaskoll/
 │   └── styles/
 │       └── globals.css
 ├── supabase/
-│   ├── migrations/                # SQL migrations
+│   ├── migrations/                # SQL migrations (00001–00017)
 │   ├── seed.sql                   # Test data
 │   └── config.toml
 ├── tests/
@@ -289,7 +301,7 @@ const AllergyConsent = () => (
 // Supabase scheduled function: party_date + 7 dagar
 
 // ✅ KRAV 3: Kryptera hälsodata
-// Använd Supabase Vault eller pgcrypto
+// AES-256-GCM via src/lib/utils/crypto.ts (ALLERGY_ENCRYPTION_KEY)
 
 // ✅ KRAV 4: RLS - endast partyOwner kan se allergidata
 ```
@@ -357,15 +369,26 @@ CREATE TABLE rsvp_responses (
   UNIQUE(invitation_id)                -- ett svar per inbjudan
 );
 
--- allergy_data (SEPARAT för GDPR - hälsodata)
+-- allergy_data (SEPARAT för GDPR - hälsodata, krypterad med AES-256-GCM)
 CREATE TABLE allergy_data (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   rsvp_id UUID REFERENCES rsvp_responses(id) ON DELETE CASCADE NOT NULL,
-  allergies JSONB,                     -- ['laktos', 'gluten', 'nötter']
-  other_dietary TEXT,                  -- fritext
+  allergies JSONB,                     -- krypterad base64-sträng (eller legacy ['laktos', 'gluten'])
+  other_dietary TEXT,                  -- krypterad base64-sträng (eller legacy fritext)
   consent_given_at TIMESTAMPTZ NOT NULL,
   auto_delete_at TIMESTAMPTZ NOT NULL, -- party_date + 7 days
   UNIQUE(rsvp_id)
+);
+
+-- audit_log (händelselogg, 90 dagars retention)
+CREATE TABLE audit_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID,
+  action TEXT NOT NULL,                -- t.ex. 'rsvp.submit', 'party.create'
+  resource_type TEXT,
+  resource_id TEXT,
+  metadata JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- invited_guests (spårar skickade inbjudningar)
@@ -398,7 +421,7 @@ CREATE TABLE children (
   owner_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
   birth_date DATE NOT NULL,
-  photo_url TEXT,                      -- barnfoto (base64 data-URL)
+  photo_url TEXT,                      -- barnfoto (Supabase Storage URL eller base64 fallback)
   photo_frame TEXT DEFAULT 'circle',   -- ram: circle/star/heart/diamond
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -854,6 +877,13 @@ RESEND_FROM_EMAIL=KalasKoll <noreply@send.kalaskoll.se>
 ELKS_API_USERNAME=your-46elks-username
 ELKS_API_PASSWORD=your-46elks-password
 
+# Encryption
+ALLERGY_ENCRYPTION_KEY=             # base64-encoded 32-byte key (openssl rand -base64 32)
+
+# Rate Limiting (Upstash Redis)
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+
 # Analytics (optional)
 NEXT_PUBLIC_POSTHOG_KEY=
 NEXT_PUBLIC_POSTHOG_HOST=
@@ -870,6 +900,9 @@ NEXT_PUBLIC_POSTHOG_HOST=
 | `RESEND_FROM_EMAIL` | Production, Preview | Avsändaradress för e-post |
 | `ELKS_API_USERNAME` | Production, Preview | 46elks API-användarnamn (SMS) |
 | `ELKS_API_PASSWORD` | Production, Preview | 46elks API-lösenord (SMS) |
+| `ALLERGY_ENCRYPTION_KEY` | Production, Preview | AES-256-GCM nyckel (base64, 32 bytes) |
+| `UPSTASH_REDIS_REST_URL` | Production, Preview | Upstash Redis URL (rate limiting) |
+| `UPSTASH_REDIS_REST_TOKEN` | Production, Preview | Upstash Redis token |
 
 > ⚠️ **ALDRIG** commita `.env.local` eller faktiska secrets!
 

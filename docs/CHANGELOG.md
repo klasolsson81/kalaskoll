@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+
+#### Tech Debt Sprint (TD-01 till TD-19)
+- **AES-256-GCM allergy encryption** (TD-08): All allergy data encrypted at rest with AES-256-GCM. `src/lib/utils/crypto.ts` with `encrypt`/`decrypt`, `encryptAllergyData`/`decryptAllergyData`. Graceful fallback for legacy unencrypted data and missing `ALLERGY_ENCRYPTION_KEY`.
+- **Supabase Storage for photos** (TD-03): Child photos uploaded to `child-photos` Supabase Storage bucket with RLS policies. Falls back to base64 data-URL if storage unavailable. `src/lib/utils/storage.ts` with `uploadPhotoToStorage`/`deletePhotoFromStorage`. Migration `00017`.
+- **Audit trail** (TD-10): `audit_log` table (migration `00016`) with RLS and pg_cron cleanup (90 days). Fire-and-forget logging via `src/lib/utils/audit.ts`. Events: `rsvp.submit`, `party.create`, `account.delete`.
+- **Unit tests** (TD-06): 11 new tests — crypto round-trip, random IV, legacy fallback (7); SMS message builder content, length, long-input fallback (4). Total: **133 tests across 9 files**.
+- **ARIA accessibility** (TD-18): `role="alert"` on error messages, `aria-pressed` on RSVP toggles, `role="dialog"` + `aria-modal` + `aria-labelledby` on dialogs, `role="img"` on QR code, `role="group"` on allergy checkboxes.
+- **Client-side Zod validation** (TD-05): RSVP form validates with `rsvpSchema.safeParse()` before API call, showing Swedish error messages without server round-trip.
+- **Client-side phone validation** (TD-11): SMS phone input validated with `sendSmsInvitationSchema.safeParse()` before API call.
+- **SEO domain env var** (TD-13): `NEXT_PUBLIC_SITE_URL` environment variable replaces hardcoded `kalaskoll.se` in SEO metadata.
+- **Image error fallbacks** (TD-19): `onError` handlers on `next/image` components with graceful fallback UI.
+
+### Changed
+
+#### Tech Debt Sprint (TD-01 till TD-19)
+- **Refactored InvitationSection** (TD-01): Extracted `useInvitation` hook with all state + API logic. Component reduced from ~400 to ~170 lines.
+- **Refactored GuestListRealtime** (TD-02): Extracted `AddGuestForm`, `EditGuestForm`, `GuestRow`, and shared `types.ts`. Component reduced from ~460 to ~160 lines.
+- **Email/SMS delivery logging** (TD-17): Structured `console.log`/`console.error` logging with `SendResult` pattern for both Resend email and 46elks SMS. Email functions return `{ success, error? }` instead of throwing.
+- **Tightened RSVP UPDATE RLS** (TD-09): RLS policy restricts updates to own response via `edit_token` column match (migration `00015`).
+
+### Added
 - **Allergy auto-delete** (MVP-1): pg_cron job (migration `00014`) that deletes expired allergy data daily at 03:00 UTC. GDPR art. 9 compliance. Also includes Edge Function fallback.
 - **Persistent rate limiting** (MVP-2): Replaced in-memory `Map` with Upstash Redis (`@upstash/ratelimit`) on RSVP routes. Falls back to allow-all if Upstash not configured (dev-friendly).
 - Shared `isRateLimited()` utility in `src/lib/utils/rate-limit.ts`
