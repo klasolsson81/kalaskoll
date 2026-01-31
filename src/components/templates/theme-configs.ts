@@ -3,12 +3,14 @@ import type { CSSProperties } from 'react';
 export interface TemplateThemeConfig {
   id: string;
   label: string;
+  bgImage: string;
   bgGradient: string;
   patternStyle?: CSSProperties;
   headlineColor: string;
   subtitleColor: string;
   detailColor: string;
   accentBorder: string;
+  textShadow?: string;
   emoji: string;
   headlineClass: string;
   subtitleClass: string;
@@ -17,20 +19,16 @@ export interface TemplateThemeConfig {
 }
 
 export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
-  // 1. WARM AMBER — light festive gold with confetti dots
+  // 1. WARM AMBER — balloons, confetti, party hats
   default: {
     id: 'default',
     label: 'Klassiskt kalas',
+    bgImage: '/assets/templates/default.png',
     bgGradient: 'bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50',
-    patternStyle: {
-      backgroundImage:
-        'radial-gradient(circle, rgba(251,191,36,0.15) 1px, transparent 1px)',
-      backgroundSize: '20px 20px',
-    },
     headlineColor: 'text-amber-800',
     subtitleColor: 'text-orange-600',
     detailColor: 'text-amber-900',
-    accentBorder: 'border-amber-300',
+    accentBorder: 'border-amber-400/60',
     emoji: '🎈🎉🎈🎉🎈',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
@@ -38,16 +36,12 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white',
   },
 
-  // 2. MEDIUM GREEN — saturated lime-to-emerald with leaf veins
+  // 2. DINOSAURIER — jungle leaves, friendly dinos
   dinosaurier: {
     id: 'dinosaurier',
     label: 'Dinosaurier',
+    bgImage: '/assets/templates/dinosaurier.png',
     bgGradient: 'bg-gradient-to-b from-lime-200 via-green-300 to-emerald-400',
-    patternStyle: {
-      backgroundImage:
-        'repeating-linear-gradient(160deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 2px, transparent 2px, transparent 18px)',
-      backgroundSize: '18px 18px',
-    },
     headlineColor: 'text-green-950',
     subtitleColor: 'text-green-800',
     detailColor: 'text-green-950',
@@ -59,21 +53,16 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white/90',
   },
 
-  // 3. SATURATED PINK — rich pink/magenta with sparkle shimmer
+  // 3. PRINSESSOR — castle, roses, crowns, sparkle
   prinsessor: {
     id: 'prinsessor',
     label: 'Prinsessor',
+    bgImage: '/assets/templates/prinsessor.png',
     bgGradient: 'bg-gradient-to-b from-pink-200 via-fuchsia-200 to-pink-300',
-    patternStyle: {
-      backgroundImage:
-        'radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px), radial-gradient(circle, rgba(236,72,153,0.15) 1px, transparent 1px)',
-      backgroundSize: '16px 16px, 32px 32px',
-      backgroundPosition: '0 0, 8px 8px',
-    },
     headlineColor: 'text-fuchsia-900',
     subtitleColor: 'text-pink-700',
     detailColor: 'text-fuchsia-950',
-    accentBorder: 'border-pink-400',
+    accentBorder: 'border-pink-400/60',
     emoji: '👑✨🏰✨👑',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
@@ -81,20 +70,17 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white/90',
   },
 
-  // 4. BOLD RED+BLUE — vivid comic-book gradient with action lines
+  // 4. SUPERHJÄLTAR — comic-book burst, capes, masks
   superhjältar: {
     id: 'superhjältar',
     label: 'Superhjältar',
+    bgImage: '/assets/templates/superhjaltar.png',
     bgGradient: 'bg-gradient-to-br from-red-500 via-yellow-400 to-blue-600',
-    patternStyle: {
-      backgroundImage:
-        'repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 4px, transparent 4px, transparent 20px)',
-      backgroundSize: '28px 28px',
-    },
     headlineColor: 'text-white',
     subtitleColor: 'text-yellow-100',
     detailColor: 'text-white',
-    accentBorder: 'border-yellow-300',
+    accentBorder: 'border-yellow-300/60',
+    textShadow: '0 2px 6px rgba(0,0,0,0.7)',
     emoji: '⚡💥⭐💥⚡',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight uppercase',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
@@ -102,20 +88,17 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white',
   },
 
-  // 5. FOOTBALL PITCH GREEN — deep green field with pitch lines
+  // 5. FOTBOLL — pitch, trophies, balls, cleats
   fotboll: {
     id: 'fotboll',
     label: 'Fotboll',
+    bgImage: '/assets/templates/fotboll.png',
     bgGradient: 'bg-gradient-to-b from-green-700 via-green-600 to-green-700',
-    patternStyle: {
-      backgroundImage:
-        'linear-gradient(to bottom, transparent 18%, rgba(255,255,255,0.12) 18%, rgba(255,255,255,0.12) 82%, transparent 82%), repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(255,255,255,0.04) 28px, rgba(255,255,255,0.04) 30px)',
-      backgroundSize: '100% 100%, 100% 30px',
-    },
     headlineColor: 'text-white',
     subtitleColor: 'text-green-100',
     detailColor: 'text-white',
     accentBorder: 'border-white/40',
+    textShadow: '0 2px 6px rgba(0,0,0,0.7)',
     emoji: '⚽🏆⚽🏆⚽',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
@@ -123,21 +106,17 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white',
   },
 
-  // 6. DARK SPACE — deep indigo/purple with stars (keep as-is)
+  // 6. RYMDEN — planets, rocket, stars, moon
   rymden: {
     id: 'rymden',
     label: 'Rymden',
+    bgImage: '/assets/templates/rymden.png',
     bgGradient: 'bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900',
-    patternStyle: {
-      backgroundImage:
-        'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)',
-      backgroundSize: '40px 40px, 90px 90px',
-      backgroundPosition: '0 0, 20px 30px',
-    },
     headlineColor: 'text-yellow-300',
-    subtitleColor: 'text-purple-300',
+    subtitleColor: 'text-purple-200',
     detailColor: 'text-indigo-100',
-    accentBorder: 'border-indigo-500',
+    accentBorder: 'border-indigo-400/40',
+    textShadow: '0 2px 6px rgba(0,0,0,0.7)',
     emoji: '🚀🪐⭐🪐🚀',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
@@ -145,21 +124,17 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white',
   },
 
-  // 7. DARK TROPICAL — deep teal/emerald with gold accents
+  // 7. DJUNGEL — tropical leaves, lion, monkey, giraffe
   djungel: {
     id: 'djungel',
     label: 'Djungel',
+    bgImage: '/assets/templates/djungel.png',
     bgGradient: 'bg-gradient-to-b from-teal-800 via-emerald-700 to-green-900',
-    patternStyle: {
-      backgroundImage:
-        'radial-gradient(ellipse 80% 60%, rgba(255,255,255,0.05) 0%, transparent 70%), radial-gradient(circle, rgba(255,255,255,0.06) 2px, transparent 2px)',
-      backgroundSize: '80px 80px, 50px 50px',
-      backgroundPosition: '0 0, 25px 25px',
-    },
     headlineColor: 'text-yellow-300',
     subtitleColor: 'text-emerald-200',
     detailColor: 'text-teal-100',
     accentBorder: 'border-yellow-500/40',
+    textShadow: '0 2px 6px rgba(0,0,0,0.7)',
     emoji: '🦁🌴🐒🌴🦁',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
@@ -167,20 +142,16 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white',
   },
 
-  // 8. RAINBOW PASTEL — multi-color gradient (pink→violet→cyan)
+  // 8. ENHÖRNINGAR — rainbow, pastel clouds, unicorns
   enhörningar: {
     id: 'enhörningar',
     label: 'Enhörningar',
+    bgImage: '/assets/templates/enhorningar.png',
     bgGradient: 'bg-gradient-to-br from-pink-300 via-violet-300 to-cyan-200',
-    patternStyle: {
-      backgroundImage:
-        'radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1px)',
-      backgroundSize: '18px 18px',
-    },
     headlineColor: 'text-purple-900',
     subtitleColor: 'text-fuchsia-700',
     detailColor: 'text-purple-950',
-    accentBorder: 'border-white/50',
+    accentBorder: 'border-purple-300/60',
     emoji: '🦄🌈✨🌈🦄',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
@@ -188,20 +159,16 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     qrBgClass: 'bg-white/90',
   },
 
-  // 9. DARK BROWN/NAVY — old parchment treasure map feel
+  // 9. PIRATER — treasure map, ship, compass, chest
   pirater: {
     id: 'pirater',
     label: 'Pirater',
+    bgImage: '/assets/templates/pirater.png',
     bgGradient: 'bg-gradient-to-b from-amber-900 via-yellow-900 to-amber-950',
-    patternStyle: {
-      backgroundImage:
-        'repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 2px, transparent 2px, transparent 16px), radial-gradient(circle, rgba(255,200,100,0.08) 1px, transparent 1px)',
-      backgroundSize: '22px 22px, 30px 30px',
-    },
-    headlineColor: 'text-amber-200',
-    subtitleColor: 'text-yellow-400',
-    detailColor: 'text-amber-100',
-    accentBorder: 'border-amber-600',
+    headlineColor: 'text-amber-900',
+    subtitleColor: 'text-amber-700',
+    detailColor: 'text-amber-800',
+    accentBorder: 'border-amber-700/40',
     emoji: '🏴‍☠️💎🗺️💎🏴‍☠️',
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',

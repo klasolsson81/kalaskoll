@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { QRCode } from '@/components/shared/QRCode';
 import { cn } from '@/lib/utils';
 import { getThemeConfig } from './theme-configs';
@@ -32,23 +33,41 @@ export function TemplateCard({
   preview = false,
 }: TemplateCardProps) {
   const theme = getThemeConfig(templateId);
+  const hasImage = !!theme.bgImage;
+  const textStyle = theme.textShadow ? { textShadow: theme.textShadow } : undefined;
 
   if (preview) {
     return (
       <div
         className={cn(
           'relative aspect-[3/4] overflow-hidden',
-          theme.bgGradient,
-          theme.borderClass,
+          hasImage ? 'rounded-xl' : theme.borderClass,
+          !hasImage && theme.bgGradient,
         )}
       >
-        {/* Pattern overlay */}
-        {theme.patternStyle && (
+        {/* Background image */}
+        {hasImage && (
+          <Image
+            src={theme.bgImage}
+            alt={theme.label}
+            fill
+            className="object-cover"
+            sizes="128px"
+          />
+        )}
+
+        {/* CSS pattern fallback */}
+        {!hasImage && theme.patternStyle && (
           <div className="absolute inset-0" style={theme.patternStyle} />
         )}
 
-        <div className="relative flex h-full flex-col items-center justify-center px-3 py-4 text-center">
-          <p className="mb-1 text-xs leading-tight">{theme.emoji}</p>
+        <div
+          className="relative flex h-full flex-col items-center justify-center px-3 py-4 text-center"
+          style={textStyle}
+        >
+          {!hasImage && (
+            <p className="mb-1 text-xs leading-tight">{theme.emoji}</p>
+          )}
           <h3
             className={cn(
               'text-sm font-extrabold leading-tight sm:text-base',
@@ -75,7 +94,9 @@ export function TemplateCard({
             {venueName}
           </p>
 
-          <p className="mt-2 text-xs leading-tight">{theme.emoji}</p>
+          {!hasImage && (
+            <p className="mt-2 text-xs leading-tight">{theme.emoji}</p>
+          )}
         </div>
       </div>
     );
@@ -85,20 +106,40 @@ export function TemplateCard({
     <div
       className={cn(
         'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0',
-        theme.bgGradient,
-        theme.borderClass,
+        hasImage ? 'rounded-2xl' : theme.borderClass,
+        !hasImage && theme.bgGradient,
       )}
     >
-      {/* Pattern overlay */}
-      {theme.patternStyle && (
+      {/* Background image */}
+      {hasImage && (
+        <Image
+          src={theme.bgImage}
+          alt={theme.label}
+          fill
+          className="object-cover"
+          sizes="(max-width: 448px) 100vw, 448px"
+          priority
+        />
+      )}
+
+      {/* CSS pattern fallback */}
+      {!hasImage && theme.patternStyle && (
         <div className="absolute inset-0" style={theme.patternStyle} />
       )}
 
-      <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-8 text-center sm:px-8 sm:py-10">
-        {/* Top emoji decoration */}
-        <p className="mb-4 text-2xl tracking-widest sm:text-3xl">
-          {theme.emoji}
-        </p>
+      <div
+        className="relative flex flex-1 flex-col items-center justify-center px-6 py-8 text-center sm:px-8 sm:py-10"
+        style={textStyle}
+      >
+        {/* Top emoji decoration (fallback only) */}
+        {!hasImage && (
+          <p className="mb-4 text-2xl tracking-widest sm:text-3xl">
+            {theme.emoji}
+          </p>
+        )}
+
+        {/* Spacer when image (push content down from top decorations) */}
+        {hasImage && <div className="h-4 sm:h-6" />}
 
         {/* Headline */}
         <h2 className={cn(theme.headlineClass, theme.headlineColor)}>
@@ -163,10 +204,15 @@ export function TemplateCard({
           Scanna för att OSA
         </p>
 
-        {/* Bottom emoji decoration */}
-        <p className="mt-4 text-2xl tracking-widest sm:text-3xl">
-          {theme.emoji}
-        </p>
+        {/* Bottom emoji decoration (fallback only) */}
+        {!hasImage && (
+          <p className="mt-4 text-2xl tracking-widest sm:text-3xl">
+            {theme.emoji}
+          </p>
+        )}
+
+        {/* Spacer when image (push content up from bottom decorations) */}
+        {hasImage && <div className="h-4 sm:h-6" />}
       </div>
     </div>
   );

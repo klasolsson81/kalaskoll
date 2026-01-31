@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Illustrerade inbjudningsmallar (Gemini AI)
+- Replaced CSS-only gradient templates with 9 hand-crafted AI-generated background images
+- Each template now uses a high-quality illustration as full-bleed background with CSS text overlay
+- Images stored in `public/assets/templates/` (default, dinosaurier, prinsessor, superhjältar, fotboll, rymden, djungel, enhörningar, pirater)
+- TemplateCard uses Next.js Image for optimized loading (WebP, lazy load, responsive sizes)
+- Emoji decorations removed from image-based templates (illustrations have their own visual frames)
+- Text shadow added to dark-background themes (superhjältar, fotboll, rymden, djungel) for readability
+- Pirater template text colors changed from light to dark to match light parchment background
+- CSS gradients and patterns kept as fallback for any future templates without images
+- Auto-select matching template when creating a party with a known theme (e.g. theme "dinosaurier" → dinosaurier template)
+
 ### Added
 - Manual guest management: add, edit, and delete guests directly on the guest list
 - "Lägg till gäst" inline form on guest list page (name, attending, parent info, message)

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { partySchema } from '@/lib/utils/validation';
+import { TEMPLATE_IDS } from '@/components/templates/theme-configs';
 
 export interface PartyActionResult {
   error?: string;
@@ -76,6 +77,15 @@ export async function createParty(
     party_id: party.id,
     token,
   });
+
+  // Auto-select matching template when theme matches a template ID
+  const theme = parsed.data.theme;
+  if (theme && TEMPLATE_IDS.includes(theme)) {
+    await supabase
+      .from('parties')
+      .update({ invitation_template: theme })
+      .eq('id', party.id);
+  }
 
   redirect(`/kalas/${party.id}`);
 }
