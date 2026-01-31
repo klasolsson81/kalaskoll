@@ -1,12 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InvitationCard } from '@/components/cards/InvitationCard';
 import { TemplateCard, TemplatePicker } from '@/components/templates';
-import { AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
+import { PhotoFrame } from '@/components/shared/PhotoFrame';
+import {
+  AI_MAX_IMAGES_PER_PARTY,
+  PHOTO_MAX_FILE_SIZE,
+  PHOTO_OUTPUT_SIZE,
+  PHOTO_QUALITY,
+  VALID_PHOTO_FRAMES,
+} from '@/lib/constants';
+import type { PhotoFrame as PhotoFrameType } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
 interface PartyImage {
@@ -31,6 +39,51 @@ interface InvitationSectionProps {
   images: PartyImage[];
   isAdmin?: boolean;
   invitationTemplate: string | null;
+  childPhotoUrl: string | null;
+  childPhotoFrame: string | null;
+}
+
+const FRAME_LABELS: Record<PhotoFrameType, string> = {
+  circle: 'Cirkel',
+  star: 'Stjärna',
+  heart: 'Hjärta',
+  diamond: 'Diamant',
+};
+
+function resizeImageToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = PHOTO_OUTPUT_SIZE;
+        canvas.height = PHOTO_OUTPUT_SIZE;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas context unavailable'));
+          return;
+        }
+
+        // Center-crop to square
+        const min = Math.min(img.width, img.height);
+        const sx = (img.width - min) / 2;
+        const sy = (img.height - min) / 2;
+        ctx.drawImage(img, sx, sy, min, min, 0, 0, PHOTO_OUTPUT_SIZE, PHOTO_OUTPUT_SIZE);
+
+        // Try WebP first, fall back to JPEG
+        let dataUrl = canvas.toDataURL('image/webp', PHOTO_QUALITY);
+        if (!dataUrl.startsWith('data:image/webp')) {
+          dataUrl = canvas.toDataURL('image/jpeg', PHOTO_QUALITY);
+        }
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error('Could not load image'));
+      img.src = reader.result as string;
+    };
+    reader.onerror = () => reject(new Error('Could not read file'));
+    reader.readAsDataURL(file);
+  });
 }
 
 export function InvitationSection({
@@ -49,6 +102,8 @@ export function InvitationSection({
   images: initialImages,
   isAdmin = false,
   invitationTemplate,
+  childPhotoUrl: initialPhotoUrl,
+  childPhotoFrame: initialPhotoFrame,
 }: InvitationSectionProps) {
   const [currentImageUrl, setCurrentImageUrl] = useState(imageUrl);
   const [images, setImages] = useState<PartyImage[]>(initialImages);
@@ -60,6 +115,14 @@ export function InvitationSection({
   const [activeTemplate, setActiveTemplate] = useState<string | null>(invitationTemplate);
   const [showPicker, setShowPicker] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
+
+  // Photo state
+  const [photoUrl, setPhotoUrl] = useState<string | null>(initialPhotoUrl);
+  const [photoFrame, setPhotoFrame] = useState<PhotoFrameType>(
+    (initialPhotoFrame as PhotoFrameType) || 'circle',
+  );
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Determine active mode
   const activeMode: 'template' | 'ai' | null = activeTemplate
@@ -195,6 +258,85 @@ export function InvitationSection({
     }
   }
 
+  async function processAndUploadPhoto(file: File) {
+    if (file.size > PHOTO_MAX_FILE_SIZE) {
+      setError('Bilden är för stor (max 10MB)');
+      return;
+    }
+
+    setUploadingPhoto(true);
+    setError(null);
+
+    try {
+      const dataUrl = await resizeImageToDataUrl(file);
+
+      const res = await fetch('/api/invitation/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partyId, photoData: dataUrl, frame: photoFrame }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Kunde inte ladda upp foto');
+        return;
+      }
+
+      setPhotoUrl(dataUrl);
+    } catch {
+      setError('Något gick fel vid uppladdning');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  }
+
+  async function removePhoto() {
+    setUploadingPhoto(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/invitation/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partyId, photoData: null, frame: photoFrame }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Kunde inte ta bort foto');
+        return;
+      }
+
+      setPhotoUrl(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch {
+      setError('Något gick fel');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  }
+
+  async function changeFrame(frame: PhotoFrameType) {
+    setPhotoFrame(frame);
+
+    if (!photoUrl) return;
+
+    try {
+      const res = await fetch('/api/invitation/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partyId, photoData: photoUrl, frame }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Kunde inte ändra ram');
+      }
+    } catch {
+      setError('Något gick fel');
+    }
+  }
+
   function handlePrint() {
     const prev = document.title;
     document.title = `Inbjudan – ${childName}s kalas`;
@@ -278,7 +420,12 @@ export function InvitationSection({
 
           {activeMode === 'template' && activeTemplate && (
             <div data-print-area>
-              <TemplateCard templateId={activeTemplate} {...partyData} />
+              <TemplateCard
+                templateId={activeTemplate}
+                {...partyData}
+                childPhotoUrl={photoUrl}
+                childPhotoFrame={photoFrame}
+              />
             </div>
           )}
 
@@ -296,6 +443,88 @@ export function InvitationSection({
                 description={description}
                 token={token}
               />
+            </div>
+          )}
+        </CardContent>
+      )}
+
+      {/* Photo upload — only for template mode */}
+      {activeMode === 'template' && !showPicker && (
+        <CardContent className="space-y-3 border-t pt-4 print:hidden">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) processAndUploadPhoto(file);
+            }}
+          />
+
+          {!photoUrl ? (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/30 px-4 py-3 text-sm text-muted-foreground transition-colors hover:border-muted-foreground/60 hover:text-foreground disabled:opacity-50"
+            >
+              {uploadingPhoto ? (
+                'Laddar upp...'
+              ) : (
+                <>
+                  <span className="text-lg">📷</span>
+                  Ladda upp foto på {childName}
+                </>
+              )}
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center gap-4">
+                <PhotoFrame
+                  src={photoUrl}
+                  alt={`Foto på ${childName}`}
+                  shape={photoFrame}
+                  size={64}
+                />
+                <div className="flex-1 space-y-2">
+                  <p className="text-sm font-medium">Ram</p>
+                  <div className="flex gap-1.5">
+                    {VALID_PHOTO_FRAMES.map((frame) => (
+                      <button
+                        key={frame}
+                        onClick={() => changeFrame(frame)}
+                        className={cn(
+                          'rounded-md px-2.5 py-1 text-xs capitalize transition-colors',
+                          photoFrame === frame
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-muted text-muted-foreground hover:bg-muted/80',
+                        )}
+                      >
+                        {FRAME_LABELS[frame]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingPhoto}
+                >
+                  Byt foto
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={removePhoto}
+                  disabled={uploadingPhoto}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  Ta bort foto
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>

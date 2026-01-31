@@ -167,6 +167,8 @@ export default async function PartyPage({ params }: PartyPageProps) {
           }))}
           isAdmin={isAdmin}
           invitationTemplate={party.invitation_template ?? null}
+          childPhotoUrl={party.child_photo_url ?? null}
+          childPhotoFrame={party.child_photo_frame ?? null}
         />
       )}
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SMS_MAX_PER_PARTY } from '@/lib/constants';
+import { SMS_MAX_PER_PARTY, PHOTO_MAX_DATA_URL_SIZE, VALID_PHOTO_FRAMES } from '@/lib/constants';
 
 // Auth schemas
 export const loginSchema = z.object({
@@ -164,6 +164,19 @@ export const manualGuestSchema = z.object({
   parentEmail: z.string().email('Ogiltig e-postadress').optional().or(z.literal('')),
   message: z.string().max(500).optional().or(z.literal('')),
 });
+
+// Upload photo schema
+export const uploadPhotoSchema = z.object({
+  partyId: z.string().uuid(),
+  photoData: z
+    .string()
+    .max(PHOTO_MAX_DATA_URL_SIZE)
+    .regex(/^data:image\/(webp|jpeg|png);base64,/)
+    .nullable(),
+  frame: z.enum(VALID_PHOTO_FRAMES).default('circle'),
+});
+
+export type UploadPhotoFormData = z.infer<typeof uploadPhotoSchema>;
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;

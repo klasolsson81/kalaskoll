@@ -34,6 +34,14 @@ export const COMMON_ALLERGIES = [
   'Skaldjur',
 ] as const;
 
+// Child photo on invitation
+export const PHOTO_MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB before resize
+export const PHOTO_OUTPUT_SIZE = 400;
+export const PHOTO_QUALITY = 0.85;
+export const PHOTO_MAX_DATA_URL_SIZE = 100_000; // ~100KB safety limit
+export const VALID_PHOTO_FRAMES = ['circle', 'star', 'heart', 'diamond'] as const;
+export type PhotoFrame = (typeof VALID_PHOTO_FRAMES)[number];
+
 // Party themes
 export const PARTY_THEMES = [
   { value: 'dinosaurier', label: 'Dinosaurier' },

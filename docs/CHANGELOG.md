@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Personligt foto på inbjudningskortet
+- Upload a child photo (JPEG/PNG/WebP, max 10MB) displayed in a decorative frame on template-based invitation cards
+- Client-side image processing: center-crop to 400x400, WebP compression (~30-60KB base64)
+- Four frame shapes: circle, star, heart, diamond — selectable via inline frame picker
+- PhotoFrame component using CSS `clip-path` (circle/star/diamond) and SVG `<clipPath>` (heart)
+- `POST /api/invitation/upload-photo` endpoint with Zod validation and ownership check
+- Photo stored as base64 data-URL in `parties.child_photo_url` (no external storage needed)
+- Frame choice stored in `parties.child_photo_frame` with CHECK constraint
+- Photo renders between "Hipp hipp hurra!" subtitle and party details on TemplateCard
+- Works in print output with clip-path preserved
+- Optional feature — invitation cards work perfectly without a photo
+- SQL migration 00012 (child_photo_url + child_photo_frame columns)
+
 ### Changed
 
 #### Illustrerade inbjudningsmallar (Gemini AI)

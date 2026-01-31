@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import { QRCode } from '@/components/shared/QRCode';
+import { PhotoFrame } from '@/components/shared/PhotoFrame';
 import { cn } from '@/lib/utils';
 import { getThemeConfig } from './theme-configs';
+import type { PhotoFrame as PhotoFrameType } from '@/lib/constants';
 
 interface TemplateCardProps {
   templateId: string;
@@ -17,6 +19,8 @@ interface TemplateCardProps {
   description?: string | null;
   token: string;
   preview?: boolean;
+  childPhotoUrl?: string | null;
+  childPhotoFrame?: string | null;
 }
 
 export function TemplateCard({
@@ -31,6 +35,8 @@ export function TemplateCard({
   description,
   token,
   preview = false,
+  childPhotoUrl,
+  childPhotoFrame,
 }: TemplateCardProps) {
   const theme = getThemeConfig(templateId);
   const hasImage = !!theme.bgImage;
@@ -156,6 +162,18 @@ export function TemplateCard({
         <p className={cn('mt-1', theme.subtitleClass, theme.subtitleColor)}>
           Hipp hipp hurra!
         </p>
+
+        {/* Child photo */}
+        {childPhotoUrl && (
+          <div className="mt-4">
+            <PhotoFrame
+              src={childPhotoUrl}
+              alt={`Foto på ${childName}`}
+              shape={(childPhotoFrame as PhotoFrameType) || 'circle'}
+              size={96}
+            />
+          </div>
+        )}
 
         {/* Separator */}
         <div
