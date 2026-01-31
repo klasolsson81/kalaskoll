@@ -11,20 +11,7 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
     content: (
       <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
         <p>
-          KalasKoll är en svensk tjänst som gör det enkelt att planera barnkalas. Skapa snygga
-          inbjudningar, skicka QR-koder och samla in OSA-svar och allergiinformation digitalt.
-        </p>
-        <p>
-          <strong className="text-foreground">Vår mission</strong> är att eliminera kaoset med
-          papperslappar, SMS-grupper och WhatsApp-meddelanden. Med KalasKoll har du full koll på
-          gästlistan, allergier och kontaktuppgifter &ndash; allt på ett ställe.
-        </p>
-        <p>
-          Vi tar integritet på allvar. All allergidata hanteras enligt GDPR och raderas automatiskt
-          7 dagar efter kalaset. Läs mer i vår integritetspolicy.
-        </p>
-        <p>
-          KalasKoll är skapat av{' '}
+          KalasKoll skapades av{' '}
           <a
             href="https://klasolsson.se"
             target="_blank"
@@ -33,7 +20,25 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
           >
             Klas Olsson
           </a>
-          .
+          , 45 år och bosatt i Göteborg. Klas studerar .NET-systemutveckling och byggde
+          KalasKoll för att lösa ett helt vardagligt problem &ndash; hans son Alexander skulle
+          fylla 6 år och bjuda in uppemot 20 barn från förskolan.
+        </p>
+        <p>
+          Att hålla koll på vilka som kommer, allergier och kontaktuppgifter via SMS, lappar och
+          anteckningar blev snabbt kaotiskt. Tanken med KalasKoll är enkel: skriv ut snygga
+          inbjudningskort med en QR-kod, lägg dem i barnens fack, och låt varje vårdnadshavare
+          svara ja eller nej smidigt via mobilen.
+        </p>
+        <p>
+          <strong className="text-foreground">Syftet är aldrig att tjäna pengar.</strong> Allt
+          nödvändigt ska vara gratis. Inga annonser, ingen prenumeration &ndash; bara en ren och
+          enkel tjänst. En valfri premiumfunktion finns för den som vill ha lite extra, och den
+          finns enbart för att täcka API-avgifter och drift.
+        </p>
+        <p>
+          Vi tar integritet på allvar. All allergidata hanteras enligt GDPR, krypteras och
+          raderas automatiskt 7 dagar efter kalaset. Läs mer i vår integritetspolicy.
         </p>
       </div>
     ),

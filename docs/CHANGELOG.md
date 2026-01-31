@@ -15,6 +15,10 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **"Om oss" personal story**: Updated footer modal with Klas Olsson's personal backstory — son Alexander, 20 preschool kids, free-first philosophy
+- **Hero subtitle**: Landing page hero now emphasizes the QR-in-the-cubby workflow
+- **FAQ "Vem ligger bakom?"**: New FAQ entry (visible + JSON-LD) about Klas and the origin of KalasKoll
+
 #### Code Review Fixes (HI-10, MI-03, MI-05, MI-06, MI-09, MI-10)
 - **Delete party modal** (MI-10): Replaced browser `confirm()` with accessible modal dialog (`role="dialog"`, `aria-modal`, Escape key, backdrop click, loading/error states)
 - **SMS quota reuse** (MI-05): Users can now reuse SMS quota for a new party after the previous one is deleted, respecting the remaining count limit

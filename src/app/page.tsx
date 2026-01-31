@@ -62,6 +62,14 @@ export default function HomePage() {
           text: 'Ja! Så snart en gäst svarar uppdateras din gästlista direkt. Du ser vilka som kommer, allergier och kontaktuppgifter.',
         },
       },
+      {
+        '@type': 'Question',
+        name: 'Vem ligger bakom KalasKoll?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'KalasKoll är skapat av Klas Olsson i Göteborg. Idén föddes ur ett verkligt behov – att bjuda in 20 förskolebarn till ett kalas utan kaos med papperslappar och SMS. Allt nödvändigt är gratis, utan reklam.',
+        },
+      },
     ],
   };
 
@@ -118,8 +126,9 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-                Skapa snygga inbjudningskort, skicka QR-koder och hantera OSA och allergier
-                digitalt. Slipp kaos med papperslappar och SMS.
+                Skriv ut inbjudningskort med QR-kod, lägg dem i barnens fack och låt
+                vårdnadshavarna svara direkt via mobilen. Slipp kaos med papperslappar,
+                SMS och anteckningar.
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link href="/register">
@@ -265,6 +274,10 @@ export default function HomePage() {
                   {
                     q: 'Kan jag se gästlistan i realtid?',
                     a: 'Ja! Så snart en gäst svarar uppdateras din gästlista direkt. Du ser vilka som kommer, allergier och kontaktuppgifter.',
+                  },
+                  {
+                    q: 'Vem ligger bakom KalasKoll?',
+                    a: 'KalasKoll är skapat av Klas Olsson i Göteborg. Idén föddes ur ett verkligt behov \u2013 att bjuda in 20 förskolebarn till ett kalas utan kaos med papperslappar och SMS. Allt nödvändigt är gratis, utan reklam.',
                   },
                 ].map((faq) => (
                   <Card key={faq.q} className="border-0 shadow-soft">
