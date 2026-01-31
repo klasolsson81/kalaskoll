@@ -7,12 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InvitationCard } from '@/components/cards/InvitationCard';
 import { TemplateCard, TemplatePicker } from '@/components/templates';
 import { PhotoFrame } from '@/components/shared/PhotoFrame';
+import { PhotoCropDialog } from '@/components/shared/PhotoCropDialog';
 import {
   AI_MAX_IMAGES_PER_PARTY,
   PHOTO_MAX_FILE_SIZE,
-  PHOTO_OUTPUT_SIZE,
-  PHOTO_QUALITY,
-  VALID_PHOTO_FRAMES,
 } from '@/lib/constants';
 import type { PhotoFrame as PhotoFrameType } from '@/lib/constants';
 import { cn } from '@/lib/utils';
@@ -41,49 +39,6 @@ interface InvitationSectionProps {
   invitationTemplate: string | null;
   childPhotoUrl: string | null;
   childPhotoFrame: string | null;
-}
-
-const FRAME_LABELS: Record<PhotoFrameType, string> = {
-  circle: 'Cirkel',
-  star: 'Stjärna',
-  heart: 'Hjärta',
-  diamond: 'Diamant',
-};
-
-function resizeImageToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new window.Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = PHOTO_OUTPUT_SIZE;
-        canvas.height = PHOTO_OUTPUT_SIZE;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Canvas context unavailable'));
-          return;
-        }
-
-        // Center-crop to square
-        const min = Math.min(img.width, img.height);
-        const sx = (img.width - min) / 2;
-        const sy = (img.height - min) / 2;
-        ctx.drawImage(img, sx, sy, min, min, 0, 0, PHOTO_OUTPUT_SIZE, PHOTO_OUTPUT_SIZE);
-
-        // Try WebP first, fall back to JPEG
-        let dataUrl = canvas.toDataURL('image/webp', PHOTO_QUALITY);
-        if (!dataUrl.startsWith('data:image/webp')) {
-          dataUrl = canvas.toDataURL('image/jpeg', PHOTO_QUALITY);
-        }
-        resolve(dataUrl);
-      };
-      img.onerror = () => reject(new Error('Could not load image'));
-      img.src = reader.result as string;
-    };
-    reader.onerror = () => reject(new Error('Could not read file'));
-    reader.readAsDataURL(file);
-  });
 }
 
 export function InvitationSection({
@@ -122,6 +77,7 @@ export function InvitationSection({
     (initialPhotoFrame as PhotoFrameType) || 'circle',
   );
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [cropFile, setCropFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Determine active mode
@@ -258,22 +214,24 @@ export function InvitationSection({
     }
   }
 
-  async function processAndUploadPhoto(file: File) {
+  function handleFileSelect(file: File) {
     if (file.size > PHOTO_MAX_FILE_SIZE) {
       setError('Bilden är för stor (max 10MB)');
       return;
     }
+    setCropFile(file);
+  }
 
+  async function handleCropSave(dataUrl: string, frame: PhotoFrameType) {
+    setCropFile(null);
     setUploadingPhoto(true);
     setError(null);
 
     try {
-      const dataUrl = await resizeImageToDataUrl(file);
-
       const res = await fetch('/api/invitation/upload-photo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partyId, photoData: dataUrl, frame: photoFrame }),
+        body: JSON.stringify({ partyId, photoData: dataUrl, frame }),
       });
 
       const data = await res.json();
@@ -283,11 +241,17 @@ export function InvitationSection({
       }
 
       setPhotoUrl(dataUrl);
+      setPhotoFrame(frame);
     } catch {
       setError('Något gick fel vid uppladdning');
     } finally {
       setUploadingPhoto(false);
     }
+  }
+
+  function handleCropCancel() {
+    setCropFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   async function removePhoto() {
@@ -313,27 +277,6 @@ export function InvitationSection({
       setError('Något gick fel');
     } finally {
       setUploadingPhoto(false);
-    }
-  }
-
-  async function changeFrame(frame: PhotoFrameType) {
-    setPhotoFrame(frame);
-
-    if (!photoUrl) return;
-
-    try {
-      const res = await fetch('/api/invitation/upload-photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partyId, photoData: photoUrl, frame }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || 'Kunde inte ändra ram');
-      }
-    } catch {
-      setError('Något gick fel');
     }
   }
 
@@ -458,7 +401,7 @@ export function InvitationSection({
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) processAndUploadPhoto(file);
+              if (file) handleFileSelect(file);
             }}
           />
 
@@ -486,24 +429,10 @@ export function InvitationSection({
                   shape={photoFrame}
                   size={64}
                 />
-                <div className="flex-1 space-y-2">
-                  <p className="text-sm font-medium">Ram</p>
-                  <div className="flex gap-1.5">
-                    {VALID_PHOTO_FRAMES.map((frame) => (
-                      <button
-                        key={frame}
-                        onClick={() => changeFrame(frame)}
-                        className={cn(
-                          'rounded-md px-2.5 py-1 text-xs capitalize transition-colors',
-                          photoFrame === frame
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-muted text-muted-foreground hover:bg-muted/80',
-                        )}
-                      >
-                        {FRAME_LABELS[frame]}
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">
+                    Foto med {photoFrame === 'circle' ? 'cirkel' : photoFrame === 'star' ? 'stjärna' : photoFrame === 'heart' ? 'hjärta' : 'diamant'}ram
+                  </p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -528,6 +457,16 @@ export function InvitationSection({
             </div>
           )}
         </CardContent>
+      )}
+
+      {/* Crop dialog */}
+      {cropFile && (
+        <PhotoCropDialog
+          imageFile={cropFile}
+          initialFrame={photoFrame}
+          onSave={handleCropSave}
+          onCancel={handleCropCancel}
+        />
       )}
 
       {/* Picker overlay — replaces full-size card when open */}

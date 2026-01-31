@@ -165,12 +165,13 @@ export function TemplateCard({
 
         {/* Child photo */}
         {childPhotoUrl && (
-          <div className="mt-4">
+          <div className="mt-4 print:mt-5">
             <PhotoFrame
               src={childPhotoUrl}
               alt={`Foto på ${childName}`}
               shape={(childPhotoFrame as PhotoFrameType) || 'circle'}
-              size={96}
+              size={144}
+              className="w-36 h-36 print:w-52 print:h-52"
             />
           </div>
         )}

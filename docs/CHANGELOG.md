@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Större foto + zoom/beskär-verktyg
+- Child photo on invitation card enlarged from 96px to 144px (inline) and 208px (print)
+- PhotoFrame component refactored to use wrapper-div approach, allowing Tailwind className to override size
+- New `PhotoCropDialog` component: zoom/pan editor with frame-shape overlay, opened on file upload
+- Drag-to-pan (mouse + touch) and zoom slider (1x–3x) for precise cropping
+- Frame shape selector (circle/star/heart/diamond) integrated into crop dialog
+- SVG evenodd overlay shows the selected frame shape as a transparent cutout over darkened area
+- Canvas export crops to the visible viewport area at `PHOTO_OUTPUT_SIZE` resolution
+- Replaced auto-center-crop with interactive crop — users control exactly what part of the photo is visible
+- Inline frame picker removed from InvitationSection (now lives in crop dialog)
+- `PHOTO_CROP_SIZE` constant (300px) for crop dialog viewport
+
 ### Added
 
 #### Personligt foto på inbjudningskortet
