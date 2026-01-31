@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Fullständig code review (6 experter)
+- `CODE_REVIEW_REPORT.md`: Komplett rapport med findings från Security, Error Handling, UX/A11y, Product, Performance/Code, UI/Design
+- `MVP_BLOCKERS.md`: 8 issues som måste fixas innan MVP-lansering 27 mars
+- `TECH_DEBT_LOG.md`: 19 dokumenterade tech debt-items prioriterade efter MVP
+- `QUICK_WINS.md`: 14 snabba fixar sorterade efter impact/effort-ratio
+
 #### Professionell footer med modaler
 - Sitewide `Footer` component in root layout, visible on all pages (landing, auth, dashboard, RSVP)
 - `FooterModal` reusable modal shell with backdrop click, Escape key, scroll support, and ARIA attributes
