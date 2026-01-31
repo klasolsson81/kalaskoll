@@ -6,6 +6,7 @@ import { generateInvitationImageFallback } from '@/lib/ai/openai';
 import { ADMIN_EMAILS, AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
 import type { AiStyle } from '@/lib/constants';
 import { generateImageSchema } from '@/lib/utils/validation';
+import { isAiRateLimited } from '@/lib/utils/rate-limit';
 
 /**
  * Download a temporary AI image and upload to Supabase Storage.
@@ -98,6 +99,14 @@ export async function POST(request: NextRequest) {
   }
 
   const isAdmin = ADMIN_EMAILS.includes(user.email ?? '');
+
+  // Per-user rate limit (skip for admins)
+  if (!isAdmin && await isAiRateLimited(user.id)) {
+    return NextResponse.json(
+      { error: 'För många bildgenereringar. Vänta en stund.' },
+      { status: 429 },
+    );
+  }
 
   // Check image limit (skip for admins)
   const { count: imageCount, error: countError } = await supabase
