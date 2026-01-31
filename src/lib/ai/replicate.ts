@@ -36,13 +36,15 @@ export async function generateWithReplicate({
 
   const prompt = buildPrompt({ style, theme, customPrompt });
 
-  const output = await replicate.run('black-forest-labs/flux-schnell', {
+  const output = await replicate.run('black-forest-labs/flux-dev', {
     input: {
       prompt,
       aspect_ratio: '3:4',
       num_outputs: 1,
       output_format: 'webp',
       output_quality: 90,
+      guidance_scale: 3.5,
+      num_inference_steps: 28,
     },
   });
 

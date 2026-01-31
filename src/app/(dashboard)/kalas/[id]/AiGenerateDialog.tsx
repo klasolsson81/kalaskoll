@@ -13,7 +13,38 @@ const AI_MOTIFS = [
   { value: 'safari', label: 'Safari' },
   { value: 'blommor', label: 'Blommor' },
   { value: 'regnbåge', label: 'Regnbåge' },
+  { value: '_custom', label: 'Eget tema...' },
 ] as const;
+
+const BLOCKED_WORDS = [
+  // Våld (sv + en)
+  'vapen', 'pistol', 'gevär', 'kniv', 'blod', 'krig', 'mord', 'döda', 'skjut',
+  'weapon', 'gun', 'knife', 'blood', 'kill', 'murder', 'violence', 'war', 'gore', 'dead',
+  // Sexuellt
+  'sex', 'porr', 'naken', 'bröst', 'xxx', 'nsfw', 'nude', 'naked', 'porn', 'erotic', 'hentai',
+  // Droger
+  'narkotika', 'kokain', 'heroin', 'cannabis', 'crack', 'meth', 'drug',
+  // Hat
+  'rasism', 'nazism', 'hitler', 'terrorist', 'hate',
+];
+
+function validateThemeInput(text: string): { valid: boolean; error?: string } {
+  const trimmed = text.trim();
+  if (trimmed.length < 2) {
+    return { valid: false, error: 'Skriv minst 2 tecken' };
+  }
+  if (trimmed.length > 80) {
+    return { valid: false, error: 'Max 80 tecken' };
+  }
+  const lower = trimmed.toLowerCase();
+  for (const word of BLOCKED_WORDS) {
+    const regex = new RegExp(`\\b${word}\\b`, 'i');
+    if (regex.test(lower)) {
+      return { valid: false, error: 'Temat innehåller otillåtet innehåll' };
+    }
+  }
+  return { valid: true };
+}
 
 export interface AiGenerateOptions {
   style: AiStyle;
@@ -38,6 +69,12 @@ export function AiGenerateDialog({
   const [selectedStyle, setSelectedStyle] = useState<AiStyle>('cartoon');
   const [selectedMotif, setSelectedMotif] = useState(defaultMotif);
   const [customPrompt, setCustomPrompt] = useState('');
+  const [customTheme, setCustomTheme] = useState('');
+  const [themeError, setThemeError] = useState<string | null>(null);
+
+  const isCustom = selectedMotif === '_custom';
+  const customValidation = isCustom ? validateThemeInput(customTheme) : { valid: true };
+  const canSubmit = !generating && (!isCustom || (customTheme.trim().length > 0 && customValidation.valid));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -98,6 +135,36 @@ export function AiGenerateDialog({
           ))}
         </div>
 
+        {/* 2b. Custom theme text input */}
+        {isCustom && (
+          <div className="mt-2">
+            <input
+              type="text"
+              value={customTheme}
+              onChange={(e) => {
+                setCustomTheme(e.target.value);
+                const result = validateThemeInput(e.target.value);
+                setThemeError(e.target.value.trim().length > 0 && !result.valid ? (result.error ?? null) : null);
+              }}
+              disabled={generating}
+              placeholder="T.ex. vikingaskepp, pokemon, bondgård..."
+              maxLength={80}
+              className={cn(
+                'w-full rounded-lg border px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 disabled:opacity-50',
+                themeError
+                  ? 'border-red-300 focus:border-red-400 focus:ring-red-400/30'
+                  : 'border-gray-200 focus:border-amber-400 focus:ring-amber-400/30',
+              )}
+            />
+            {themeError && (
+              <p className="mt-1 text-xs text-red-600">{themeError}</p>
+            )}
+            <p className="mt-0.5 text-right text-[10px] text-gray-400">
+              {customTheme.length}/80
+            </p>
+          </div>
+        )}
+
         {/* 3. Custom description */}
         <label className="mt-4 block text-xs font-semibold uppercase tracking-wide text-gray-500">
           Beskriv din bild <span className="font-normal normal-case text-gray-400">(valfritt)</span>
@@ -130,11 +197,11 @@ export function AiGenerateDialog({
             onClick={() =>
               onGenerate({
                 style: selectedStyle,
-                theme: selectedMotif,
+                theme: isCustom ? customTheme.trim() : selectedMotif,
                 customPrompt: customPrompt.trim(),
               })
             }
-            disabled={generating}
+            disabled={!canSubmit}
           >
             {generating ? 'Genererar...' : 'Skapa bild ✨'}
           </Button>

@@ -64,6 +64,7 @@ export function InvitationSection({
   const [generating, setGenerating] = useState(false);
   const [selecting, setSelecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Template state
   const [activeTemplate, setActiveTemplate] = useState<string | null>(invitationTemplate);
@@ -157,6 +158,8 @@ export function InvitationSection({
         setCurrentImageUrl(data.imageUrl);
         setActiveTemplate(null);
         setExpanded(true);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 4000);
 
         if (data.imageId) {
           const isFirst = images.length === 0;
@@ -305,6 +308,11 @@ export function InvitationSection({
       {/* Full-size preview */}
       {expanded && activeMode && (
         <CardContent className="pb-2">
+          {showSuccess && (
+            <div className="mb-2 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-800 animate-in fade-in">
+              <span>&#10003;</span> Din AI-bild är klar!
+            </div>
+          )}
           {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
 
           <InvitationPreview

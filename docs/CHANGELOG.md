@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Flux Dev + Eget tema + Bättre laddnings-UX
+- Switched AI model from Flux Schnell to Flux Dev for higher image quality (`guidance_scale: 3.5`, `num_inference_steps: 28`)
+- Custom theme input ("Eget tema...") in AI generate dialog — freetext motif with client-side content validation blocklist
+- Prompt builder (`buildPrompt`) falls back to raw theme text for custom themes not in THEME_DESCRIPTION
+- Animated loading card in AI column: shimmer effect with rotating status messages during generation
+- Success notification banner ("Din AI-bild är klar!") after image generation, auto-dismisses after 4 seconds
+
 ### Added
 
 #### Riktig AI-bildgenerering med Replicate Flux + Premium-kortrendering

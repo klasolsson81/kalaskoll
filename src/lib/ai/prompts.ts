@@ -55,7 +55,7 @@ interface BuildPromptOptions {
 
 export function buildPrompt({ style, theme, customPrompt }: BuildPromptOptions): string {
   const prefix = STYLE_PREFIX[style];
-  const themeDesc = THEME_DESCRIPTION[theme] || THEME_DESCRIPTION.default;
+  const themeDesc = THEME_DESCRIPTION[theme] || theme || THEME_DESCRIPTION.default;
   const quality = STYLE_QUALITY[style];
 
   const parts = [
