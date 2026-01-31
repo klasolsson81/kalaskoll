@@ -43,6 +43,9 @@ export function AiInvitationCard({
 
   return (
     <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0">
+      {/* Fallback gradient if image fails */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-pink-300 to-amber-200" />
+
       {/* AI background image — full bleed */}
       <Image
         src={src}
@@ -52,6 +55,7 @@ export function AiInvitationCard({
         sizes="(max-width: 448px) 100vw, 448px"
         priority
         unoptimized={isSvg}
+        onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
       />
 
       {/* Dark overlay for text readability */}

@@ -91,12 +91,16 @@ export function AiColumn({
                 selecting === img.id && 'opacity-50',
               )}
             >
+              <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                <span className="text-2xl">🖼️</span>
+              </div>
               <Image
                 src={img.imageUrl}
                 alt="AI-inbjudningsbild"
                 fill
                 className="object-cover"
                 sizes="128px"
+                onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
               />
               {isSelected && (
                 <div className="absolute inset-0 flex items-center justify-center bg-amber-500/20">

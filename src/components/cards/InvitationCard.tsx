@@ -35,12 +35,16 @@ export function InvitationCard({
         <div className="relative">
           {/* Invitation image */}
           <div className="relative aspect-[4/3] w-full">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
+              <span className="text-5xl">🎉</span>
+            </div>
             <Image
               src={imageUrl}
               alt={`Inbjudan till ${childName}s kalas`}
               fill
               className="object-cover"
               unoptimized={typeof imageUrl === 'string' && imageUrl.endsWith('.svg')}
+              onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
             />
           </div>
 

@@ -56,6 +56,7 @@ export function PhotoFrame({ src, alt, shape, size = 96, className }: PhotoFrame
           height: '100%',
           objectFit: 'cover',
         }}
+        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
       />
     </div>
   );

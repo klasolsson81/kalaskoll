@@ -59,6 +59,7 @@ export function TemplateCard({
             fill
             className="object-cover"
             sizes="128px"
+            onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
           />
         )}
 
@@ -125,6 +126,7 @@ export function TemplateCard({
           className="object-cover"
           sizes="(max-width: 448px) 100vw, 448px"
           priority
+          onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
         />
       )}
 
