@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { DevBadge } from '@/components/shared/DevBadge';
+import { Footer } from '@/components/layout/Footer';
 import './globals.css';
 
 const inter = Inter({
@@ -97,6 +98,7 @@ export default function RootLayout({
     <html lang="sv" className={inter.variable}>
       <body className="min-h-screen bg-background font-sans antialiased">
         {children}
+        <Footer />
         <DevBadge />
       </body>
     </html>

@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Professionell footer med modaler
+- Sitewide `Footer` component in root layout, visible on all pages (landing, auth, dashboard, RSVP)
+- `FooterModal` reusable modal shell with backdrop click, Escape key, scroll support, and ARIA attributes
+- Three-column layout: brand, navigation, legal — stacks vertically on mobile
+- 5 modal pages: Om oss, Priser, Integritetspolicy, Användarvillkor, Cookiepolicy
+- All policy text in Swedish with GDPR-relevant privacy sections
+- `print:hidden` on footer to keep print output clean
+- Removed inline footer from landing page (replaced by global footer)
+
 ### Changed
 
 #### Flux Dev + Eget tema + Bättre laddnings-UX

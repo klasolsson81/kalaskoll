@@ -297,12 +297,6 @@ export default function HomePage() {
           </section>
         </main>
 
-        {/* Footer */}
-        <footer className="border-t py-8">
-          <div className="mx-auto max-w-5xl px-4 text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} KalasKoll. Alla rättigheter förbehållna.</p>
-          </div>
-        </footer>
       </div>
     </>
   );
