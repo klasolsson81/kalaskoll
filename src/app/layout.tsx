@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { DevBadge } from '@/components/shared/DevBadge';
 import { Footer } from '@/components/layout/Footer';
+import { APP_URL } from '@/lib/constants';
 import './globals.css';
 
 const inter = Inter({
@@ -21,7 +22,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://kalaskoll.se'),
+  metadataBase: new URL(APP_URL),
   title: {
     default: 'KalasKoll – Smarta barnkalas-inbjudningar med QR-kod',
     template: '%s | KalasKoll',
