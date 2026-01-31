@@ -1,10 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { generateWithReplicate } from '@/lib/ai/replicate';
 import { generateInvitationImageFallback } from '@/lib/ai/openai';
 import { ADMIN_EMAILS, AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
 import type { AiStyle } from '@/lib/constants';
 import { generateImageSchema } from '@/lib/utils/validation';
+
+/**
+ * Download a temporary AI image and upload to Supabase Storage.
+ * Returns a permanent public URL. Falls back to the original URL
+ * if storage upload fails (e.g. bucket not created yet).
+ */
+async function persistImage(
+  tempUrl: string,
+  partyId: string,
+): Promise<string> {
+  // Mock/local images don't need persisting
+  if (tempUrl.startsWith('/') || tempUrl.startsWith('data:')) {
+    return tempUrl;
+  }
+
+  try {
+    const res = await fetch(tempUrl);
+    if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+
+    const blob = await res.blob();
+    const ext = blob.type === 'image/webp' ? 'webp' : 'png';
+    const filename = `${partyId}/${crypto.randomUUID()}.${ext}`;
+
+    const admin = createAdminClient();
+    const { error: uploadError } = await admin.storage
+      .from('ai-images')
+      .upload(filename, blob, {
+        contentType: blob.type,
+        cacheControl: '31536000',
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error('[Storage] Upload failed:', uploadError.message);
+      return tempUrl;
+    }
+
+    const { data: publicData } = admin.storage
+      .from('ai-images')
+      .getPublicUrl(filename);
+
+    return publicData.publicUrl;
+  } catch (err) {
+    console.error('[Storage] persistImage failed:', err);
+    return tempUrl;
+  }
+}
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -68,10 +116,10 @@ export async function POST(request: NextRequest) {
   const forceLive = isAdmin;
 
   // Generate: Replicate Flux (primary) -> OpenAI DALL-E 3 (fallback) -> error
-  let imageUrl: string | null = null;
+  let tempImageUrl: string | null = null;
 
   try {
-    imageUrl = await generateWithReplicate({
+    tempImageUrl = await generateWithReplicate({
       theme: resolvedTheme,
       style: resolvedStyle,
       forceLive,
@@ -79,7 +127,7 @@ export async function POST(request: NextRequest) {
   } catch (replicateError) {
     console.error('[AI] Replicate failed:', replicateError);
     try {
-      imageUrl = await generateInvitationImageFallback(
+      tempImageUrl = await generateInvitationImageFallback(
         resolvedTheme,
         resolvedStyle,
         { forceLive },
@@ -89,12 +137,15 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  if (!imageUrl) {
+  if (!tempImageUrl) {
     return NextResponse.json(
       { error: 'Kunde inte generera bild' },
       { status: 500 },
     );
   }
+
+  // Persist to Supabase Storage (temporary URLs expire after ~1h)
+  const imageUrl = await persistImage(tempImageUrl, partyId);
 
   // Try to insert into party_images (if table exists)
   if (tableExists) {

@@ -44,11 +44,30 @@ export async function generateWithReplicate({
     },
   });
 
-  // Flux Schnell returns an array of file URLs
-  const urls = output as string[];
-  if (!urls || urls.length === 0) {
+  // SDK v1+ returns FileOutput objects (ReadableStream with .url())
+  // Extract the URL string from the first output
+  const items = output as unknown[];
+  if (!items || items.length === 0) {
     throw new Error('Replicate returned no images');
   }
 
-  return urls[0];
+  const first = items[0];
+  let tempUrl: string;
+
+  if (typeof first === 'string') {
+    tempUrl = first;
+  } else if (first && typeof first === 'object' && 'url' in first) {
+    // FileOutput object — .url() returns a URL object
+    const urlResult = (first as { url: () => URL }).url();
+    tempUrl = urlResult.href;
+  } else {
+    // Fallback: try String() conversion
+    tempUrl = String(first);
+  }
+
+  if (!tempUrl || !tempUrl.startsWith('http')) {
+    throw new Error('Replicate returned invalid URL');
+  }
+
+  return tempUrl;
 }
