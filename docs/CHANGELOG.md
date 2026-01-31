@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 - SVG evenodd overlay shows the selected frame shape as a transparent cutout over darkened area
 - Canvas export crops to the visible viewport area at `PHOTO_OUTPUT_SIZE` resolution
 - Replaced auto-center-crop with interactive crop — users control exactly what part of the photo is visible
+- Photo layout changed from stacked (own row) to inline beside "Hipp hipp hurra!" subtitle, preventing photo from pushing headline into background illustrations on image-based templates
+- Photo size: 80px inline / 112px print (side-by-side with subtitle text)
 - Inline frame picker removed from InvitationSection (now lives in crop dialog)
 - `PHOTO_CROP_SIZE` constant (300px) for crop dialog viewport
 

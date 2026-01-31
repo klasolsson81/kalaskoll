@@ -159,21 +159,24 @@ export function TemplateCard({
         <h2 className={cn(theme.headlineClass, theme.headlineColor)}>
           {childName} fyller {childAge} år!
         </h2>
-        <p className={cn('mt-1', theme.subtitleClass, theme.subtitleColor)}>
-          Hipp hipp hurra!
-        </p>
-
-        {/* Child photo */}
-        {childPhotoUrl && (
-          <div className="mt-4 print:mt-5">
+        {/* Subtitle + optional child photo side by side */}
+        {childPhotoUrl ? (
+          <div className="mt-2 flex items-center justify-center gap-3 print:mt-3 print:gap-4">
             <PhotoFrame
               src={childPhotoUrl}
               alt={`Foto på ${childName}`}
               shape={(childPhotoFrame as PhotoFrameType) || 'circle'}
-              size={144}
-              className="w-36 h-36 print:w-52 print:h-52"
+              size={80}
+              className="w-20 h-20 shrink-0 print:w-28 print:h-28"
             />
+            <p className={cn('italic', theme.subtitleClass, theme.subtitleColor)}>
+              Hipp hipp hurra!
+            </p>
           </div>
+        ) : (
+          <p className={cn('mt-1', theme.subtitleClass, theme.subtitleColor)}>
+            Hipp hipp hurra!
+          </p>
         )}
 
         {/* Separator */}
