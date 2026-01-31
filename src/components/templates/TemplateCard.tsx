@@ -17,6 +17,7 @@ interface TemplateCardProps {
   description?: string | null;
   token: string;
   preview?: boolean;
+  previewMode?: boolean;
 }
 
 export function TemplateCard({
@@ -31,6 +32,7 @@ export function TemplateCard({
   description,
   token,
   preview = false,
+  previewMode = false,
 }: TemplateCardProps) {
   const theme = getThemeConfig(templateId);
   const hasImage = !!theme.bgImage;
@@ -108,6 +110,7 @@ export function TemplateCard({
         'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0',
         hasImage ? 'rounded-2xl' : theme.borderClass,
         !hasImage && theme.bgGradient,
+        previewMode && 'mx-0 max-w-none h-full rounded-none border-0',
       )}
     >
       {/* Background image */}
@@ -132,12 +135,14 @@ export function TemplateCard({
         className={cn(
           'flex flex-col items-center justify-center text-center',
           hasImage
-            ? [
-                // Inline: relative with fixed padding — card grows to fit content
-                'relative pt-32 pb-28 px-10 sm:pt-36 sm:pb-32 sm:px-14',
-                // Print: absolute positioning in the image center zone
-                'print:absolute print:inset-x-[8%] print:top-[22%] print:bottom-[16%] print:p-0',
-              ]
+            ? previewMode
+              ? 'absolute inset-x-[8%] top-[22%] bottom-[16%] p-0'
+              : [
+                  // Inline: relative with fixed padding — card grows to fit content
+                  'relative pt-32 pb-28 px-10 sm:pt-36 sm:pb-32 sm:px-14',
+                  // Print: absolute positioning in the image center zone
+                  'print:absolute print:inset-x-[8%] print:top-[22%] print:bottom-[16%] print:p-0',
+                ]
             : 'relative flex-1 px-6 py-8 sm:px-8 sm:py-10',
         )}
         style={textStyle}

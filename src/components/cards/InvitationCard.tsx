@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { QRCode } from '@/components/shared/QRCode';
+import { cn } from '@/lib/utils';
 
 interface InvitationCardProps {
   imageUrl: string;
@@ -15,6 +16,7 @@ interface InvitationCardProps {
   rsvpDeadline?: string | null;
   description?: string | null;
   token: string;
+  previewMode?: boolean;
 }
 
 export function InvitationCard({
@@ -28,9 +30,10 @@ export function InvitationCard({
   rsvpDeadline,
   description,
   token,
+  previewMode = false,
 }: InvitationCardProps) {
   return (
-    <Card className="overflow-hidden print:shadow-none print:border-none print:rounded-none">
+    <Card className={cn('overflow-hidden print:shadow-none print:border-none print:rounded-none', previewMode && 'shadow-none border-none rounded-none')}>
       <CardContent className="p-0">
         <div className="relative">
           {/* Invitation image */}
