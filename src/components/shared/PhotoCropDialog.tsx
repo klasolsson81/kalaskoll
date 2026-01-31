@@ -271,6 +271,7 @@ export function PhotoCropDialog({
             style={{
               width: displayW || 'auto',
               height: displayH || 'auto',
+              maxWidth: 'none', // Override Tailwind Preflight img { max-width: 100% }
               left: '50%',
               top: '50%',
               transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px))`,
