@@ -106,9 +106,7 @@ export function TemplateCard({
     <div
       className={cn(
         'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0',
-        hasImage
-          ? 'aspect-[3/4] rounded-2xl print:aspect-auto'
-          : theme.borderClass,
+        hasImage ? 'rounded-2xl' : theme.borderClass,
         !hasImage && theme.bgGradient,
       )}
     >
@@ -129,12 +127,17 @@ export function TemplateCard({
         <div className="absolute inset-0" style={theme.patternStyle} />
       )}
 
-      {/* Text content — constrained to the center zone when image is present */}
+      {/* Text content */}
       <div
         className={cn(
           'flex flex-col items-center justify-center text-center',
           hasImage
-            ? 'absolute inset-x-[8%] top-[18%] bottom-[16%] overflow-hidden'
+            ? [
+                // Inline: relative with fixed padding — card grows to fit content
+                'relative pt-32 pb-28 px-10 sm:pt-36 sm:pb-32 sm:px-14',
+                // Print: absolute positioning in the image center zone
+                'print:absolute print:inset-x-[8%] print:top-[22%] print:bottom-[16%] print:p-0',
+              ]
             : 'relative flex-1 px-6 py-8 sm:px-8 sm:py-10',
         )}
         style={textStyle}
