@@ -11,7 +11,10 @@ export default async function NewPartyPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-8 text-3xl font-bold">Skapa nytt kalas</h1>
+      <div className="mb-8 space-y-1">
+        <h1 className="text-2xl font-bold sm:text-3xl">Skapa nytt kalas</h1>
+        <p className="text-muted-foreground">Fyll i uppgifterna nedan för att komma igång.</p>
+      </div>
       <PartyForm
         action={createParty}
         submitLabel="Skapa kalas"

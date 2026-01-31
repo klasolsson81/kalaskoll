@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AllergyCheckboxes } from '@/components/forms/AllergyCheckboxes';
+import { useConfetti } from '@/hooks/useConfetti';
 
 interface RsvpDefaultValues {
   childName?: string;
@@ -31,8 +32,17 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { fireConfettiCannon } = useConfetti();
 
   const isEdit = mode === 'edit';
+
+  // Fire confetti on successful attending submission
+  useEffect(() => {
+    if (submitted && attending) {
+      const timer = setTimeout(() => fireConfettiCannon(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [submitted, attending, fireConfettiCannon]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -91,8 +101,11 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
 
   if (submitted) {
     return (
-      <Card>
+      <Card className="border-0 shadow-warm">
         <CardContent className="py-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-3xl">
+            {attending ? '🎉' : '👋'}
+          </div>
           <p className="text-2xl font-bold">
             {isEdit
               ? 'Ditt svar har uppdaterats!'
@@ -117,13 +130,13 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+        <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
       )}
 
       {/* Attending toggle */}
-      <Card>
+      <Card className="border-0 shadow-soft">
         <CardHeader>
           <CardTitle>Kan ni komma?</CardTitle>
         </CardHeader>
@@ -132,24 +145,26 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
             <button
               type="button"
               onClick={() => setAttending(true)}
-              className={`rounded-lg border-2 p-4 text-center text-lg font-medium transition-colors ${
+              className={`rounded-xl border-2 p-5 text-center transition-all ${
                 attending === true
-                  ? 'border-green-500 bg-green-50 text-green-700'
-                  : 'border-border hover:border-green-300'
+                  ? 'border-success bg-success/5 text-success shadow-sm'
+                  : 'border-border hover:border-success/50 hover:bg-success/5'
               }`}
             >
-              Ja, vi kommer!
+              <span className="block text-2xl">✓</span>
+              <span className="mt-1 block text-base font-semibold">Ja, vi kommer!</span>
             </button>
             <button
               type="button"
               onClick={() => setAttending(false)}
-              className={`rounded-lg border-2 p-4 text-center text-lg font-medium transition-colors ${
+              className={`rounded-xl border-2 p-5 text-center transition-all ${
                 attending === false
-                  ? 'border-red-500 bg-red-50 text-red-700'
-                  : 'border-border hover:border-red-300'
+                  ? 'border-destructive bg-destructive/5 text-destructive shadow-sm'
+                  : 'border-border hover:border-destructive/50 hover:bg-destructive/5'
               }`}
             >
-              Nej, tyvärr
+              <span className="block text-2xl">✗</span>
+              <span className="mt-1 block text-base font-semibold">Nej, tyvärr</span>
             </button>
           </div>
         </CardContent>
@@ -158,7 +173,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
       {attending !== null && (
         <>
           {/* Email (required identifier) */}
-          <Card>
+          <Card className="border-0 shadow-soft">
             <CardHeader>
               <CardTitle>Din e-postadress</CardTitle>
             </CardHeader>
@@ -173,7 +188,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                   placeholder="din@email.se"
                   defaultValue={defaultValues?.parentEmail ?? ''}
                   readOnly={isEdit}
-                  className={isEdit ? 'bg-muted' : ''}
+                  className={`h-12 text-base ${isEdit ? 'bg-muted' : ''}`}
                 />
                 {!isEdit && (
                   <p className="text-xs text-muted-foreground">
@@ -190,7 +205,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
           </Card>
 
           {/* Child info */}
-          <Card>
+          <Card className="border-0 shadow-soft">
             <CardHeader>
               <CardTitle>Om barnet</CardTitle>
             </CardHeader>
@@ -203,13 +218,14 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                   required
                   placeholder="Barnets namn"
                   defaultValue={defaultValues?.childName ?? ''}
+                  className="h-12 text-base"
                 />
               </div>
             </CardContent>
           </Card>
 
           {/* Parent info */}
-          <Card>
+          <Card className="border-0 shadow-soft">
             <CardHeader>
               <CardTitle>Kontaktuppgifter (valfritt)</CardTitle>
             </CardHeader>
@@ -221,6 +237,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                   name="parentName"
                   placeholder="Ditt namn"
                   defaultValue={defaultValues?.parentName ?? ''}
+                  className="h-12 text-base"
                 />
               </div>
               <div className="space-y-2">
@@ -231,6 +248,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                   type="tel"
                   placeholder="070 123 4567"
                   defaultValue={defaultValues?.parentPhone ?? ''}
+                  className="h-12 text-base"
                 />
               </div>
             </CardContent>
@@ -238,7 +256,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
 
           {/* Allergies (only if attending) */}
           {attending && (
-            <Card>
+            <Card className="border-0 shadow-soft">
               <CardHeader>
                 <CardTitle>Allergier & specialkost</CardTitle>
               </CardHeader>
@@ -252,7 +270,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
           )}
 
           {/* Message */}
-          <Card>
+          <Card className="border-0 shadow-soft">
             <CardContent className="pt-6">
               <div className="space-y-2">
                 <Label htmlFor="message">Meddelande (valfritt)</Label>
@@ -262,13 +280,18 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                   rows={2}
                   placeholder="Vi ser fram emot det!"
                   defaultValue={defaultValues?.message ?? ''}
-                  className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="flex min-h-[60px] w-full rounded-lg border border-input bg-transparent px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
             </CardContent>
           </Card>
 
-          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full h-14 text-base font-semibold gradient-celebration text-white shadow-warm"
+            size="lg"
+            disabled={loading}
+          >
             {loading ? 'Skickar...' : isEdit ? 'Uppdatera svar' : 'Skicka svar'}
           </Button>
         </>

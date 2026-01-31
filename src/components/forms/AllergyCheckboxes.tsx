@@ -31,7 +31,7 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
         {COMMON_ALLERGIES.map((allergy) => (
           <label
             key={allergy}
-            className="flex items-center gap-2 rounded-md border p-3 text-sm transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5"
+            className="flex items-center gap-2 rounded-xl border p-3 text-sm transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:shadow-sm"
           >
             <Checkbox
               name="allergies"
@@ -53,11 +53,12 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
           placeholder="t.ex. vegetarian, vegan..."
           defaultValue={initialOtherDietary ?? ''}
           disabled={disabled}
+          className="h-11"
         />
       </div>
 
       {hasAllergies && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
           <label className="flex items-start gap-3 text-sm">
             <Checkbox
               name="allergyConsent"

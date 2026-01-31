@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { PartyHeader } from '@/components/cards/PartyHeader';
 import { RsvpForm } from '@/components/forms/RsvpForm';
 import type { Database } from '@/types/database';
@@ -53,7 +54,7 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     .order('responded_at', { ascending: true });
 
   return (
-    <div className="min-h-screen bg-muted/50 px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 px-4 py-8">
       <div className="mx-auto max-w-md space-y-6">
         {/* Party header */}
         <PartyHeader
@@ -71,22 +72,23 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
 
         {/* Guest responses */}
         {responses && responses.length > 0 && (
-          <Card>
+          <Card className="border-0 shadow-soft">
             <CardHeader>
               <CardTitle className="text-base">
                 Vilka har svarat ({responses.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-1.5">
+              <ul className="space-y-2">
                 {responses.map((r, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm">
-                    <span
-                      className={`inline-block h-2 w-2 rounded-full ${
-                        r.attending ? 'bg-green-500' : 'bg-red-400'
-                      }`}
-                    />
-                    <span>{r.child_name}</span>
+                    <Badge
+                      variant={r.attending ? 'success' : 'outline'}
+                      className="h-5 w-5 justify-center rounded-full p-0 text-[10px]"
+                    >
+                      {r.attending ? '✓' : '✗'}
+                    </Badge>
+                    <span className="font-medium">{r.child_name}</span>
                     <span className="text-muted-foreground">
                       – {r.attending ? 'Kommer' : 'Kan inte komma'}
                     </span>
@@ -109,7 +111,9 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground">
-          Drivs av KalasKoll – Smarta inbjudningar för barnkalas
+          Drivs av{' '}
+          <span className="font-semibold text-primary">KalasKoll</span>
+          {' '}– Smarta inbjudningar för barnkalas
         </p>
       </div>
     </div>

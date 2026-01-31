@@ -1,42 +1,72 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import { DevBadge } from '@/components/shared/DevBadge';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FAF9F7' },
+    { media: '(prefers-color-scheme: dark)', color: '#1a1a2e' },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kalaskoll.se'),
   title: {
-    default: 'KalasKoll – Smarta inbjudningar för barnkalas',
+    default: 'KalasKoll – Smarta barnkalas-inbjudningar med QR-kod',
     template: '%s | KalasKoll',
   },
   description:
-    'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt. Perfekt för barnkalas!',
-  keywords: ['barnkalas', 'inbjudningar', 'kalas', 'OSA', 'födelsedagskalas', 'allergi'],
+    'Skapa digitala barnkalas-inbjudningar med QR-kod. Gäster svarar via mobilen, du ser OSA i realtid. Hantera allergier GDPR-säkert. Gratis att börja!',
+  keywords: [
+    'barnkalas',
+    'inbjudningar',
+    'kalas',
+    'barnkalas inbjudan',
+    'QR-kod inbjudan',
+    'OSA barnkalas',
+    'digital inbjudan',
+    'barnkalas planering',
+    'födelsedagskalas',
+    'allergi kalas',
+  ],
   authors: [{ name: 'KalasKoll' }],
   creator: 'KalasKoll',
+  publisher: 'KalasKoll',
+  formatDetection: {
+    telephone: true,
+    email: true,
+    address: true,
+  },
   openGraph: {
     type: 'website',
     locale: 'sv_SE',
     url: 'https://kalaskoll.se',
     siteName: 'KalasKoll',
-    title: 'KalasKoll – Smarta inbjudningar för barnkalas',
-    description: 'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    title: 'KalasKoll – Smarta barnkalas-inbjudningar',
+    description: 'Skapa digitala barnkalas-inbjudningar med QR-kod. Gästerna svarar via mobilen!',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'KalasKoll - Digitala barnkalas-inbjudningar',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'KalasKoll – Smarta inbjudningar för barnkalas',
-    description: 'Skapa snygga inbjudningskort med AI, hantera OSA och allergier digitalt.',
+    title: 'KalasKoll – Smarta barnkalas-inbjudningar',
+    description: 'Skapa digitala inbjudningar med QR-kod. Gästerna svarar via mobilen!',
     images: ['/og-image.png'],
   },
   robots: {
@@ -50,6 +80,12 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  alternates: {
+    canonical: 'https://kalaskoll.se',
+    languages: {
+      'sv-SE': 'https://kalaskoll.se',
+    },
+  },
 };
 
 export default function RootLayout({
@@ -58,8 +94,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="sv" className={inter.variable}>
+      <body className="min-h-screen bg-background font-sans antialiased">
         {children}
         <DevBadge />
       </body>

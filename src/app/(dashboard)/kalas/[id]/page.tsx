@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { DeletePartyButton } from './DeletePartyButton';
 import { InvitationSection } from './InvitationSection';
@@ -75,7 +76,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
         .eq('invitation_id', invitation.id)
     : { data: null };
 
-  // Normalize phone to E.164 for matching: "070..." → "+4670..."
+  // Normalize phone to E.164 for matching: "070..." -> "+4670..."
   function normalizePhone(phone: string): string {
     const cleaned = phone.replace(/[\s\-()]/g, '');
     if (cleaned.startsWith('07')) return '+46' + cleaned.slice(1);
@@ -123,17 +124,29 @@ export default async function PartyPage({ params }: PartyPageProps) {
     const isThisParty = smsUsageData.party_id === id;
     smsUsage = {
       smsCount: isThisParty ? smsUsageData.sms_count : 0,
-      allowed: isThisParty, // Only allowed if this party is the one that used SMS
+      allowed: isThisParty,
     };
   } else {
-    // No usage this month – SMS is available
     smsUsage = { smsCount: 0, allowed: true };
   }
 
+  const isUpcoming = new Date(party.party_date) >= new Date();
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-3xl font-bold">{party.child_name}s kalas</h1>
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold sm:text-3xl">{party.child_name}s kalas</h1>
+            <Badge variant={isUpcoming ? 'success' : 'outline'}>
+              {isUpcoming ? 'Kommande' : 'Avslutat'}
+            </Badge>
+          </div>
+          <p className="text-muted-foreground">
+            {formatDate(party.party_date)} kl {formatTimeRange(party.party_time, party.party_time_end)}
+          </p>
+        </div>
         <div className="flex gap-2">
           <Link href={`/kalas/${id}/edit`}>
             <Button variant="outline">Redigera</Button>
@@ -186,64 +199,95 @@ export default async function PartyPage({ params }: PartyPageProps) {
         )}
       </div>
 
+      {/* Details & Guests grid */}
       <div className="grid gap-6 sm:grid-cols-2 print:hidden">
-        <Card>
+        <Card className="border-0 shadow-soft">
           <CardHeader>
             <CardTitle>Detaljer</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-sm text-muted-foreground">Barn</p>
-              <p className="font-medium">
-                {party.child_name}, fyller {party.child_age} år
-              </p>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-lg">
+                👶
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Barn</p>
+                <p className="font-medium">
+                  {party.child_name}, fyller {party.child_age} år
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Datum & tid</p>
-              <p className="font-medium">
-                {formatDate(party.party_date)} kl {formatTimeRange(party.party_time, party.party_time_end)}
-              </p>
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-lg">
+                📅
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Datum & tid</p>
+                <p className="font-medium">
+                  {formatDate(party.party_date)} kl {formatTimeRange(party.party_time, party.party_time_end)}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Plats</p>
-              <p className="font-medium">{party.venue_name}</p>
-              {party.venue_address && (
-                <p className="text-sm text-muted-foreground">{party.venue_address}</p>
-              )}
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-lg">
+                📍
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Plats</p>
+                <p className="font-medium">{party.venue_name}</p>
+                {party.venue_address && (
+                  <p className="text-sm text-muted-foreground">{party.venue_address}</p>
+                )}
+              </div>
             </div>
             {party.theme && (
-              <div>
-                <p className="text-sm text-muted-foreground">Tema</p>
-                <p className="font-medium capitalize">{party.theme}</p>
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-lg">
+                  🎨
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Tema</p>
+                  <p className="font-medium capitalize">{party.theme}</p>
+                </div>
               </div>
             )}
             {party.description && (
-              <div>
-                <p className="text-sm text-muted-foreground">Beskrivning</p>
-                <p className="font-medium">{party.description}</p>
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-lg">
+                  📝
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Beskrivning</p>
+                  <p className="font-medium">{party.description}</p>
+                </div>
               </div>
             )}
             {party.rsvp_deadline && (
-              <div>
-                <p className="text-sm text-muted-foreground">Sista OSA</p>
-                <p className="font-medium">{formatDate(party.rsvp_deadline)}</p>
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-lg">
+                  ⏰
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Sista OSA</p>
+                  <p className="font-medium">{formatDate(party.rsvp_deadline)}</p>
+                </div>
               </div>
             )}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-soft">
           <CardHeader>
             <CardTitle>Gäster</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-lg bg-muted p-4 text-center">
-                <p className="text-2xl font-bold">{attendingCount ?? 0}</p>
+              <div className="rounded-xl bg-success/5 p-4 text-center">
+                <p className="text-3xl font-bold text-success">{attendingCount ?? 0}</p>
                 <p className="text-sm text-muted-foreground">Kommer</p>
               </div>
-              <div className="rounded-lg bg-muted p-4 text-center">
-                <p className="text-2xl font-bold">{guestCount ?? 0}</p>
+              <div className="rounded-xl bg-muted p-4 text-center">
+                <p className="text-3xl font-bold">{guestCount ?? 0}</p>
                 <p className="text-sm text-muted-foreground">Svar totalt</p>
               </div>
             </div>
@@ -255,7 +299,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
             {invitation?.token && (
               <div>
                 <p className="text-sm text-muted-foreground">QR-kod token</p>
-                <code className="rounded bg-muted px-2 py-1 text-sm font-mono">
+                <code className="rounded-lg bg-muted px-2 py-1 text-sm font-mono">
                   {invitation.token}
                 </code>
               </div>

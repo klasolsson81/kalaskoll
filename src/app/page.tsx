@@ -78,15 +78,21 @@ export default function HomePage() {
 
       <div className="flex min-h-screen flex-col">
         {/* Header */}
-        <header className="border-b">
+        <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
           <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-            <h1 className="text-xl font-bold">KalasKoll</h1>
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-2xl font-extrabold tracking-tight text-primary">
+                KalasKoll
+              </span>
+            </Link>
             <nav className="flex gap-2">
               <Link href="/login">
-                <Button variant="ghost">Logga in</Button>
+                <Button variant="ghost" className="font-medium">Logga in</Button>
               </Link>
               <Link href="/register">
-                <Button>Kom igång</Button>
+                <Button className="gradient-celebration font-semibold text-white shadow-warm">
+                  Kom igång gratis
+                </Button>
               </Link>
             </nav>
           </div>
@@ -94,55 +100,88 @@ export default function HomePage() {
 
         <main className="flex-1">
           {/* Hero */}
-          <section className="mx-auto max-w-5xl px-4 py-20 text-center">
-            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
-              Smarta inbjudningar
-              <br />
-              för barnkalas
-            </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              Skapa snygga inbjudningskort med AI, skicka QR-koder och hantera OSA och allergier
-              digitalt. Slipp kaos med papperslappar och SMS.
-            </p>
-            <div className="mt-10 flex justify-center gap-4">
-              <Link href="/register">
-                <Button size="lg">Skapa ditt första kalas</Button>
-              </Link>
+          <section className="relative overflow-hidden">
+            {/* Decorative background blobs */}
+            <div className="pointer-events-none absolute -top-32 right-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-32 left-0 h-96 w-96 rounded-full bg-secondary/5 blur-3xl" />
+            <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-3xl" />
+
+            <div className="relative mx-auto max-w-5xl px-4 py-24 text-center sm:py-32">
+              <p className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+                Gratis att börja
+              </p>
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+                Smarta inbjudningar
+                <br />
+                <span className="bg-gradient-to-r from-primary via-purple-500 to-secondary bg-clip-text text-transparent">
+                  för barnkalas
+                </span>
+              </h1>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+                Skapa snygga inbjudningskort, skicka QR-koder och hantera OSA och allergier
+                digitalt. Slipp kaos med papperslappar och SMS.
+              </p>
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link href="/register">
+                  <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm">
+                    Skapa ditt första kalas
+                  </Button>
+                </Link>
+                <a href="#hur-det-fungerar">
+                  <Button size="lg" variant="outline" className="h-12 px-8 text-base">
+                    Se hur det fungerar
+                  </Button>
+                </a>
+              </div>
             </div>
           </section>
 
           {/* How it works */}
-          <section className="border-t bg-muted/50 py-20">
+          <section id="hur-det-fungerar" className="border-t bg-muted/40 py-20">
             <div className="mx-auto max-w-5xl px-4">
-              <h3 className="mb-12 text-center text-2xl font-bold">Så här fungerar KalasKoll</h3>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mb-12 text-center">
+                <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
+                  Enkelt som 1-2-3
+                </p>
+                <h2 className="text-3xl font-bold tracking-tight">Så här fungerar KalasKoll</h2>
+              </div>
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {[
                   {
                     step: '1',
+                    icon: '🎨',
                     title: 'Skapa kalas',
                     description:
-                      'Fyll i datum, plats och tema. AI genererar ett snyggt inbjudningskort åt dig.',
+                      'Fyll i datum, plats och tema. Välj en gratis mall eller låt AI generera ett unikt inbjudningskort.',
+                    color: 'bg-primary/10 text-primary',
                   },
                   {
                     step: '2',
-                    title: 'Skriv ut & dela',
+                    icon: '📱',
+                    title: 'Dela inbjudan',
                     description:
-                      'Skriv ut inbjudan med QR-kod. Ge till barnen i skolan eller skicka digitalt.',
+                      'Skriv ut inbjudan med QR-kod och ge till barnen. Eller skicka via SMS och e-post.',
+                    color: 'bg-secondary/10 text-secondary',
                   },
                   {
                     step: '3',
+                    icon: '✅',
                     title: 'Samla svar',
                     description:
                       'Gästerna scannar QR-koden och svarar direkt på mobilen. Du ser allt i realtid.',
+                    color: 'bg-accent/10 text-accent-foreground',
                   },
                 ].map((feature) => (
-                  <Card key={feature.step}>
-                    <CardContent className="pt-6">
-                      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
-                        {feature.step}
+                  <Card key={feature.step} className="relative overflow-hidden border-0 shadow-soft">
+                    <CardContent className="pt-8 pb-6">
+                      <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${feature.color}`}>
+                        {feature.icon}
                       </div>
-                      <h4 className="mb-2 font-semibold">{feature.title}</h4>
-                      <p className="text-sm text-muted-foreground">{feature.description}</p>
+                      <div className="mb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Steg {feature.step}
+                      </div>
+                      <h3 className="mb-2 text-lg font-bold">{feature.title}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -153,42 +192,63 @@ export default function HomePage() {
           {/* Features */}
           <section className="py-20">
             <div className="mx-auto max-w-5xl px-4">
-              <h3 className="mb-12 text-center text-2xl font-bold">Allt du behöver</h3>
-              <div className="grid gap-8 sm:grid-cols-2">
+              <div className="mb-12 text-center">
+                <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary">
+                  Funktioner
+                </p>
+                <h2 className="text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2">
                 {[
                   {
+                    icon: '🎨',
                     title: 'AI-genererade inbjudningar',
-                    description: 'Välj tema och få en unik, professionell inbjudan genererad av AI.',
+                    description: 'Välj mellan 9 illustrerade mallar eller skapa en unik AI-genererad inbjudan med ditt eget tema.',
                   },
                   {
+                    icon: '📱',
                     title: 'QR-kod för enkel OSA',
-                    description: 'Gästerna behöver bara scanna QR-koden med mobilen. Inget konto krävs.',
+                    description: 'Gästerna behöver bara scanna QR-koden med mobilen. Inget konto krävs. Svaret tar under 30 sekunder.',
                   },
                   {
+                    icon: '🛡️',
                     title: 'Allergihantering med GDPR',
                     description:
-                      'Samla in allergiinfo säkert med samtycke. Data raderas automatiskt efter kalaset.',
+                      'Samla in allergiinfo säkert med samtycke. Data raderas automatiskt 7 dagar efter kalaset.',
                   },
                   {
+                    icon: '⚡',
                     title: 'Gästlista i realtid',
                     description:
-                      'Se direkt när någon svarar. Överblick över vilka som kommer och deras allergier.',
+                      'Se direkt när någon svarar. Full överblick över vilka som kommer, allergier och kontaktuppgifter.',
                   },
                 ].map((feature) => (
-                  <div key={feature.title} className="space-y-2">
-                    <h4 className="font-semibold">{feature.title}</h4>
-                    <p className="text-sm text-muted-foreground">{feature.description}</p>
-                  </div>
+                  <Card key={feature.title} className="border-0 shadow-soft transition-shadow hover:shadow-warm">
+                    <CardContent className="flex gap-4 pt-6">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted text-2xl">
+                        {feature.icon}
+                      </div>
+                      <div>
+                        <h3 className="mb-1 font-bold">{feature.title}</h3>
+                        <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
           </section>
 
           {/* FAQ */}
-          <section className="border-t bg-muted/50 py-20">
+          <section className="border-t bg-muted/40 py-20">
             <div className="mx-auto max-w-3xl px-4">
-              <h3 className="mb-12 text-center text-2xl font-bold">Vanliga frågor</h3>
-              <div className="space-y-6">
+              <div className="mb-12 text-center">
+                <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
+                  FAQ
+                </p>
+                <h2 className="text-3xl font-bold tracking-tight">Vanliga frågor</h2>
+              </div>
+              <div className="space-y-4">
                 {[
                   {
                     q: 'Kostar det något att använda KalasKoll?',
@@ -207,25 +267,30 @@ export default function HomePage() {
                     a: 'Ja! Så snart en gäst svarar uppdateras din gästlista direkt. Du ser vilka som kommer, allergier och kontaktuppgifter.',
                   },
                 ].map((faq) => (
-                  <div key={faq.q} className="space-y-2">
-                    <h4 className="font-semibold">{faq.q}</h4>
-                    <p className="text-sm text-muted-foreground">{faq.a}</p>
-                  </div>
+                  <Card key={faq.q} className="border-0 shadow-soft">
+                    <CardContent className="pt-6">
+                      <h3 className="mb-2 font-bold">{faq.q}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
           </section>
 
           {/* CTA */}
-          <section className="py-20 text-center">
-            <div className="mx-auto max-w-2xl px-4">
-              <h3 className="text-3xl font-bold">Redo att planera kalas?</h3>
-              <p className="mt-4 text-muted-foreground">
+          <section className="relative overflow-hidden py-20 text-center">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-primary/3 to-transparent" />
+            <div className="relative mx-auto max-w-2xl px-4">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
+              <p className="mt-4 text-lg text-muted-foreground">
                 Skapa ditt konto gratis och ha full koll på nästa barnkalas.
               </p>
               <div className="mt-8">
                 <Link href="/register">
-                  <Button size="lg">Skapa konto gratis</Button>
+                  <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm">
+                    Kom igång gratis
+                  </Button>
                 </Link>
               </div>
             </div>

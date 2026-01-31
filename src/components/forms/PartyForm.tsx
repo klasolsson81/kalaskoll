@@ -63,14 +63,17 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
   return (
     <form action={formAction} className="space-y-6">
       {state.error && (
-        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
           {state.error}
         </div>
       )}
 
-      <Card>
+      <Card className="border-0 shadow-soft">
         <CardHeader>
-          <CardTitle>Om barnet</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-sm">👶</span>
+            Om barnet
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {savedChildren.length > 0 && (
@@ -80,7 +83,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 id="childSelect"
                 value={selectedChildId}
                 onChange={(e) => setSelectedChildId(e.target.value)}
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <option value="">Ange manuellt</option>
                 {savedChildren.map((child) => (
@@ -101,6 +104,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                   name="childName"
                   placeholder="t.ex. Klas"
                   defaultValue={defaultValues?.childName}
+                  className="h-10"
                   required
                 />
               </div>
@@ -114,6 +118,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                   max={19}
                   placeholder="t.ex. 7"
                   defaultValue={defaultValues?.childAge}
+                  className="h-10"
                   required
                 />
               </div>
@@ -142,9 +147,12 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-0 shadow-soft">
         <CardHeader>
-          <CardTitle>Datum & Plats</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/10 text-sm">📅</span>
+            Datum & Plats
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
@@ -157,6 +165,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 value={partyDate}
                 onChange={(e) => setPartyDate(e.target.value)}
                 min={new Date().toISOString().slice(0, 10)}
+                className="h-10"
                 required
               />
             </div>
@@ -167,6 +176,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 name="partyTime"
                 type="time"
                 defaultValue={defaultValues?.partyTime}
+                className="h-10"
                 required
               />
             </div>
@@ -177,6 +187,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 name="partyTimeEnd"
                 type="time"
                 defaultValue={defaultValues?.partyTimeEnd}
+                className="h-10"
               />
             </div>
           </div>
@@ -187,6 +198,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
               name="venueName"
               placeholder="t.ex. Leo's Lekland"
               defaultValue={defaultValues?.venueName}
+              className="h-10"
               required
             />
           </div>
@@ -197,14 +209,18 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
               name="venueAddress"
               placeholder="t.ex. Storgatan 1, Stockholm"
               defaultValue={defaultValues?.venueAddress}
+              className="h-10"
             />
           </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-0 shadow-soft">
         <CardHeader>
-          <CardTitle>Detaljer</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10 text-sm">🎨</span>
+            Detaljer
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -218,7 +234,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                   setCustomTheme('');
                 }
               }}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="">Inget tema</option>
               {PARTY_THEMES.map((t) => (
@@ -234,6 +250,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 placeholder="t.ex. Pokemon, Minecraft, Frozen"
                 value={customTheme}
                 onChange={(e) => setCustomTheme(e.target.value)}
+                className="h-10"
               />
             )}
             <input
@@ -251,7 +268,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
               maxLength={200}
               placeholder="T.ex. Korv med bröd. Kalasrum först, lek sedan."
               defaultValue={defaultValues?.description}
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onInput={(e) => {
                 const counter = (e.target as HTMLTextAreaElement).nextElementSibling;
                 if (counter) counter.textContent = `${(e.target as HTMLTextAreaElement).value.length}/200`;
@@ -274,6 +291,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 defaultValue={defaultValues?.rsvpDeadline}
                 min={new Date().toISOString().slice(0, 10)}
                 max={partyDate || undefined}
+                className="h-10"
               />
             </div>
             <div className="space-y-2">
@@ -286,13 +304,16 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 max={100}
                 placeholder="t.ex. 15"
                 defaultValue={defaultValues?.maxGuests}
+                className="h-10"
               />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <SubmitButton className="w-full">{submitLabel}</SubmitButton>
+      <SubmitButton className="w-full h-11 font-semibold gradient-celebration text-white shadow-warm">
+        {submitLabel}
+      </SubmitButton>
     </form>
   );
 }

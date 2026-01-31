@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 
 interface PartyHeaderProps {
@@ -27,36 +28,60 @@ export function PartyHeader({
   rsvpDeadline,
 }: PartyHeaderProps) {
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">
+    <Card className="overflow-hidden border-0 shadow-warm">
+      {/* Festive gradient header */}
+      <div className="gradient-celebration p-6 text-center text-white">
+        <p className="mb-1 text-sm font-medium opacity-90">Du är inbjuden till</p>
+        <h1 className="text-2xl font-extrabold sm:text-3xl">
           {childName} fyller {childAge} år!
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3 text-center">
-        <div>
-          <p className="text-lg font-medium">{formatDate(partyDate)}</p>
-          <p className="text-muted-foreground">kl {formatTimeRange(partyTime, partyTimeEnd)}</p>
+        </h1>
+      </div>
+
+      <CardContent className="space-y-4 pt-6">
+        {/* Date & Time */}
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-lg">
+            📅
+          </div>
+          <div>
+            <p className="font-semibold">{formatDate(partyDate)}</p>
+            <p className="text-sm text-muted-foreground">kl {formatTimeRange(partyTime, partyTimeEnd)}</p>
+          </div>
         </div>
-        <div>
-          <p className="font-medium">{venueName}</p>
-          {venueAddress && (
-            <p className="text-sm text-muted-foreground">{venueAddress}</p>
+
+        {/* Location */}
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/10 text-lg">
+            📍
+          </div>
+          <div>
+            <p className="font-semibold">{venueName}</p>
+            {venueAddress && (
+              <p className="text-sm text-muted-foreground">{venueAddress}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Description */}
+        {description && (
+          <div className="rounded-xl bg-muted/50 p-3">
+            <p className="text-sm text-muted-foreground">{description}</p>
+          </div>
+        )}
+
+        {/* Meta info */}
+        <div className="flex flex-wrap gap-2">
+          {theme && (
+            <Badge variant="outline" className="capitalize">
+              {theme}
+            </Badge>
+          )}
+          {rsvpDeadline && (
+            <Badge variant="warning">
+              OSA senast {formatDate(rsvpDeadline)}
+            </Badge>
           )}
         </div>
-        {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
-        )}
-        {rsvpDeadline && (
-          <p className="text-sm text-muted-foreground">
-            OSA senast {formatDate(rsvpDeadline)}
-          </p>
-        )}
-        {theme && (
-          <p className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium capitalize text-primary">
-            Tema: {theme}
-          </p>
-        )}
       </CardContent>
     </Card>
   );

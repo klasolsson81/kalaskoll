@@ -22,16 +22,21 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen">
-      <header className="border-b print:hidden">
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md print:hidden">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-          <Link href="/dashboard" className="text-xl font-bold">
-            KalasKoll
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <span className="text-xl font-extrabold tracking-tight text-primary">
+              KalasKoll
+            </span>
           </Link>
-          <nav className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-sm hover:underline">
+          <nav className="flex items-center gap-3">
+            <Link
+              href="/dashboard"
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
               Mina kalas
             </Link>
-            <span className="text-sm text-muted-foreground">{displayName}</span>
+            <span className="text-sm font-medium text-foreground">{displayName}</span>
             <LogoutButton />
             <DeleteAccountButton />
           </nav>

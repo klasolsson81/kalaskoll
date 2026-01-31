@@ -27,7 +27,10 @@ export default async function EditPartyPage({ params }: EditPartyPageProps) {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-8 text-3xl font-bold">Redigera kalas</h1>
+      <div className="mb-8 space-y-1">
+        <h1 className="text-2xl font-bold sm:text-3xl">Redigera kalas</h1>
+        <p className="text-muted-foreground">{party.child_name}s kalas</p>
+      </div>
       <PartyForm
         action={boundAction}
         submitLabel="Spara ändringar"

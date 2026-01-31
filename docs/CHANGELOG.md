@@ -6,6 +6,26 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+#### UI/UX Refaktor: Festlig Skandinavisk Minimalism
+- Complete visual redesign based on "Festlig Skandinavisk Minimalism" design philosophy
+- New color palette: Konfetti Rosa (primary), Ballong Turkos (secondary), Celebration Gold (accent) with warm off-white background
+- Switched from Geist Sans to Inter font for better Swedish character support
+- New warm shadow utilities: `shadow-soft`, `shadow-warm`, `shadow-lifted`
+- Gradient celebration buttons with `gradient-celebration` utility
+- Warm decorative background blobs throughout auth and landing pages
+- Landing page: sticky header with blur, gradient hero text, feature cards with icons, FAQ cards, CTA with gradient
+- Auth pages: card-based forms with brand logo, decorative background elements, warmer inputs
+- Dashboard: welcome section with quick stats, gradient accent strips on party cards, empty state with CTA
+- Party detail page: icon-based detail sections, better information hierarchy, badge-based status
+- RSVP page: festive gradient header on PartyHeader, larger touch targets (h-12/h-14 inputs), warm success state
+- Forms: consistent h-10/h-11 input heights, rounded-xl borders, icon-enhanced card headers
+- Badge component added (success, warning, outline, destructive variants)
+- Confetti animations on account verification and successful RSVP (via canvas-confetti)
+- Animation utilities library (`src/lib/animations.ts`) with spring physics, fade-in, stagger variants
+- `useConfetti` hook with reduced-motion respect
+- Improved SEO metadata: more keywords, format detection, alternates, better descriptions
+- All existing functionality preserved (auth, RSVP, GDPR, edit mode, email, etc.)
+
 #### Större foto + zoom/beskär-verktyg
 - Child photo on invitation card enlarged from 96px to 144px (inline) and 208px (print)
 - PhotoFrame component refactored to use wrapper-div approach, allowing Tailwind className to override size

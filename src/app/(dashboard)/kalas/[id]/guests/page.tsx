@@ -82,8 +82,13 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Gästlista - {party.child_name}s kalas</h1>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold sm:text-3xl">
+            Gästlista
+          </h1>
+          <p className="text-muted-foreground">{party.child_name}s kalas</p>
+        </div>
         <Link href={`/kalas/${id}`}>
           <Button variant="outline">Tillbaka</Button>
         </Link>

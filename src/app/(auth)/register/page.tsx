@@ -15,25 +15,34 @@ export default function RegisterPage() {
   );
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Skapa konto</CardTitle>
-        <CardDescription>Kom igång med KalasKoll</CardDescription>
+    <Card className="border-0 shadow-lifted">
+      <CardHeader className="text-center space-y-3 pb-2">
+        <Link href="/" className="mx-auto block">
+          <span className="text-3xl font-extrabold tracking-tight text-primary">
+            KalasKoll
+          </span>
+        </Link>
+        <div>
+          <CardTitle className="text-2xl">Skapa konto</CardTitle>
+          <CardDescription className="mt-1 text-base">
+            Kom igång med KalasKoll – helt gratis
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
           {state.error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
               {state.error}
             </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="fullName">Namn</Label>
-            <Input id="fullName" name="fullName" placeholder="Ditt namn" required />
+            <Input id="fullName" name="fullName" placeholder="Ditt namn" className="h-11" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">E-post</Label>
-            <Input id="email" name="email" type="email" placeholder="din@email.se" required />
+            <Input id="email" name="email" type="email" placeholder="din@email.se" className="h-11" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Lösenord</Label>
@@ -43,14 +52,27 @@ export default function RegisterPage() {
               type="password"
               minLength={6}
               placeholder="Minst 6 tecken"
+              className="h-11"
               required
             />
           </div>
-          <SubmitButton className="w-full">Skapa konto</SubmitButton>
+          <SubmitButton className="w-full h-11 font-semibold gradient-celebration text-white">
+            Skapa konto
+          </SubmitButton>
         </form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-3 text-muted-foreground">eller</span>
+          </div>
+        </div>
+
+        <p className="text-center text-sm text-muted-foreground">
           Har du redan ett konto?{' '}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link href="/login" className="font-semibold text-primary hover:underline">
             Logga in
           </Link>
         </p>
