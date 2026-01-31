@@ -24,7 +24,7 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="group" aria-label="Allergier och specialkost">
       <p className="text-sm font-medium">Allergier eller specialkost</p>
 
       <div className="grid grid-cols-2 gap-3">

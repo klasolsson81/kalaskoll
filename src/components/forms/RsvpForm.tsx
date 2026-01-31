@@ -133,7 +133,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+        <div role="alert" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
       )}
 
       {/* Attending toggle */}
@@ -146,6 +146,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
             <button
               type="button"
               onClick={() => setAttending(true)}
+              aria-pressed={attending === true}
               className={`rounded-xl border-2 p-5 text-center transition-all ${
                 attending === true
                   ? 'border-success bg-success/5 text-success shadow-sm'
@@ -158,6 +159,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
             <button
               type="button"
               onClick={() => setAttending(false)}
+              aria-pressed={attending === false}
               className={`rounded-xl border-2 p-5 text-center transition-all ${
                 attending === false
                   ? 'border-destructive bg-destructive/5 text-destructive shadow-sm'

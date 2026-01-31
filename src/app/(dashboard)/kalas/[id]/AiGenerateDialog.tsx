@@ -77,9 +77,9 @@ export function AiGenerateDialog({
   const canSubmit = !generating && (!isCustom || (customTheme.trim().length > 0 && customValidation.valid));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="ai-dialog-title">
       <div className="max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
-        <h3 className="text-lg font-bold text-gray-900">Skapa AI-bild</h3>
+        <h3 id="ai-dialog-title" className="text-lg font-bold text-gray-900">Skapa AI-bild</h3>
         <p className="mt-1 text-sm text-gray-600">
           Designa din inbjudningsbild
         </p>
@@ -157,7 +157,7 @@ export function AiGenerateDialog({
               )}
             />
             {themeError && (
-              <p className="mt-1 text-xs text-red-600">{themeError}</p>
+              <p role="alert" className="mt-1 text-xs text-red-600">{themeError}</p>
             )}
             <p className="mt-0.5 text-right text-[10px] text-gray-400">
               {customTheme.length}/80

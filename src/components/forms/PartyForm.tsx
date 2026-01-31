@@ -63,7 +63,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
   return (
     <form action={formAction} className="space-y-6">
       {state.error && (
-        <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+        <div role="alert" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
           {state.error}
         </div>
       )}
