@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 #### Code Review Fixes (HI-10, MI-03, MI-05, MI-06, MI-09, MI-10)
 - **Loading skeletons** (MI-03): `loading.tsx` for dashboard and party detail pages with spinner + skeleton cards
 - **Per-user AI rate limiting** (MI-06): Factory-based rate limiter in `rate-limit.ts`. AI generation limited to 10 req/hour per user (admins exempt). RSVP limiter unchanged (backward-compatible).
+- **Composite index** (LO-04): `parties(owner_id, party_date DESC)` for faster dashboard queries (migration `00018`)
+- **CI/CD improvements** (LO-03): Coverage reporting with artifact upload, E2E job (Playwright on PRs) with artifact upload
 
 ### Changed
 
@@ -21,6 +23,9 @@ All notable changes to this project will be documented in this file.
 #### Code Review Fixes (HI-10, MI-03, MI-05, MI-06, MI-09, MI-10)
 - **Image header validation** (HI-10): Server-side magic byte validation in `uploadPhotoToStorage()` rejects files with mismatched MIME type and actual content (JPEG/PNG/WebP)
 - **Allergy consent filter** (MI-09): Allergy data query now includes `consent_given_at` in SELECT and filters out rows without consent
+- **Visual consistency** (LO-01): Standardized QR background to `bg-white` across all templates, replaced hardcoded `blue-500` with `primary` in TemplatePicker and PhotoCropDialog, textarea styling now matches Input component pattern
+- **Magic number comments** (LO-05): Documented Bézier circle constant (0.5523), star inner radius (0.38), and heart path control points in PhotoCropDialog
+- **Lint warnings** (LO-06): Suppressed 2 `no-unused-vars` warnings for intentional destructuring-to-omit pattern in test file
 
 #### Tech Debt Sprint (TD-01 till TD-19)
 - **AES-256-GCM allergy encryption** (TD-08): All allergy data encrypted at rest with AES-256-GCM. `src/lib/utils/crypto.ts` with `encrypt`/`decrypt`, `encryptAllergyData`/`decryptAllergyData`. Graceful fallback for legacy unencrypted data and missing `ALLERGY_ENCRYPTION_KEY`.
