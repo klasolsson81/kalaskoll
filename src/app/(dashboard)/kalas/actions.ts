@@ -80,10 +80,31 @@ export async function createParty(
 
   // Auto-select matching template when theme matches a template ID
   const theme = parsed.data.theme;
+  const postInsertUpdate: Record<string, string> = {};
+
   if (theme && TEMPLATE_IDS.includes(theme)) {
+    postInsertUpdate.invitation_template = theme;
+  }
+
+  // Auto-copy child photo to party when a saved child is selected
+  const childId = parsed.data.childId;
+  if (childId) {
+    const { data: childData } = await supabase
+      .from('children')
+      .select('photo_url, photo_frame')
+      .eq('id', childId)
+      .single();
+
+    if (childData?.photo_url) {
+      postInsertUpdate.child_photo_url = childData.photo_url;
+      postInsertUpdate.child_photo_frame = childData.photo_frame || 'circle';
+    }
+  }
+
+  if (Object.keys(postInsertUpdate).length > 0) {
     await supabase
       .from('parties')
-      .update({ invitation_template: theme })
+      .update(postInsertUpdate)
       .eq('id', party.id);
   }
 

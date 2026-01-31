@@ -132,6 +132,8 @@ export type Database = {
           owner_id: string;
           name: string;
           birth_date: string;
+          photo_url: string | null;
+          photo_frame: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -140,6 +142,8 @@ export type Database = {
           owner_id: string;
           name: string;
           birth_date: string;
+          photo_url?: string | null;
+          photo_frame?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -148,6 +152,8 @@ export type Database = {
           owner_id?: string;
           name?: string;
           birth_date?: string;
+          photo_url?: string | null;
+          photo_frame?: string | null;
           updated_at?: string;
         };
         Relationships: [

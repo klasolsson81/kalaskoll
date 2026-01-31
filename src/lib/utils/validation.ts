@@ -178,6 +178,19 @@ export const uploadPhotoSchema = z.object({
 
 export type UploadPhotoFormData = z.infer<typeof uploadPhotoSchema>;
 
+// Upload child photo schema
+export const uploadChildPhotoSchema = z.object({
+  childId: z.string().uuid(),
+  photoData: z
+    .string()
+    .max(PHOTO_MAX_DATA_URL_SIZE)
+    .regex(/^data:image\/(webp|jpeg|png);base64,/)
+    .nullable(),
+  frame: z.enum(VALID_PHOTO_FRAMES).default('circle'),
+});
+
+export type UploadChildPhotoFormData = z.infer<typeof uploadChildPhotoSchema>;
+
 // Profile schema
 export const profileSchema = z.object({
   fullName: z.string().min(1, 'Namn krävs').max(100),

@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Barnfoto — foto på sparade barn + auto-kopiera till kalas
+- Optional photo upload on saved children (same crop/frame dialog as party invitation)
+- `PhotoFrame` displayed (40px) next to child name in "Mina barn" list
+- "Foto" / "Byt foto" / "Ta bort foto" buttons per child row
+- `POST /api/children/upload-photo` endpoint with Zod validation and ownership check
+- Photo stored as base64 data-URL in `children.photo_url` column
+- Frame choice stored in `children.photo_frame` with CHECK constraint
+- Auto-copy: when creating a party with a saved child that has a photo, the photo and frame are copied to `child_photo_url`/`child_photo_frame` on the party
+- SQL migration 00013 (photo_url + photo_frame columns on children table)
+- `uploadChildPhotoSchema` Zod validation schema
+
 #### Profilsidor
 - New `/profile` page for editing name and phone number
 - New `/profile/password` page for changing password

@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useActionState } from 'react';
+import { useState, useRef, useActionState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SubmitButton } from '@/components/forms/SubmitButton';
+import { PhotoFrame } from '@/components/shared/PhotoFrame';
+import { PhotoCropDialog } from '@/components/shared/PhotoCropDialog';
 import {
   createChild,
   updateChild,
@@ -13,11 +16,15 @@ import {
   type ChildActionResult,
 } from '@/app/(dashboard)/children/actions';
 import { calculateAge } from '@/lib/utils/format';
+import { PHOTO_MAX_FILE_SIZE } from '@/lib/constants';
+import type { PhotoFrame as PhotoFrameType } from '@/lib/constants';
 
 interface Child {
   id: string;
   name: string;
   birth_date: string;
+  photo_url: string | null;
+  photo_frame: string | null;
 }
 
 function todayString(): string {
@@ -94,47 +101,160 @@ function EditChildForm({ child, onDone }: { child: Child; onDone: () => void }) 
 }
 
 function ChildRow({ child }: { child: Child }) {
+  const router = useRouter();
   const [mode, setMode] = useState<'view' | 'edit' | 'confirm-delete'>('view');
+  const [cropFile, setCropFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const age = calculateAge(child.birth_date);
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    setPhotoError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Välj en bildfil');
+      return;
+    }
+    if (file.size > PHOTO_MAX_FILE_SIZE) {
+      setPhotoError('Bilden är för stor (max 10 MB)');
+      return;
+    }
+    setCropFile(file);
+    // Reset input so the same file can be re-selected
+    e.target.value = '';
+  }
+
+  async function handleCropSave(dataUrl: string, frame: PhotoFrameType) {
+    setCropFile(null);
+    setUploading(true);
+    setPhotoError(null);
+    try {
+      const res = await fetch('/api/children/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ childId: child.id, photoData: dataUrl, frame }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setPhotoError(data.error || 'Kunde inte spara foto');
+        return;
+      }
+      router.refresh();
+    } catch {
+      setPhotoError('Nätverksfel');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleRemovePhoto() {
+    setUploading(true);
+    setPhotoError(null);
+    try {
+      const res = await fetch('/api/children/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ childId: child.id, photoData: null, frame: 'circle' }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setPhotoError(data.error || 'Kunde inte ta bort foto');
+        return;
+      }
+      router.refresh();
+    } catch {
+      setPhotoError('Nätverksfel');
+    } finally {
+      setUploading(false);
+    }
+  }
 
   if (mode === 'edit') {
     return <EditChildForm child={child} onDone={() => setMode('view')} />;
   }
 
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm">
-        {child.name} &bull; {age} år
-      </span>
-      <div className="flex gap-2">
-        {mode === 'confirm-delete' ? (
-          <>
-            <span className="text-sm text-muted-foreground">Säker?</span>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={async () => {
-                await deleteChild(child.id);
-              }}
-            >
-              Ja
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setMode('view')}>
-              Nej
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button variant="ghost" size="sm" onClick={() => setMode('edit')}>
-              Redigera
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setMode('confirm-delete')}>
-              Ta bort
-            </Button>
-          </>
-        )}
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          {child.photo_url && (
+            <PhotoFrame
+              src={child.photo_url}
+              alt={`Foto på ${child.name}`}
+              shape={(child.photo_frame as PhotoFrameType) || 'circle'}
+              size={40}
+            />
+          )}
+          <span className="text-sm">
+            {child.name} &bull; {age} år
+          </span>
+        </div>
+        <div className="flex gap-2">
+          {mode === 'confirm-delete' ? (
+            <>
+              <span className="text-sm text-muted-foreground">Säker?</span>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={async () => {
+                  await deleteChild(child.id);
+                }}
+              >
+                Ja
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setMode('view')}>
+                Nej
+              </Button>
+            </>
+          ) : (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+              >
+                {uploading ? 'Sparar...' : child.photo_url ? 'Byt foto' : 'Foto'}
+              </Button>
+              {child.photo_url && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRemovePhoto}
+                  disabled={uploading}
+                >
+                  Ta bort foto
+                </Button>
+              )}
+              <Button variant="ghost" size="sm" onClick={() => setMode('edit')}>
+                Redigera
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setMode('confirm-delete')}>
+                Ta bort
+              </Button>
+            </>
+          )}
+        </div>
       </div>
+      {photoError && <p className="text-xs text-destructive">{photoError}</p>}
+      {cropFile && (
+        <PhotoCropDialog
+          imageFile={cropFile}
+          initialFrame={(child.photo_frame as PhotoFrameType) || 'circle'}
+          onSave={handleCropSave}
+          onCancel={() => setCropFile(null)}
+        />
+      )}
     </div>
   );
 }
