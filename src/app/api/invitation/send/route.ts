@@ -69,7 +69,7 @@ export async function POST(request: Request) {
   );
 
   // Send emails in parallel (append ?email= so RSVP form is pre-filled)
-  const results = await Promise.allSettled(
+  const results = await Promise.all(
     emails.map((e) => {
       const rsvpUrl = `${baseRsvpUrl}?email=${encodeURIComponent(e.email)}`;
       return sendPartyInvitation({
@@ -89,8 +89,8 @@ export async function POST(request: Request) {
     }),
   );
 
-  const sent = results.filter((r) => r.status === 'fulfilled').length;
-  const failed = results.filter((r) => r.status === 'rejected').length;
+  const sent = results.filter((r) => r.success).length;
+  const failed = results.filter((r) => !r.success).length;
 
   const response: SendInvitationResponse = { sent, failed };
   return NextResponse.json(response);

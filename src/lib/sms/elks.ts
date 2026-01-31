@@ -65,6 +65,7 @@ export async function sendPartySms(params: SendPartySmsParams): Promise<ElksResp
   const password = process.env.ELKS_API_PASSWORD;
 
   if (!username || !password) {
+    console.error('[SMS] 46elks credentials not configured');
     throw new Error('46elks credentials not configured');
   }
 
@@ -91,20 +92,28 @@ export async function sendPartySms(params: SendPartySmsParams): Promise<ElksResp
       body: body.toString(),
       signal: controller.signal,
     });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[SMS] Send failed:', { to: params.to, error: msg });
+    throw err;
   } finally {
     clearTimeout(timeout);
   }
 
   if (!response.ok) {
     const text = await response.text();
+    console.error('[SMS] API error:', { to: params.to, status: response.status, body: text });
     throw new Error(`46elks API error: ${response.status} ${text}`);
   }
 
   const data = await response.json();
   const parsed = elksResponseSchema.safeParse(data);
   if (!parsed.success) {
+    console.error('[SMS] Unexpected response format:', { to: params.to, data });
     throw new Error('Unexpected 46elks API response format');
   }
+
+  console.log('[SMS] Sent:', { to: params.to, smsId: parsed.data.id });
   return parsed.data;
 }
 
