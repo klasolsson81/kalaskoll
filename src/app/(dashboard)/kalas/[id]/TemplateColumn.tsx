@@ -30,7 +30,10 @@ export function TemplateColumn({
 }: TemplateColumnProps) {
   return (
     <div>
-      <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-xs">
+          🎨
+        </span>
         Gratis-mallar
       </h3>
       <div className="grid grid-cols-3 gap-2">

@@ -35,13 +35,19 @@ export function AiColumn({
   const remainingCount = maxImages - images.length;
 
   return (
-    <div>
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-        AI-kort
-        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+    <div className="rounded-xl border border-amber-200 bg-gradient-to-b from-amber-50/80 to-amber-50/30 p-4">
+      {/* Premium heading */}
+      <div className="mb-3 flex items-center gap-2">
+        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-100 text-xs">
+          ✨
+        </span>
+        <h3 className="text-sm font-semibold text-amber-900">
+          AI-kort
+        </h3>
+        <span className="rounded-full border border-amber-300 bg-gradient-to-r from-amber-100 to-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 shadow-sm">
           Guldkalas
         </span>
-      </h3>
+      </div>
 
       <div className="grid grid-cols-3 gap-2">
         {/* AI image thumbnails */}
@@ -55,8 +61,8 @@ export function AiColumn({
               className={cn(
                 'relative aspect-[3/4] overflow-hidden rounded-lg border-2 transition-all',
                 isSelected
-                  ? 'border-blue-500 ring-2 ring-blue-500/30'
-                  : 'border-muted hover:border-blue-300',
+                  ? 'border-amber-500 ring-2 ring-amber-400/40'
+                  : 'border-amber-200 hover:border-amber-400',
                 selecting === img.id && 'opacity-50',
               )}
             >
@@ -68,8 +74,8 @@ export function AiColumn({
                 sizes="128px"
               />
               {isSelected && (
-                <div className="absolute inset-0 flex items-center justify-center bg-blue-500/20">
-                  <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
+                <div className="absolute inset-0 flex items-center justify-center bg-amber-500/20">
+                  <span className="rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">
                     ✓
                   </span>
                 </div>
@@ -83,14 +89,14 @@ export function AiColumn({
           <button
             onClick={onGenerate}
             disabled={generating}
-            className="flex aspect-[3/4] flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 text-muted-foreground transition-colors hover:border-muted-foreground/60 hover:text-foreground disabled:opacity-50"
+            className="flex aspect-[3/4] flex-col items-center justify-center rounded-lg border-2 border-dashed border-amber-300 text-amber-600 transition-colors hover:border-amber-400 hover:bg-amber-50 hover:text-amber-800 disabled:opacity-50"
           >
             {generating ? (
               <span className="text-[10px]">Genererar...</span>
             ) : (
               <>
                 <span className="text-lg">+</span>
-                <span className="text-[10px]">Ny AI-bild</span>
+                <span className="text-[10px] font-medium">Ny AI-bild</span>
               </>
             )}
           </button>
@@ -98,17 +104,17 @@ export function AiColumn({
       </div>
 
       {/* Counter / upgrade text */}
-      <div className="mt-2">
+      <div className="mt-3 border-t border-amber-200/60 pt-2">
         {isAdmin ? (
-          <p className="text-xs text-amber-600">
+          <p className="text-xs font-medium text-amber-700">
             Superadmin — inga begränsningar
           </p>
         ) : remainingCount > 0 ? (
-          <p className="text-xs text-muted-foreground">
-            Genereringar kvar: {remainingCount}/{maxImages}
+          <p className="text-xs text-amber-700">
+            Genereringar kvar: <span className="font-semibold">{remainingCount}/{maxImages}</span>
           </p>
         ) : (
-          <p className="text-xs text-amber-600">
+          <p className="text-xs font-medium text-amber-700">
             Uppgradera till Guldkalas för fler AI-genereringar
           </p>
         )}

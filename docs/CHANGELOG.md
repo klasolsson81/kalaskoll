@@ -12,7 +12,11 @@ All notable changes to this project will be documented in this file.
 - AI column shows Guldkalas badge, generation counter (X/5), and upgrade text when limit reached
 - Admin users see "Superadmin — inga begränsningar" instead of counter
 - Extracted `InvitationPreview`, `PhotoUploadSection`, `TemplateColumn`, `AiColumn` sub-components from monolithic InvitationSection (605 → ~250 lines orchestrator)
-- Columns stack vertically on mobile (md:grid-cols-2)
+- Columns stack vertically on mobile with horizontal divider; vertical divider on desktop
+- Card heading renamed from "Inbjudan" to "Inbjudningskort"
+- AI column styled as premium card: amber gradient background, gold border, amber-tinted selection rings and generate button
+- Guldkalas badge upgraded: gradient fill, border, shadow — feels premium instead of flat
+- Column headings promoted from gray `text-muted-foreground` to darker `text-foreground`/`text-amber-900` with icon chips
 - PartyForm: added Guldkalas info box under theme selector explaining AI cards are available after party creation
 - `createParty`: new parties without a matching theme template now default to 'default' (Klassiskt kalas)
 

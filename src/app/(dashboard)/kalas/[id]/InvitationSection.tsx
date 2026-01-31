@@ -274,7 +274,7 @@ export function InvitationSection({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 print:hidden">
-        <CardTitle>Inbjudan</CardTitle>
+        <CardTitle>Inbjudningskort</CardTitle>
         <div className="flex gap-2">
           {activeMode && (
             <Button
@@ -318,7 +318,7 @@ export function InvitationSection({
           <p className="mb-2 text-sm text-red-600">{error}</p>
         )}
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-0 md:grid-cols-[1fr_auto_1fr]">
           <TemplateColumn
             activeTemplate={activeTemplate}
             activeMode={activeMode}
@@ -326,6 +326,8 @@ export function InvitationSection({
             onSelectTemplate={selectTemplate}
             partyData={partyData}
           />
+          {/* Vertical divider (desktop) / horizontal divider (mobile) */}
+          <div className="my-4 border-t md:my-0 md:mx-5 md:border-t-0 md:border-l" />
           <AiColumn
             images={images}
             activeMode={activeMode}
