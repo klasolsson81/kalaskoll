@@ -35,7 +35,7 @@ const MAX_SCALE = 3;
 function getOverlayPath(frame: PhotoFrameType, s: number): string {
   const cx = s / 2;
   const cy = s / 2;
-  const r = s * 0.45; // slightly smaller than half to give a small margin
+  const r = s * 0.45; // 45% of viewport size — leaves a 5% margin on each side
 
   // Outer rectangle (clockwise)
   const outer = `M0,0 L${s},0 L${s},${s} L0,${s} Z`;
@@ -44,7 +44,9 @@ function getOverlayPath(frame: PhotoFrameType, s: number): string {
   switch (frame) {
     case 'circle': {
       // Approximate circle with 4 cubic bezier arcs
-      const k = r * 0.5523; // magic number for cubic bezier circle
+      // 4/3 * (√2 - 1) ≈ 0.5523 — the optimal control point distance
+      // for approximating a circle with 4 cubic Bézier curves
+      const k = r * 0.5523;
       inner = [
         `M${cx},${cy - r}`,
         `C${cx + k},${cy - r} ${cx + r},${cy - k} ${cx + r},${cy}`,
@@ -58,7 +60,7 @@ function getOverlayPath(frame: PhotoFrameType, s: number): string {
     case 'star': {
       // 5-pointed star
       const outerR = r;
-      const innerR = r * 0.38;
+      const innerR = r * 0.38; // inner-to-outer ratio for a classic 5-pointed star
       const points: string[] = [];
       for (let i = 0; i < 10; i++) {
         const angle = (Math.PI / 2) * -1 + (Math.PI / 5) * i;
@@ -71,7 +73,8 @@ function getOverlayPath(frame: PhotoFrameType, s: number): string {
       break;
     }
     case 'heart': {
-      // Heart path scaled to the viewport
+      // Heart path scaled to the viewport — control points define cubic Bézier
+      // curves forming two lobes meeting at a bottom point
       const hs = r * 2; // heart size
       const ox = cx - hs / 2;
       const oy = cy - hs * 0.4;
@@ -303,7 +306,7 @@ export function PhotoCropDialog({
             step={0.01}
             value={scale}
             onChange={(e) => setScale(Number(e.target.value))}
-            className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-gray-200 accent-blue-500"
+            className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-gray-200 accent-primary"
           />
           <span className="text-xs text-muted-foreground">+</span>
         </div>
@@ -317,7 +320,7 @@ export function PhotoCropDialog({
               className={cn(
                 'rounded-md px-2.5 py-1 text-xs capitalize transition-colors',
                 frame === f
-                  ? 'bg-blue-500 text-white'
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
               )}
             >

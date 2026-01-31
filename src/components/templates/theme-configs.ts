@@ -50,7 +50,7 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
     borderClass: 'border-4 border-green-700 rounded-2xl',
-    qrBgClass: 'bg-white/90',
+    qrBgClass: 'bg-white',
   },
 
   // 3. PRINSESSOR — castle, roses, crowns, sparkle
@@ -67,7 +67,7 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
     borderClass: 'border-4 border-fuchsia-400 rounded-2xl',
-    qrBgClass: 'bg-white/90',
+    qrBgClass: 'bg-white',
   },
 
   // 4. SUPERHJÄLTAR — comic-book burst, capes, masks
@@ -156,7 +156,7 @@ export const TEMPLATE_THEMES: Record<string, TemplateThemeConfig> = {
     headlineClass: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
     subtitleClass: 'text-lg sm:text-xl italic font-medium',
     borderClass: 'border-4 border-purple-300 rounded-2xl',
-    qrBgClass: 'bg-white/90',
+    qrBgClass: 'bg-white',
   },
 
   // 9. PIRATER — treasure map, ship, compass, chest

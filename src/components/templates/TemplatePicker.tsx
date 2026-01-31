@@ -38,10 +38,10 @@ export function TemplatePicker({
           key={id}
           onClick={() => onSelect(id)}
           className={cn(
-            'rounded-2xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+            'rounded-2xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
             selectedId === id
-              ? 'ring-2 ring-blue-500 ring-offset-2'
-              : 'hover:ring-2 hover:ring-blue-300 hover:ring-offset-1',
+              ? 'ring-2 ring-primary ring-offset-2'
+              : 'hover:ring-2 hover:ring-primary/40 hover:ring-offset-1',
           )}
         >
           <TemplateCard
