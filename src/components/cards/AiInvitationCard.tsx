@@ -36,13 +36,16 @@ export function AiInvitationCard({
   childPhotoUrl,
   childPhotoFrame = 'circle',
 }: AiInvitationCardProps) {
-  const isSvg = imageUrl.endsWith('.svg');
+  const src = typeof imageUrl === 'string' ? imageUrl : '';
+  const isSvg = src.endsWith('.svg');
+
+  if (!src) return null;
 
   return (
     <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0">
       {/* AI background image — full bleed */}
       <Image
-        src={imageUrl}
+        src={src}
         alt={`AI-genererad inbjudan till ${childName}s kalas`}
         fill
         className="object-cover"

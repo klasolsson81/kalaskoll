@@ -40,7 +40,7 @@ export function InvitationCard({
               alt={`Inbjudan till ${childName}s kalas`}
               fill
               className="object-cover"
-              unoptimized={imageUrl.endsWith('.svg')}
+              unoptimized={typeof imageUrl === 'string' && imageUrl.endsWith('.svg')}
             />
           </div>
 
