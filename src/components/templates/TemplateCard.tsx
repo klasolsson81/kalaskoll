@@ -106,7 +106,9 @@ export function TemplateCard({
     <div
       className={cn(
         'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0',
-        hasImage ? 'rounded-2xl' : theme.borderClass,
+        hasImage
+          ? 'aspect-[3/4] rounded-2xl print:aspect-auto'
+          : theme.borderClass,
         !hasImage && theme.bgGradient,
       )}
     >
@@ -127,8 +129,14 @@ export function TemplateCard({
         <div className="absolute inset-0" style={theme.patternStyle} />
       )}
 
+      {/* Text content — constrained to the center zone when image is present */}
       <div
-        className="relative flex flex-1 flex-col items-center justify-center px-6 py-8 text-center sm:px-8 sm:py-10"
+        className={cn(
+          'flex flex-col items-center justify-center text-center',
+          hasImage
+            ? 'absolute inset-x-[8%] top-[18%] bottom-[16%] overflow-hidden'
+            : 'relative flex-1 px-6 py-8 sm:px-8 sm:py-10',
+        )}
         style={textStyle}
       >
         {/* Top emoji decoration (fallback only) */}
@@ -137,9 +145,6 @@ export function TemplateCard({
             {theme.emoji}
           </p>
         )}
-
-        {/* Spacer when image (push content down from top decorations) */}
-        {hasImage && <div className="h-4 sm:h-6" />}
 
         {/* Headline */}
         <h2 className={cn(theme.headlineClass, theme.headlineColor)}>
@@ -151,11 +156,11 @@ export function TemplateCard({
 
         {/* Separator */}
         <div
-          className={cn('my-5 w-3/4 border-t-2 sm:my-6', theme.accentBorder)}
+          className={cn('my-4 w-3/4 border-t-2 sm:my-5', theme.accentBorder)}
         />
 
         {/* Party details */}
-        <div className={cn('space-y-1.5 text-base sm:text-lg', theme.detailColor)}>
+        <div className={cn('space-y-1 text-base sm:text-lg', theme.detailColor)}>
           <p>📅 {partyDate}</p>
           <p>🕐 {partyTime}</p>
           <p>📍 {venueName}</p>
@@ -165,7 +170,7 @@ export function TemplateCard({
         </div>
 
         {rsvpDeadline && (
-          <p className={cn('mt-4 text-sm font-medium', theme.detailColor)}>
+          <p className={cn('mt-3 text-sm font-medium', theme.detailColor)}>
             OSA senast {rsvpDeadline}
           </p>
         )}
@@ -174,7 +179,7 @@ export function TemplateCard({
         {description && (
           <p
             className={cn(
-              'mt-4 max-w-xs whitespace-pre-line text-sm italic leading-relaxed',
+              'mt-3 max-w-xs whitespace-pre-line text-sm italic leading-relaxed',
               theme.detailColor,
             )}
           >
@@ -184,23 +189,23 @@ export function TemplateCard({
 
         {/* Separator */}
         <div
-          className={cn('my-5 w-3/4 border-t-2 sm:my-6', theme.accentBorder)}
+          className={cn('my-4 w-3/4 border-t-2 sm:my-5', theme.accentBorder)}
         />
 
         {/* Welcome + QR */}
         <p
           className={cn(
-            'mb-4 text-lg font-semibold sm:text-xl',
+            'mb-3 text-lg font-semibold sm:text-xl',
             theme.subtitleColor,
           )}
         >
           Välkomna!
         </p>
 
-        <div className={cn('rounded-xl p-3', theme.qrBgClass)}>
-          <QRCode token={token} size={120} />
+        <div className={cn('rounded-xl p-2', theme.qrBgClass)}>
+          <QRCode token={token} size={110} />
         </div>
-        <p className={cn('mt-2 text-xs', theme.detailColor)}>
+        <p className={cn('mt-1.5 text-xs', theme.detailColor)}>
           Scanna för att OSA
         </p>
 
@@ -210,9 +215,6 @@ export function TemplateCard({
             {theme.emoji}
           </p>
         )}
-
-        {/* Spacer when image (push content up from bottom decorations) */}
-        {hasImage && <div className="h-4 sm:h-6" />}
       </div>
     </div>
   );
