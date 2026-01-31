@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Riktig AI-bildgenerering med fal.ai + Premium-kortrendering
+- fal.ai Flux Schnell as primary AI image provider (768x1024 portrait)
+- OpenAI DALL-E 3 as fallback provider (1024x1792 portrait)
+- `AiGenerateDialog` modal: 4 style choices (Tecknat, 3D-render, Akvarell, Fotorealistisk) with amber Guldkalas styling
+- `AiInvitationCard` component: fullbleed AI background with dark gradient overlay, white text + text-shadow, QR in white container
+- `buildPrompt()` prompt builder: maps style + theme to detailed image prompts with "no text" enforcement
+- `generateImageSchema` Zod validation for style parameter
+- Child photo support on AI-generated cards (same PhotoFrame component as templates)
+- Photo upload enabled for both template and AI invitation modes
+- `@fal-ai/client` dependency for fal.ai API integration
+- `FAL_KEY` environment variable for fal.ai authentication
+- Next.js `images.remotePatterns` for fal.media and OpenAI blob domains
+- `AI_STYLES` constant with 4 style options and `AiStyle` type
+
+### Changed
+
+- AI generation API route (`/api/invitation/generate`) now accepts `style` parameter and uses fal.ai as primary provider
+- Ideogram API deprecated — `ideogram.ts` simplified to mock-only
+- `openai.ts` updated to use `buildPrompt()` and portrait format (1024x1792)
+- AI invitation cards now render with fullbleed background + text overlay instead of image-above-text layout
+
 ### Changed
 
 #### Inbjudnings-sektionen — Tvåkolumnslayout med Guldkalas-branding

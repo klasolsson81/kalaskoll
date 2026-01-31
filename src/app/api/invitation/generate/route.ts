@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { generateInvitationImage } from '@/lib/ai/ideogram';
+import { generateWithFal } from '@/lib/ai/fal';
 import { generateInvitationImageFallback } from '@/lib/ai/openai';
 import { ADMIN_EMAILS, AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
-import type { PartyDetails } from '@/types';
+import type { AiStyle } from '@/lib/constants';
+import { generateImageSchema } from '@/lib/utils/validation';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -23,11 +24,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltigt format' }, { status: 400 });
   }
 
-  const { partyId, theme } = body;
-
-  if (!partyId || typeof partyId !== 'string') {
-    return NextResponse.json({ error: 'partyId krävs' }, { status: 400 });
+  const parsed = generateImageSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message || 'Ogiltiga parametrar' },
+      { status: 400 },
+    );
   }
+
+  const { partyId, theme: requestTheme, style } = parsed.data;
 
   // Fetch party details
   const { data: party, error: partyError } = await supabase
@@ -48,7 +53,6 @@ export async function POST(request: NextRequest) {
     .select('*', { count: 'exact', head: true })
     .eq('party_id', partyId);
 
-  // If party_images table doesn't exist yet, count will be null
   const tableExists = !countError;
   const currentCount = imageCount ?? 0;
 
@@ -59,50 +63,37 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const partyDetails: PartyDetails = {
-    id: party.id,
-    childName: party.child_name,
-    childAge: party.child_age,
-    partyDate: party.party_date,
-    partyTime: party.party_time,
-    venueName: party.venue_name,
-    venueAddress: party.venue_address ?? undefined,
-    description: party.description ?? undefined,
-    theme: (theme || party.theme) ?? undefined,
-  };
+  const resolvedTheme = requestTheme || party.theme || 'default';
+  const resolvedStyle: AiStyle = style;
+  const forceLive = isAdmin;
 
-  const resolvedTheme = theme || party.theme || 'default';
-
-  // Superadmins try real AI first, but fall back to mock if APIs aren't configured
+  // Generate: fal.ai -> OpenAI -> error
   let imageUrl: string | null = null;
 
-  if (isAdmin) {
-    // Try real APIs first for admins
+  try {
+    imageUrl = await generateWithFal({
+      theme: resolvedTheme,
+      style: resolvedStyle,
+      forceLive,
+    });
+  } catch (falError) {
+    console.error('[AI] fal.ai failed:', falError);
     try {
-      imageUrl = await generateInvitationImage(resolvedTheme, partyDetails, { forceLive: true });
-    } catch {
-      try {
-        imageUrl = await generateInvitationImageFallback(resolvedTheme, partyDetails, { forceLive: true });
-      } catch {
-        // Real APIs failed — fall back to mock below
-      }
+      imageUrl = await generateInvitationImageFallback(
+        resolvedTheme,
+        resolvedStyle,
+        { forceLive },
+      );
+    } catch (openaiError) {
+      console.error('[AI] OpenAI fallback failed:', openaiError);
     }
   }
 
-  // Non-admins use normal flow (mock or real based on env), admins fall back here if real APIs failed
   if (!imageUrl) {
-    try {
-      imageUrl = await generateInvitationImage(resolvedTheme, partyDetails);
-    } catch {
-      try {
-        imageUrl = await generateInvitationImageFallback(resolvedTheme, partyDetails);
-      } catch {
-        return NextResponse.json(
-          { error: 'Kunde inte generera bild' },
-          { status: 500 },
-        );
-      }
-    }
+    return NextResponse.json(
+      { error: 'Kunde inte generera bild' },
+      { status: 500 },
+    );
   }
 
   // Try to insert into party_images (if table exists)
@@ -119,7 +110,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError || !newImage) {
-      // Table exists but insert failed — still save to party and return
       await supabase
         .from('parties')
         .update({ invitation_image_url: imageUrl })
@@ -143,7 +133,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // Fallback: party_images table doesn't exist yet — use legacy behavior
+  // Fallback: party_images table doesn't exist yet
   await supabase
     .from('parties')
     .update({ invitation_image_url: imageUrl })

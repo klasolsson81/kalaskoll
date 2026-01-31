@@ -1,6 +1,6 @@
 'use client';
 
-import { InvitationCard } from '@/components/cards/InvitationCard';
+import { AiInvitationCard } from '@/components/cards/AiInvitationCard';
 import { TemplateCard } from '@/components/templates';
 import type { PhotoFrame as PhotoFrameType } from '@/lib/constants';
 
@@ -61,7 +61,7 @@ export function InvitationPreview({
   if (activeMode === 'ai' && currentImageUrl) {
     return (
       <div data-print-area>
-        <InvitationCard
+        <AiInvitationCard
           imageUrl={currentImageUrl}
           childName={childName}
           childAge={childAge}
@@ -72,6 +72,8 @@ export function InvitationPreview({
           rsvpDeadline={rsvpDeadline}
           description={description}
           token={token}
+          childPhotoUrl={photoUrl}
+          childPhotoFrame={photoFrame}
         />
       </div>
     );

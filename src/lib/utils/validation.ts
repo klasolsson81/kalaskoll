@@ -165,6 +165,15 @@ export const manualGuestSchema = z.object({
   message: z.string().max(500).optional().or(z.literal('')),
 });
 
+// AI image generation schema
+export const generateImageSchema = z.object({
+  partyId: z.string().uuid('Ogiltigt kalas-ID'),
+  theme: z.string().optional(),
+  style: z.enum(['cartoon', '3d', 'watercolor', 'photorealistic']).default('cartoon'),
+});
+
+export type GenerateImageFormData = z.infer<typeof generateImageSchema>;
+
 // Upload photo schema
 export const uploadPhotoSchema = z.object({
   partyId: z.string().uuid(),

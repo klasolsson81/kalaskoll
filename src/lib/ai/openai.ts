@@ -1,19 +1,22 @@
 import { MOCK_MODE } from '@/lib/constants';
-import type { PartyDetails } from '@/types';
+import type { AiStyle } from '@/lib/constants';
+import { buildPrompt } from './prompts';
 
 /**
- * Fallback image generation via OpenAI DALL-E.
- * Only used if Ideogram fails.
+ * Fallback image generation via OpenAI DALL-E 3.
+ * Used if fal.ai fails.
  */
 export async function generateInvitationImageFallback(
   theme: string,
-  _partyDetails: PartyDetails,
+  style: AiStyle,
   options?: { forceLive?: boolean },
 ): Promise<string> {
   if (MOCK_MODE && !options?.forceLive) {
     console.log('[MOCK] OpenAI fallback - returning placeholder');
-    return '/mock/invitation-default.jpg';
+    return '/mock/invitation-default.svg';
   }
+
+  const prompt = buildPrompt(style, theme);
 
   const response = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
@@ -23,9 +26,9 @@ export async function generateInvitationImageFallback(
     },
     body: JSON.stringify({
       model: 'dall-e-3',
-      prompt: `Children's birthday party invitation card, ${theme} theme, colorful, festive, high quality illustration`,
+      prompt,
       n: 1,
-      size: '1024x1024',
+      size: '1024x1792',
     }),
   });
 

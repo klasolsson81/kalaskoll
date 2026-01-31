@@ -43,6 +43,16 @@ export const PHOTO_CROP_SIZE = 300; // Viewport size in crop dialog
 export const VALID_PHOTO_FRAMES = ['circle', 'star', 'heart', 'diamond'] as const;
 export type PhotoFrame = (typeof VALID_PHOTO_FRAMES)[number];
 
+// AI image styles
+export const AI_STYLES = [
+  { value: 'cartoon', label: 'Tecknat', emoji: '🖍️' },
+  { value: '3d', label: '3D-render', emoji: '🎮' },
+  { value: 'watercolor', label: 'Akvarell', emoji: '🎨' },
+  { value: 'photorealistic', label: 'Fotorealistisk', emoji: '📸' },
+] as const;
+
+export type AiStyle = (typeof AI_STYLES)[number]['value'];
+
 // Party themes
 export const PARTY_THEMES = [
   { value: 'dinosaurier', label: 'Dinosaurier' },
