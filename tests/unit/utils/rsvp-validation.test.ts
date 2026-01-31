@@ -181,6 +181,7 @@ describe('rsvpEditSchema', () => {
   });
 
   it('rejects missing editToken', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { editToken: _editToken, ...noToken } = validEdit;
     const result = rsvpEditSchema.safeParse(noToken);
     expect(result.success).toBe(false);
@@ -246,6 +247,7 @@ describe('rsvpEditSchema', () => {
   });
 
   it('rejects missing email', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { parentEmail: _email, ...noEmail } = validEdit;
     const result = rsvpEditSchema.safeParse(noEmail);
     expect(result.success).toBe(false);
