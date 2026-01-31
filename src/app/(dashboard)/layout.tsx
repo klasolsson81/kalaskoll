@@ -29,15 +29,7 @@ export default async function DashboardLayout({
               KalasKoll
             </span>
           </Link>
-          <nav className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              Mina kalas
-            </Link>
-            <ProfileDropdown displayName={displayName} email={email} />
-          </nav>
+          <ProfileDropdown displayName={displayName} email={email} />
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
