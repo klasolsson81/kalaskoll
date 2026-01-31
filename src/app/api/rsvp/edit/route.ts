@@ -4,6 +4,7 @@ import { rsvpEditSchema } from '@/lib/utils/validation';
 import { sendRsvpConfirmation } from '@/lib/email/resend';
 import { formatDate, formatTime } from '@/lib/utils/format';
 import { APP_URL } from '@/lib/constants';
+import { isRateLimited } from '@/lib/utils/rate-limit';
 import type { Database } from '@/types/database';
 
 function createServiceClient() {
@@ -11,24 +12,6 @@ function createServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
-}
-
-// Simple in-memory rate limiter
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 10;
-const RATE_WINDOW = 60 * 1000;
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
-    return false;
-  }
-
-  entry.count++;
-  return entry.count > RATE_LIMIT;
 }
 
 // GET: Fetch existing RSVP data for edit form pre-fill
@@ -83,7 +66,7 @@ export async function GET(request: NextRequest) {
 // POST: Update existing RSVP via edit_token
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
-  if (isRateLimited(ip)) {
+  if (await isRateLimited(ip)) {
     return NextResponse.json(
       { error: 'För många förfrågningar. Vänta en stund.' },
       { status: 429 },

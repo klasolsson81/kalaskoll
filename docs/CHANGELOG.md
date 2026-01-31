@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Allergy auto-delete Edge Function** (MVP-1): Supabase Edge Function (`cleanup-allergy-data`) that deletes expired allergy data where `auto_delete_at < NOW()`. GDPR art. 9 compliance.
+- **Persistent rate limiting** (MVP-2): Replaced in-memory `Map` with Upstash Redis (`@upstash/ratelimit`) on RSVP routes. Falls back to allow-all if Upstash not configured (dev-friendly).
+- Shared `isRateLimited()` utility in `src/lib/utils/rate-limit.ts`
+- `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in `.env.example`
+
 ### Fixed
 
 #### Säkerhet & Robusthet (QW-01 till QW-14 + MVP Blockers)
