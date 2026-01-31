@@ -135,8 +135,10 @@ export function PhotoCropDialog({
     : 1;
 
   // The displayed image size in the viewport
-  const displayW = imageSize.w * Math.max(scale, minCoverScale);
-  const displayH = imageSize.h * Math.max(scale, minCoverScale);
+  // scale=1 means image just covers the viewport; scale=3 means 3x zoom
+  const effectiveScale = minCoverScale * scale;
+  const displayW = imageSize.w * effectiveScale;
+  const displayH = imageSize.h * effectiveScale;
 
   // Clamp offset so image always covers the viewport
   const clampOffset = useCallback(
