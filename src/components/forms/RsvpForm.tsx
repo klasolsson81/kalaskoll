@@ -35,6 +35,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
   const { fireConfettiCannon } = useConfetti();
 
   const isEdit = mode === 'edit';
+  const emailLocked = isEdit || !!defaultValues?.parentEmail;
 
   // Fire confetti on successful attending submission
   useEffect(() => {
@@ -187,15 +188,15 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                   required
                   placeholder="din@email.se"
                   defaultValue={defaultValues?.parentEmail ?? ''}
-                  readOnly={isEdit}
-                  className={`h-12 text-base ${isEdit ? 'bg-muted' : ''}`}
+                  readOnly={emailLocked}
+                  className={`h-12 text-base ${emailLocked ? 'bg-muted' : ''}`}
                 />
-                {!isEdit && (
+                {!emailLocked && (
                   <p className="text-xs text-muted-foreground">
                     Hit skickar vi en bekräftelse och en länk om du vill ändra ditt svar.
                   </p>
                 )}
-                {isEdit && (
+                {emailLocked && (
                   <p className="text-xs text-muted-foreground">
                     E-postadressen kan inte ändras.
                   </p>

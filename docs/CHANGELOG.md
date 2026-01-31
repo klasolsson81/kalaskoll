@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Email RSVP pre-fill: guests clicking an email invitation link now have their email address pre-filled and locked (read-only) in the RSVP form, matching the edit-mode behavior
 - AI generation API route (`/api/invitation/generate`) now accepts `style` parameter and uses Replicate Flux as primary provider
 - Ideogram API deprecated — `ideogram.ts` simplified to mock-only, `@fal-ai/client` removed
 - `openai.ts` updated to use `buildPrompt()` and portrait format (1024x1792)

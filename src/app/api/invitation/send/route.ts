@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const rsvpUrl = `${APP_URL}/r/${invitation.token}`;
+  const baseRsvpUrl = `${APP_URL}/r/${invitation.token}`;
 
   // Save invited guests (ON CONFLICT DO NOTHING)
   await supabase.from('invited_guests').upsert(
@@ -68,10 +68,11 @@ export async function POST(request: Request) {
     { onConflict: 'party_id,email', ignoreDuplicates: true },
   );
 
-  // Send emails in parallel
+  // Send emails in parallel (append ?email= so RSVP form is pre-filled)
   const results = await Promise.allSettled(
-    emails.map((e) =>
-      sendPartyInvitation({
+    emails.map((e) => {
+      const rsvpUrl = `${baseRsvpUrl}?email=${encodeURIComponent(e.email)}`;
+      return sendPartyInvitation({
         to: e.email,
         partyChildName: party.child_name,
         childAge: party.child_age,
@@ -84,8 +85,8 @@ export async function POST(request: Request) {
         description: party.description,
         rsvpUrl,
         imageUrl: party.invitation_image_url,
-      }),
-    ),
+      });
+    }),
   );
 
   const sent = results.filter((r) => r.status === 'fulfilled').length;
