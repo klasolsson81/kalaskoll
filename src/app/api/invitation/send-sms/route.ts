@@ -80,13 +80,17 @@ export async function POST(request: Request) {
           { status: 429 },
         );
       }
-      // Same party (or party was deleted → party_id is NULL but we allow re-use)
-      // However if party_id is NULL, another party already used SMS and was deleted
+      // Party deleted (ON DELETE SET NULL) — allow re-use with remaining count
       if (usage.party_id === null) {
-        return NextResponse.json(
-          { error: 'Du har redan använt SMS-inbjudningar denna månad' },
-          { status: 429 },
-        );
+        if (usage.sms_count + phones.length > SMS_MAX_PER_PARTY) {
+          return NextResponse.json(
+            {
+              error: `Max ${SMS_MAX_PER_PARTY} SMS per månad. Du har redan skickat ${usage.sms_count}.`,
+              remainingSmsThisParty: SMS_MAX_PER_PARTY - usage.sms_count,
+            },
+            { status: 429 },
+          );
+        }
       }
       // Check count limit
       if (usage.sms_count + phones.length > SMS_MAX_PER_PARTY) {
