@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AllergyCheckboxes } from '@/components/forms/AllergyCheckboxes';
+import { rsvpSchema } from '@/lib/utils/validation';
 import { useConfetti } from '@/hooks/useConfetti';
 
 interface RsvpDefaultValues {
@@ -68,6 +69,14 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
       otherDietary: (formData.get('otherDietary') as string) || undefined,
       allergyConsent: formData.get('allergyConsent') === 'true',
     };
+
+    // Client-side validation before sending
+    const validated = rsvpSchema.safeParse(baseBody);
+    if (!validated.success) {
+      setError(validated.error.issues[0].message);
+      setLoading(false);
+      return;
+    }
 
     const url = isEdit ? '/api/rsvp/edit' : '/api/rsvp';
     const body = isEdit
