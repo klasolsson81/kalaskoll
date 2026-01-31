@@ -78,6 +78,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltig inbjudan' }, { status: 404 });
   }
 
+  // Check RSVP deadline
+  const { data: partyForDeadline } = await supabase
+    .from('parties')
+    .select('rsvp_deadline')
+    .eq('id', invitation.party_id)
+    .single();
+
+  if (partyForDeadline?.rsvp_deadline) {
+    const deadline = new Date(partyForDeadline.rsvp_deadline);
+    deadline.setHours(23, 59, 59, 999);
+    if (new Date() > deadline) {
+      return NextResponse.json(
+        { error: 'Sista svarsdatum har passerat. Kontakta den som bjöd in dig.' },
+        { status: 400 },
+      );
+    }
+  }
+
   const email = parsed.data.parentEmail;
 
   // Check for duplicate email on this invitation → 409

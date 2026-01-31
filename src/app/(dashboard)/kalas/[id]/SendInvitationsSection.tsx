@@ -169,7 +169,7 @@ export function SendInvitationsSection({
   }
 
   const smsCount = smsUsage?.smsCount ?? 0;
-  const smsAllowed = smsUsage?.allowed ?? true;
+  const smsAllowed = smsUsage?.allowed ?? false;
   const smsRemaining = SMS_MAX_PER_PARTY - smsCount;
 
   const canShare = typeof navigator !== 'undefined' && !!navigator.share;

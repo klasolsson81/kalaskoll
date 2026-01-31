@@ -93,6 +93,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Kalas hittades inte' }, { status: 404 });
   }
 
+  if (party.owner_id !== user.id) {
+    return NextResponse.json({ error: 'Åtkomst nekad' }, { status: 403 });
+  }
+
   const isAdmin = ADMIN_EMAILS.includes(user.email ?? '');
 
   // Check image limit (skip for admins)

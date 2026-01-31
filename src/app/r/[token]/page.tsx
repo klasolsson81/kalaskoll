@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +31,17 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     .single();
 
   if (!invitation) {
-    notFound();
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Inbjudan hittades inte</h1>
+          <p className="mt-2 text-muted-foreground">
+            QR-koden verkar vara ogiltig eller har gått ut.
+            Kontakta den som bjöd in dig.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   // Get party details
@@ -43,7 +52,35 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     .single();
 
   if (!party) {
-    notFound();
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Kalas hittades inte</h1>
+          <p className="mt-2 text-muted-foreground">
+            Något gick fel. Kontakta den som bjöd in dig.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check RSVP deadline
+  const deadlinePassed = party.rsvp_deadline
+    ? new Date() > new Date(party.rsvp_deadline + 'T23:59:59')
+    : false;
+
+  if (deadlinePassed) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="mx-auto max-w-md text-center">
+          <h1 className="text-2xl font-bold">Sista svarsdatum har passerat</h1>
+          <p className="mt-2 text-muted-foreground">
+            Tyvärr går det inte längre att svara på denna inbjudan.
+            Kontakta den som bjöd in dig om du har frågor.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   // Fetch all responses for this invitation

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { selectImageSchema } from '@/lib/utils/validation';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -19,25 +20,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltigt format' }, { status: 400 });
   }
 
-  const { partyId, imageId } = body;
-
-  if (!partyId || typeof partyId !== 'string') {
-    return NextResponse.json({ error: 'partyId krävs' }, { status: 400 });
+  const parsed = selectImageSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message || 'Ogiltiga parametrar' },
+      { status: 400 },
+    );
   }
 
-  if (!imageId || typeof imageId !== 'string') {
-    return NextResponse.json({ error: 'imageId krävs' }, { status: 400 });
-  }
+  const { partyId, imageId } = parsed.data;
 
   // Verify party ownership
   const { data: party, error: partyError } = await supabase
     .from('parties')
-    .select('id')
+    .select('id, owner_id')
     .eq('id', partyId)
     .single();
 
   if (partyError || !party) {
     return NextResponse.json({ error: 'Kalas hittades inte' }, { status: 404 });
+  }
+
+  if (party.owner_id !== user.id) {
+    return NextResponse.json({ error: 'Åtkomst nekad' }, { status: 403 });
   }
 
   // Verify image belongs to this party

@@ -33,12 +33,16 @@ export async function POST(request: NextRequest) {
   // Verify party ownership (RLS handles this, but check explicitly)
   const { data: party, error: partyError } = await supabase
     .from('parties')
-    .select('id')
+    .select('id, owner_id')
     .eq('id', partyId)
     .single();
 
   if (partyError || !party) {
     return NextResponse.json({ error: 'Kalas hittades inte' }, { status: 404 });
+  }
+
+  if (party.owner_id !== user.id) {
+    return NextResponse.json({ error: 'Åtkomst nekad' }, { status: 403 });
   }
 
   // Update photo and frame

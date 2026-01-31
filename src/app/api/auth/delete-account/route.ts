@@ -12,8 +12,16 @@ export async function POST() {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const admin = createAdminClient();
-  await admin.auth.admin.deleteUser(user.id);
-  await supabase.auth.signOut();
-  return NextResponse.json({ success: true });
+  try {
+    const admin = createAdminClient();
+    await admin.auth.admin.deleteUser(user.id);
+    await supabase.auth.signOut();
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('Failed to delete account:', err);
+    return NextResponse.json(
+      { error: 'Kunde inte radera kontot. Försök igen senare.' },
+      { status: 500 },
+    );
+  }
 }

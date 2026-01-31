@@ -165,6 +165,18 @@ export const manualGuestSchema = z.object({
   message: z.string().max(500).optional().or(z.literal('')),
 });
 
+// Select AI image schema
+export const selectImageSchema = z.object({
+  partyId: z.string().uuid('Ogiltigt kalas-ID'),
+  imageId: z.string().uuid('Ogiltigt bild-ID'),
+});
+
+// Select template schema
+export const selectTemplateSchema = z.object({
+  partyId: z.string().uuid('Ogiltigt kalas-ID'),
+  templateId: z.string().min(1, 'Mall-ID krävs'),
+});
+
 // AI image generation schema
 export const generateImageSchema = z.object({
   partyId: z.string().uuid('Ogiltigt kalas-ID'),

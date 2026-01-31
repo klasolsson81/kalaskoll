@@ -1,5 +1,12 @@
+import { z } from 'zod';
 import { SMS_SENDER_ID } from '@/lib/constants';
 import { formatDateShort, formatTime } from '@/lib/utils/format';
+
+const elksResponseSchema = z.object({
+  status: z.string(),
+  id: z.string(),
+  created: z.string(),
+});
 
 interface SendPartySmsParams {
   to: string; // E.164 format, e.g. +46701234567
@@ -70,21 +77,35 @@ export async function sendPartySms(params: SendPartySmsParams): Promise<ElksResp
     message,
   });
 
-  const response = await fetch('https://api.46elks.com/a1/sms', {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${auth}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: body.toString(),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  let response: Response;
+  try {
+    response = await fetch('https://api.46elks.com/a1/sms', {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body.toString(),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!response.ok) {
     const text = await response.text();
     throw new Error(`46elks API error: ${response.status} ${text}`);
   }
 
-  return response.json() as Promise<ElksResponse>;
+  const data = await response.json();
+  const parsed = elksResponseSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error('Unexpected 46elks API response format');
+  }
+  return parsed.data;
 }
 
 // Re-export for testing

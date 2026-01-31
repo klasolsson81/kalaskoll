@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+#### Säkerhet & Robusthet (QW-01 till QW-14 + MVP Blockers)
+- **SMS fail-closed** (QW-01): `smsAllowed` defaults to `false` instead of `true` when DB query fails
+- **Server-only guard** (QW-02): Admin client throws if imported client-side, preventing service role key leak
+- **Admin emails to env var** (QW-03): `ADMIN_EMAILS` read from environment variable instead of hardcoded
+- **Delete account error handling** (QW-04): Wrapped in try/catch with user-friendly error message
+- **Zod schemas** (QW-05): `select-image` and `select-template` routes use Zod `.safeParse()` instead of manual validation
+- **API response validation** (QW-06/07): OpenAI and 46elks responses validated with Zod schemas instead of unsafe casts
+- **HTML-escape email templates** (QW-08): All user input (`childName`, `venueName`, `description`, etc.) escaped with `escapeHtml()` in both email templates
+- **RSVP deadline check** (QW-09): API returns 400 and UI shows message when `rsvp_deadline` has passed
+- **RSVP loading state** (QW-10): Added `loading.tsx` with spinner for RSVP page
+- **Better QR error** (QW-11): Invalid/expired QR codes show helpful Swedish message instead of generic 404
+- **Dashboard error boundaries** (QW-12): `Promise.all` wrapped in try/catch with graceful fallback
+- **API timeouts** (QW-13): AbortController (30s) on OpenAI and 46elks calls; Promise.race (60s) on Replicate
+- **Ownership checks** (QW-14): Explicit `owner_id` check on generate, select-image, select-template, upload-photo routes
+
 ### Added
 
 #### Fullständig code review (6 experter)

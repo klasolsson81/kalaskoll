@@ -2,6 +2,15 @@ import { Resend } from 'resend';
 import { RESEND_FROM_EMAIL } from '@/lib/constants';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function getResendClient() {
   return new Resend(process.env.RESEND_API_KEY);
 }
@@ -47,14 +56,14 @@ export async function sendRsvpConfirmation({
         ${statusEmoji} Svar registrerat!
       </h1>
       <p style="font-size:16px;color:#6b7280;margin:0 0 24px;">
-        Ditt svar för <strong>${partyChildName}s kalas</strong> har sparats.
+        Ditt svar för <strong>${escapeHtml(partyChildName)}s kalas</strong> har sparats.
       </p>
 
       <div style="background:#f3f4f6;border-radius:8px;padding:16px;margin-bottom:24px;">
         <table style="width:100%;border-collapse:collapse;">
           <tr>
             <td style="padding:4px 0;color:#6b7280;font-size:14px;">Barn:</td>
-            <td style="padding:4px 0;font-weight:600;font-size:14px;">${childName}</td>
+            <td style="padding:4px 0;font-weight:600;font-size:14px;">${escapeHtml(childName)}</td>
           </tr>
           <tr>
             <td style="padding:4px 0;color:#6b7280;font-size:14px;">Svar:</td>
@@ -70,7 +79,7 @@ export async function sendRsvpConfirmation({
           </tr>
           <tr>
             <td style="padding:4px 0;color:#6b7280;font-size:14px;">Plats:</td>
-            <td style="padding:4px 0;font-size:14px;">${venueName}</td>
+            <td style="padding:4px 0;font-size:14px;">${escapeHtml(venueName)}</td>
           </tr>
         </table>
       </div>
@@ -140,26 +149,26 @@ export async function sendPartyInvitation({
 
   const imageSection = imageUrl
     ? `<div style="margin-bottom:24px;">
-        <img src="${imageUrl}" alt="Inbjudan till ${partyChildName}s kalas" style="width:100%;border-radius:8px;" />
+        <img src="${imageUrl}" alt="Inbjudan till ${escapeHtml(partyChildName)}s kalas" style="width:100%;border-radius:8px;" />
       </div>`
     : '';
 
   const addressRow = venueAddress
     ? `<tr>
         <td style="padding:4px 0;color:#6b7280;font-size:14px;">Adress:</td>
-        <td style="padding:4px 0;font-size:14px;">${venueAddress}</td>
+        <td style="padding:4px 0;font-size:14px;">${escapeHtml(venueAddress)}</td>
       </tr>`
     : '';
 
   const themeRow = theme
     ? `<tr>
         <td style="padding:4px 0;color:#6b7280;font-size:14px;">Tema:</td>
-        <td style="padding:4px 0;font-size:14px;text-transform:capitalize;">${theme}</td>
+        <td style="padding:4px 0;font-size:14px;text-transform:capitalize;">${escapeHtml(theme)}</td>
       </tr>`
     : '';
 
   const descriptionSection = description
-    ? `<p style="font-size:14px;color:#374151;margin:0 0 24px;">${description}</p>`
+    ? `<p style="font-size:14px;color:#374151;margin:0 0 24px;">${escapeHtml(description)}</p>`
     : '';
 
   const html = `
@@ -173,7 +182,7 @@ export async function sendPartyInvitation({
   <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
     <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
       <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">
-        🎉 ${partyChildName} fyller ${childAge} år!
+        🎉 ${escapeHtml(partyChildName)} fyller ${childAge} år!
       </h1>
       <p style="font-size:16px;color:#6b7280;margin:0 0 24px;">
         Du är varmt välkommen till kalaset!
@@ -193,7 +202,7 @@ export async function sendPartyInvitation({
           </tr>
           <tr>
             <td style="padding:4px 0;color:#6b7280;font-size:14px;">Plats:</td>
-            <td style="padding:4px 0;font-weight:600;font-size:14px;">${venueName}</td>
+            <td style="padding:4px 0;font-weight:600;font-size:14px;">${escapeHtml(venueName)}</td>
           </tr>
           ${addressRow}
           ${themeRow}

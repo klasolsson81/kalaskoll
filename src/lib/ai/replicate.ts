@@ -36,17 +36,24 @@ export async function generateWithReplicate({
 
   const prompt = buildPrompt({ style, theme, customPrompt });
 
-  const output = await replicate.run('black-forest-labs/flux-dev', {
-    input: {
-      prompt,
-      aspect_ratio: '3:4',
-      num_outputs: 1,
-      output_format: 'webp',
-      output_quality: 90,
-      guidance_scale: 3.5,
-      num_inference_steps: 28,
-    },
-  });
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error('Replicate API timeout (60s)')), 60000),
+  );
+
+  const output = await Promise.race([
+    replicate.run('black-forest-labs/flux-dev', {
+      input: {
+        prompt,
+        aspect_ratio: '3:4',
+        num_outputs: 1,
+        output_format: 'webp',
+        output_quality: 90,
+        guidance_scale: 3.5,
+        num_inference_steps: 28,
+      },
+    }),
+    timeoutPromise,
+  ]);
 
   // SDK v1+ returns FileOutput objects (ReadableStream with .url())
   // Extract the URL string from the first output

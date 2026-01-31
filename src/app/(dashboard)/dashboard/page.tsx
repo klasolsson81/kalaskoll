@@ -15,10 +15,19 @@ export default async function DashboardPage() {
 
   const displayName = user?.user_metadata?.full_name?.split(' ')[0] || 'du';
 
-  const [{ data: parties }, { data: children }] = await Promise.all([
-    supabase.from('parties').select('*').order('party_date', { ascending: true }),
-    supabase.from('children').select('*').order('name', { ascending: true }),
-  ]);
+  const partiesQuery = supabase.from('parties').select('*').order('party_date', { ascending: true });
+  const childrenQuery = supabase.from('children').select('*').order('name', { ascending: true });
+
+  let parties: Awaited<typeof partiesQuery>['data'] = null;
+  let children: Awaited<typeof childrenQuery>['data'] = null;
+
+  try {
+    const [partiesResult, childrenResult] = await Promise.all([partiesQuery, childrenQuery]);
+    parties = partiesResult.data;
+    children = childrenResult.data;
+  } catch (err) {
+    console.error('Failed to load dashboard data:', err);
+  }
 
   // Fetch guest counts for all parties
   const guestCounts: Record<string, { attending: number; declined: number; total: number }> = {};
