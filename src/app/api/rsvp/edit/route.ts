@@ -5,6 +5,7 @@ import { sendRsvpConfirmation } from '@/lib/email/resend';
 import { formatDate, formatTime } from '@/lib/utils/format';
 import { APP_URL } from '@/lib/constants';
 import { isRateLimited } from '@/lib/utils/rate-limit';
+import { encryptAllergyData, decryptAllergyData } from '@/lib/utils/crypto';
 import type { Database } from '@/types/database';
 
 function createServiceClient() {
@@ -57,8 +58,7 @@ export async function GET(request: NextRequest) {
       parentEmail: rsvp.parent_email,
       message: rsvp.message,
     },
-    allergies: allergyData?.allergies ?? [],
-    otherDietary: allergyData?.other_dietary ?? null,
+    ...decryptAllergyData(allergyData?.allergies ?? [], allergyData?.other_dietary ?? null),
     invitationToken: invitation?.token ?? null,
   });
 }
@@ -143,10 +143,11 @@ export async function POST(request: NextRequest) {
       const autoDeleteAt = new Date(partyDate);
       autoDeleteAt.setDate(autoDeleteAt.getDate() + 7);
 
+      const encrypted = encryptAllergyData(allergies, otherDietary || null);
       await supabase.from('allergy_data').insert({
         rsvp_id: existing.id,
-        allergies: allergies,
-        other_dietary: otherDietary || null,
+        allergies: encrypted.allergies_enc,
+        other_dietary: encrypted.other_dietary_enc,
         consent_given_at: new Date().toISOString(),
         auto_delete_at: autoDeleteAt.toISOString(),
       });

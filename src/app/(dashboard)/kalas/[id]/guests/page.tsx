@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import { decryptAllergyData } from '@/lib/utils/crypto';
 import { GuestListRealtime } from './GuestListRealtime';
 
 interface GuestsPageProps {
@@ -99,11 +100,14 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
         invitationId={invitationId}
         initialGuests={guests ?? []}
         initialAllergies={
-          (allergies ?? []).map((a) => ({
-            rsvp_id: a.rsvp_id,
-            allergies: Array.isArray(a.allergies) ? (a.allergies as string[]) : [],
-            other_dietary: a.other_dietary,
-          }))
+          (allergies ?? []).map((a) => {
+            const decrypted = decryptAllergyData(a.allergies, a.other_dietary);
+            return {
+              rsvp_id: a.rsvp_id,
+              allergies: decrypted.allergies,
+              other_dietary: decrypted.other_dietary,
+            };
+          })
         }
         invitedGuests={invitedGuestsWithStatus}
       />
