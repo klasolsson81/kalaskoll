@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { QRCode } from '@/components/shared/QRCode';
 import { APP_URL, SMS_MAX_PER_PARTY } from '@/lib/constants';
+import { sendSmsInvitationSchema } from '@/lib/utils/validation';
 
 type InviteMethod = 'email' | 'sms';
 
@@ -132,6 +133,13 @@ export function SendInvitationsSection({
 
     if (raw.length === 0) {
       setError('Ange minst ett telefonnummer');
+      return;
+    }
+
+    // Client-side phone validation
+    const validated = sendSmsInvitationSchema.safeParse({ partyId, phones: raw });
+    if (!validated.success) {
+      setError(validated.error.issues[0].message);
       return;
     }
 
