@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { isBetaEnded } from '@/lib/beta-config';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -39,6 +40,30 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
+  }
+
+  // After beta ends, redirect testers to farewell page on protected routes
+  if (
+    user &&
+    isBetaEnded() &&
+    !request.nextUrl.pathname.startsWith('/beta-ended') &&
+    !request.nextUrl.pathname.startsWith('/admin') &&
+    !request.nextUrl.pathname.startsWith('/api') &&
+    (request.nextUrl.pathname.startsWith('/dashboard') ||
+      request.nextUrl.pathname.startsWith('/kalas'))
+  ) {
+    // Check if user is a tester (admins are exempt)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role === 'tester') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/beta-ended';
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

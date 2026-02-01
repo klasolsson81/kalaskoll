@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { BETA_CONFIG, type BetaRole, type BetaStatus } from '@/lib/beta-config';
+import { BETA_CONFIG, BETA_END_DATE, betaDaysRemaining, isBetaEnded, type BetaRole, type BetaStatus } from '@/lib/beta-config';
 
 export function useBetaStatus(): BetaStatus | null {
   const [status, setStatus] = useState<BetaStatus | null>(null);
@@ -17,7 +17,7 @@ export function useBetaStatus(): BetaStatus | null {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role, beta_ai_images_used, beta_sms_used, beta_expires_at')
+        .select('role, beta_ai_images_used, beta_sms_used')
         .eq('id', user.id)
         .single();
 
@@ -29,11 +29,9 @@ export function useBetaStatus(): BetaStatus | null {
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id);
 
-      const expiresAt = profile.beta_expires_at ? new Date(profile.beta_expires_at) : null;
-      const isExpired = expiresAt ? expiresAt < new Date() : false;
-      const daysRemaining = expiresAt
-        ? Math.max(0, Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-        : 0;
+      const expiresAt = new Date(`${BETA_END_DATE}T23:59:59`);
+      const isExpired = isBetaEnded();
+      const daysRemaining = betaDaysRemaining();
 
       const role = profile.role as BetaRole;
       setStatus({

@@ -72,7 +72,7 @@ export function BetaBanner({ stats }: BetaBannerProps) {
             </li>
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
-              Gratis i {BETA_CONFIG.expiresInDays} dagar &mdash; inga kortuppgifter
+              Gratis t.o.m. 28 februari &mdash; inga kortuppgifter
             </li>
           </ul>
         </>

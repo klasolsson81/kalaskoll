@@ -4,6 +4,7 @@ import { requireAdmin } from '@/lib/utils/admin-guard';
 import { logAudit } from '@/lib/utils/audit';
 import { sendTesterInvite } from '@/lib/email/resend';
 import { APP_URL } from '@/lib/constants';
+import { BETA_END_DATE } from '@/lib/beta-config';
 
 const inviteSchema = z.object({
   email: z.string().email('Ogiltig e-postadress'),
@@ -42,16 +43,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Upsert profile with tester role and 30-day expiry
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 30);
-
+    // Upsert profile with tester role — all testers expire on BETA_END_DATE
     const { error: profileError } = await adminClient.from('profiles').upsert(
       {
         id: linkData.user.id,
         role: 'tester',
         full_name: name || null,
-        beta_expires_at: expiresAt.toISOString(),
+        beta_expires_at: new Date(`${BETA_END_DATE}T23:59:59`).toISOString(),
       },
       { onConflict: 'id' },
     );
@@ -60,8 +58,10 @@ export async function POST(request: NextRequest) {
       console.error('[Admin invite] profile upsert failed:', profileError.message);
     }
 
-    // Build the invite URL from the generated link properties
-    const inviteUrl = linkData.properties.action_link;
+    // Build invite URL using hashed_token to bypass PKCE (action_link fails
+    // when clicked from email because there's no code_verifier cookie).
+    const tokenHash = linkData.properties.hashed_token;
+    const inviteUrl = `${APP_URL}/auth/callback?token_hash=${tokenHash}&type=invite&next=/set-password`;
 
     // Send custom invite email
     const emailResult = await sendTesterInvite({

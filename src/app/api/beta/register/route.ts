@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { BETA_CONFIG } from '@/lib/beta-config';
+import { BETA_CONFIG, BETA_END_DATE } from '@/lib/beta-config';
 import { betaRegisterSchema } from '@/lib/utils/validation';
 
 async function checkRateLimit(ip: string): Promise<boolean> {
@@ -115,8 +115,6 @@ export async function POST(request: NextRequest) {
 
     // Update profile with beta status via admin client (bypass RLS)
     const adminClient = createAdminClient();
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + BETA_CONFIG.expiresInDays);
 
     await adminClient
       .from('profiles')
@@ -124,7 +122,7 @@ export async function POST(request: NextRequest) {
         full_name: name,
         role: 'tester',
         beta_registered_at: new Date().toISOString(),
-        beta_expires_at: expiresAt.toISOString(),
+        beta_expires_at: new Date(`${BETA_END_DATE}T23:59:59`).toISOString(),
         beta_ai_images_used: 0,
         beta_sms_used: 0,
       })

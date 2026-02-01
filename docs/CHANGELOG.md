@@ -4,7 +4,33 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+#### Invite Link Bug
+- **Invite link PKCE fix** — invited testers clicking the email link now land on `/set-password` instead of `/login?error=verification_failed`. Uses `hashed_token` from `generateLink().properties` instead of `action_link` to bypass PKCE code exchange (which fails in new browser without `code_verifier` cookie).
+- **Auth callback invite type** — `/auth/callback` now accepts `type=invite` in `verifyOtp` call
+
+### Changed
+
+#### Fixed Beta End Date (28 feb)
+- **`BETA_END_DATE`** constant (`2026-02-28`) replaces per-user 30-day expiry — all testers end on the same day
+- **`isBetaEnded()` + `betaDaysRemaining()`** helper functions in `beta-config.ts`
+- **Beta limits display** now shows "Beta avslutas 28 feb (X dagar kvar)" with farewell message at 7 days
+- **Beta banner** shows "Gratis t.o.m. 28 februari" instead of "Gratis i 30 dagar"
+- **Beta register + invite routes** use `BETA_END_DATE` for profile `beta_expires_at`
+- **Beta stats** simplified: 0 active testers after end date, `registrationOpen` false after beta
+- **`useBetaStatus` hook** uses fixed end date instead of per-user `beta_expires_at`
+
+#### Post-Beta Enforcement
+- **Middleware redirect** — after `BETA_END_DATE`, testers are redirected to `/beta-ended` on protected routes (admins exempt)
+- **Register page** shows "Kommer snart!" message after beta ends instead of registration form
+- **Beta-ended page** (`/beta-ended`) — thank-you page with link to re-register when the full version launches
+
 ### Added
+
+#### Tester Auto-Cleanup
+- **Cron cleanup endpoint** (`GET /api/cron/cleanup-testers`) — deletes all `role='tester'` auth users (cascades profiles, parties, etc.). Protected by `CRON_SECRET` header.
+- **`vercel.json`** with cron schedule: March 1 00:00 UTC (`0 0 1 3 *`)
 
 #### Admin Invite Tester
 - **Admin invite form** on `/admin` — enter email + optional name to invite a tester directly (bypasses signup limit)

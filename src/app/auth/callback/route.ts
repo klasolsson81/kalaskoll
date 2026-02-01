@@ -32,11 +32,11 @@ export async function GET(request: Request) {
     console.error('[auth/callback] verifyOtp fallback failed:', otpError.message);
   }
 
-  // Flow 2: token_hash + type parameters (Supabase default email template)
+  // Flow 2: token_hash + type parameters (Supabase default email template / invite)
   if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
-      type: type as 'signup' | 'email',
+      type: type as 'signup' | 'email' | 'invite',
     });
     if (!error) {
       return NextResponse.redirect(successUrl);

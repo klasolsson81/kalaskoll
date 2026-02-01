@@ -49,10 +49,10 @@ export function BetaLimitsDisplay() {
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-amber-600" />
-            <span>Beta gäller i</span>
+            <span>Beta avslutas 28 feb</span>
           </div>
           <span className="font-medium">
-            {status.daysRemaining} dagar
+            {status.daysRemaining} dagar kvar
           </span>
         </div>
 
@@ -67,9 +67,9 @@ export function BetaLimitsDisplay() {
         </div>
       </div>
 
-      {status.daysRemaining <= 7 && (
+      {status.daysRemaining <= 7 && status.daysRemaining > 0 && (
         <p className="text-xs text-amber-700 mt-3">
-          Din beta-period går ut snart. Alla kalas du skapat finns kvar!
+          Betan stänger 28 februari. Tack för att du testat KalasKoll &mdash; vi hoppas du gillade det!
         </p>
       )}
     </div>
