@@ -26,11 +26,11 @@ export function PartyHeader({
   rsvpDeadline,
 }: PartyHeaderProps) {
   return (
-    <Card className="overflow-hidden border-0 shadow-warm">
+    <Card className="overflow-hidden border-0 glass-card shadow-warm">
       {/* Festive gradient header */}
       <div className="gradient-celebration p-6 text-center text-white">
         <p className="mb-1 text-sm font-medium opacity-90">Du är inbjuden till</p>
-        <h1 className="text-2xl font-extrabold sm:text-3xl">
+        <h1 className="text-2xl font-extrabold sm:text-3xl font-display">
           {childName} fyller {childAge} år!
         </h1>
       </div>

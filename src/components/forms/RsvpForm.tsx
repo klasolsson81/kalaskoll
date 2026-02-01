@@ -112,12 +112,12 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
 
   if (submitted) {
     return (
-      <Card className="border-0 shadow-warm">
+      <Card className="border-0 glass-card">
         <CardContent className="py-12 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-3xl">
             {attending ? '🎉' : '👋'}
           </div>
-          <p className="text-2xl font-bold">
+          <p className="text-2xl font-bold font-display">
             {isEdit
               ? 'Ditt svar har uppdaterats!'
               : attending
@@ -147,9 +147,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
       )}
 
       {/* Attending toggle */}
-      <Card className="border-0 shadow-soft">
+      <Card className="border-0 glass-card">
         <CardHeader>
-          <CardTitle>Kan ni komma?</CardTitle>
+          <CardTitle className="font-display">Kan ni komma?</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3">
@@ -186,9 +186,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
       {attending !== null && (
         <>
           {/* Email (required identifier) */}
-          <Card className="border-0 shadow-soft">
+          <Card className="border-0 glass-card">
             <CardHeader>
-              <CardTitle>Din e-postadress</CardTitle>
+              <CardTitle className="font-display">Din e-postadress</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-2">
@@ -218,9 +218,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
           </Card>
 
           {/* Child info */}
-          <Card className="border-0 shadow-soft">
+          <Card className="border-0 glass-card">
             <CardHeader>
-              <CardTitle>Om barnet</CardTitle>
+              <CardTitle className="font-display">Om barnet</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -238,9 +238,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
           </Card>
 
           {/* Parent info */}
-          <Card className="border-0 shadow-soft">
+          <Card className="border-0 glass-card">
             <CardHeader>
-              <CardTitle>Kontaktuppgifter (valfritt)</CardTitle>
+              <CardTitle className="font-display">Kontaktuppgifter (valfritt)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -269,9 +269,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
 
           {/* Allergies (only if attending) */}
           {attending && (
-            <Card className="border-0 shadow-soft">
+            <Card className="border-0 glass-card">
               <CardHeader>
-                <CardTitle>Allergier & specialkost</CardTitle>
+                <CardTitle className="font-display">Allergier & specialkost</CardTitle>
               </CardHeader>
               <CardContent>
                 <AllergyCheckboxes
@@ -283,7 +283,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
           )}
 
           {/* Message */}
-          <Card className="border-0 shadow-soft">
+          <Card className="border-0 glass-card">
             <CardContent className="pt-6">
               <div className="space-y-2">
                 <Label htmlFor="message">Meddelande (valfritt)</Label>

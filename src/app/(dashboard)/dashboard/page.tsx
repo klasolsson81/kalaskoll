@@ -99,11 +99,11 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Welcome section */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 p-6 sm:p-8">
+      <section className="relative overflow-hidden rounded-2xl glass-card p-6 sm:p-8">
         <div className="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-bold sm:text-3xl">
+            <h1 className="text-2xl font-bold sm:text-3xl font-display">
               Hej {displayName}!
             </h1>
             {upcomingParties.length > 0 ? (
@@ -127,15 +127,15 @@ export default async function DashboardPage() {
         {/* Quick stats */}
         {(parties ?? []).length > 0 && (
           <div className="relative mt-6 grid grid-cols-3 gap-4">
-            <div className="rounded-xl bg-white/60 p-4 text-center backdrop-blur-sm">
+            <div className="rounded-xl glass-card p-4 text-center">
               <p className="text-2xl font-bold text-primary">{upcomingParties.length}</p>
               <p className="text-xs text-muted-foreground">Kommande kalas</p>
             </div>
-            <div className="rounded-xl bg-white/60 p-4 text-center backdrop-blur-sm">
+            <div className="rounded-xl glass-card p-4 text-center">
               <p className="text-2xl font-bold text-success">{totalAttending}</p>
               <p className="text-xs text-muted-foreground">Svarat ja</p>
             </div>
-            <div className="rounded-xl bg-white/60 p-4 text-center backdrop-blur-sm">
+            <div className="rounded-xl glass-card p-4 text-center">
               <p className="text-2xl font-bold text-warning-foreground">{totalPending}</p>
               <p className="text-xs text-muted-foreground">Väntar svar</p>
             </div>
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
       {/* Parties */}
       <section>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Mina kalas</h2>
+          <h2 className="text-xl font-bold font-display">Mina kalas</h2>
         </div>
 
         {parties && parties.length > 0 ? (
@@ -163,7 +163,7 @@ export default async function DashboardPage() {
               const pending = counts ? counts.total - counts.attending - counts.declined : 0;
               return (
                 <Link key={party.id} href={`/kalas/${party.id}`}>
-                  <Card className="h-full border-0 shadow-soft transition-all hover:shadow-warm hover:-translate-y-0.5">
+                  <Card className="h-full border-0 glass-card transition-all hover:shadow-warm hover:-translate-y-0.5">
                     {/* Theme accent strip */}
                     <div className="h-1.5 rounded-t-[inherit] gradient-celebration" />
                     <CardHeader className="pb-2">
@@ -212,12 +212,12 @@ export default async function DashboardPage() {
             })}
           </div>
         ) : (
-          <Card className="border-0 shadow-soft">
+          <Card className="border-0 glass-card">
             <CardContent className="py-12 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-3xl">
                 🎉
               </div>
-              <h3 className="mb-2 text-lg font-bold">Inga kalas ännu</h3>
+              <h3 className="mb-2 text-lg font-bold font-display">Inga kalas ännu</h3>
               <p className="mb-6 text-muted-foreground">
                 Skapa ditt första kalas och börja samla in OSA-svar!
               </p>

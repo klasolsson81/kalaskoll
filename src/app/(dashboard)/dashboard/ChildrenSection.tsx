@@ -263,9 +263,9 @@ export function ChildrenSection({ savedChildren }: ChildrenSectionProps) {
   const [showAdd, setShowAdd] = useState(false);
 
   return (
-    <Card>
+    <Card className="border-0 glass-card">
       <CardHeader>
-        <CardTitle>Mina barn</CardTitle>
+        <CardTitle className="font-display">Mina barn</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {savedChildren.length > 0 ? (

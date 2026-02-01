@@ -24,11 +24,11 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md print:hidden">
+      <header className="sticky top-0 z-50 border-b bg-white/70 backdrop-blur-xl print:hidden">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <span className="text-xl font-extrabold tracking-tight text-primary">
+              <span className="text-xl font-extrabold tracking-tight text-primary font-display">
                 KalasKoll
               </span>
             </Link>
@@ -51,6 +51,7 @@ export default async function DashboardLayout({
           </div>
           <ProfileDropdown displayName={displayName} email={email} />
         </div>
+        <div className="h-0.5 gradient-celebration" />
       </header>
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
     </div>

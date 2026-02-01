@@ -69,7 +69,7 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
   const allergies = Array.isArray(allergyData?.allergies) ? (allergyData.allergies as string[]) : [];
 
   return (
-    <div className="min-h-screen bg-muted/50 px-4 py-8">
+    <div className="min-h-screen bg-app-gradient-rsvp px-4 py-8">
       <div className="mx-auto max-w-md space-y-6">
         <PartyHeader
           childName={party.child_name}
@@ -101,7 +101,7 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
         />
 
         <p className="text-center text-xs text-muted-foreground">
-          Drivs av KalasKoll – Smarta inbjudningar för barnkalas
+          Drivs av <span className="font-display">KalasKoll</span> – Smarta inbjudningar för barnkalas
         </p>
       </div>
     </div>

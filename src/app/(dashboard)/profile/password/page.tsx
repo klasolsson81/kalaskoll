@@ -20,7 +20,7 @@ export default function PasswordPage() {
             &larr; Tillbaka
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">Ändra lösenord</h1>
+        <h1 className="text-2xl font-bold font-display">Ändra lösenord</h1>
       </div>
 
       <form action={formAction} className="space-y-6">
@@ -35,9 +35,9 @@ export default function PasswordPage() {
           </div>
         )}
 
-        <Card className="border-0 shadow-soft">
+        <Card className="border-0 glass-card">
           <CardHeader>
-            <CardTitle>Nytt lösenord</CardTitle>
+            <CardTitle className="font-display">Nytt lösenord</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">

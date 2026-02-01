@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 
 export default function BetaEndedPage() {
   return (
-    <Card className="border-0 shadow-lifted text-center">
+    <Card className="border-0 glass-card text-center">
       <CardHeader className="space-y-4 pb-2">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-3xl">
           &#127881;
         </div>
-        <CardTitle className="text-2xl">Betan har avslutats</CardTitle>
+        <CardTitle className="text-2xl font-display">Betan har avslutats</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-muted-foreground">

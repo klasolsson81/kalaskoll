@@ -63,7 +63,7 @@ export default function SetPasswordPage() {
 
   if (checking) {
     return (
-      <Card className="border-0 shadow-lifted text-center">
+      <Card className="border-0 glass-card text-center">
         <CardContent className="py-12">
           <p className="text-muted-foreground">Laddar...</p>
         </CardContent>
@@ -73,12 +73,12 @@ export default function SetPasswordPage() {
 
   if (done) {
     return (
-      <Card className="border-0 shadow-lifted text-center">
+      <Card className="border-0 glass-card text-center">
         <CardHeader className="space-y-4 pb-2">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-3xl">
             ✅
           </div>
-          <CardTitle className="text-2xl">Konto redo!</CardTitle>
+          <CardTitle className="text-2xl font-display">Konto redo!</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
@@ -97,12 +97,12 @@ export default function SetPasswordPage() {
   }
 
   return (
-    <Card className="border-0 shadow-lifted">
+    <Card className="border-0 glass-card">
       <CardHeader className="text-center space-y-3 pb-2">
-        <span className="mx-auto block text-3xl font-extrabold tracking-tight text-primary">
+        <span className="mx-auto block text-3xl font-extrabold tracking-tight text-primary font-display">
           KalasKoll
         </span>
-        <CardTitle className="text-2xl">Välkommen!</CardTitle>
+        <CardTitle className="text-2xl font-display">Välkommen!</CardTitle>
         <p className="text-sm text-muted-foreground">
           Sätt ett lösenord för att aktivera ditt konto.
         </p>

@@ -34,7 +34,7 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Inbjudan hittades inte</h1>
+          <h1 className="text-2xl font-bold font-display">Inbjudan hittades inte</h1>
           <p className="mt-2 text-muted-foreground">
             QR-koden verkar vara ogiltig eller har gått ut.
             Kontakta den som bjöd in dig.
@@ -55,7 +55,7 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Kalas hittades inte</h1>
+          <h1 className="text-2xl font-bold font-display">Kalas hittades inte</h1>
           <p className="mt-2 text-muted-foreground">
             Något gick fel. Kontakta den som bjöd in dig.
           </p>
@@ -73,7 +73,7 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="mx-auto max-w-md text-center">
-          <h1 className="text-2xl font-bold">Sista svarsdatum har passerat</h1>
+          <h1 className="text-2xl font-bold font-display">Sista svarsdatum har passerat</h1>
           <p className="mt-2 text-muted-foreground">
             Tyvärr går det inte längre att svara på denna inbjudan.
             Kontakta den som bjöd in dig om du har frågor.
@@ -91,7 +91,7 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     .order('responded_at', { ascending: true });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 px-4 py-8">
+    <div className="min-h-screen bg-app-gradient-rsvp px-4 py-8">
       <div className="mx-auto max-w-md space-y-6">
         {/* Party header */}
         <PartyHeader
@@ -108,9 +108,9 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
 
         {/* Guest responses */}
         {responses && responses.length > 0 && (
-          <Card className="border-0 shadow-soft">
+          <Card className="border-0 glass-card">
             <CardHeader>
-              <CardTitle className="text-base">
+              <CardTitle className="text-base font-display">
                 Vilka har svarat ({responses.length})
               </CardTitle>
             </CardHeader>
@@ -155,7 +155,7 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground">
           Drivs av{' '}
-          <span className="font-semibold text-primary">KalasKoll</span>
+          <span className="font-semibold text-primary font-display">KalasKoll</span>
           {' '}– Smarta inbjudningar för barnkalas
         </p>
       </div>

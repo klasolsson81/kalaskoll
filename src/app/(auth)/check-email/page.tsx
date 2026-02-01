@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 
 export default function CheckEmailPage() {
   return (
-    <Card className="border-0 shadow-lifted text-center">
+    <Card className="border-0 glass-card text-center">
       <CardHeader className="space-y-4 pb-2">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
           ✉️
         </div>
-        <CardTitle className="text-2xl">Kolla din e-post</CardTitle>
+        <CardTitle className="text-2xl font-display">Kolla din e-post</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-muted-foreground">

@@ -11,15 +11,15 @@ export const dynamic = 'force-dynamic';
 export default async function RegisterPage() {
   if (isBetaEnded()) {
     return (
-      <Card className="border-0 shadow-lifted">
+      <Card className="border-0 glass-card">
         <CardHeader className="text-center space-y-3 pb-2">
           <Link href="/" className="mx-auto block">
-            <span className="text-3xl font-extrabold tracking-tight text-primary">
+            <span className="text-3xl font-extrabold tracking-tight text-primary font-display">
               KalasKoll
             </span>
           </Link>
           <div>
-            <CardTitle className="text-2xl">Kommer snart!</CardTitle>
+            <CardTitle className="text-2xl font-display">Kommer snart!</CardTitle>
             <CardDescription className="mt-1 text-base">
               Betan avslutades 28 februari. Vi jobbar p&aring; att lansera den riktiga versionen.
             </CardDescription>
@@ -46,7 +46,7 @@ export default async function RegisterPage() {
               <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-3 text-muted-foreground">eller</span>
+              <span className="bg-white/75 px-3 text-muted-foreground">eller</span>
             </div>
           </div>
 
@@ -76,15 +76,15 @@ export default async function RegisterPage() {
   const stats = { totalTesters, spotsRemaining, percentFull };
 
   return (
-    <Card className="border-0 shadow-lifted">
+    <Card className="border-0 glass-card">
       <CardHeader className="text-center space-y-3 pb-2">
         <Link href="/" className="mx-auto block">
-          <span className="text-3xl font-extrabold tracking-tight text-primary">
+          <span className="text-3xl font-extrabold tracking-tight text-primary font-display">
             KalasKoll
           </span>
         </Link>
         <div>
-          <CardTitle className="text-2xl">
+          <CardTitle className="text-2xl font-display">
             {isFull ? 'Gå med i väntelistan' : 'Skapa beta-konto'}
           </CardTitle>
           <CardDescription className="mt-1 text-base">
@@ -126,7 +126,7 @@ export default async function RegisterPage() {
             <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-3 text-muted-foreground">eller</span>
+            <span className="bg-white/75 px-3 text-muted-foreground">eller</span>
           </div>
         </div>
 

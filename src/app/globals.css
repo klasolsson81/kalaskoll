@@ -60,9 +60,9 @@
   --foreground: oklch(0.17 0.02 260);
 
   /* Surfaces */
-  --card: oklch(1 0 0);
+  --card: oklch(1 0 0 / 90%);
   --card-foreground: oklch(0.17 0.02 260);
-  --popover: oklch(1 0 0);
+  --popover: oklch(1 0 0 / 95%);
   --popover-foreground: oklch(0.17 0.02 260);
 
   /* Festblå (Primary) */
@@ -239,6 +239,21 @@
   backdrop-filter: blur(20px);
   border: 1px solid oklch(1 0 0 / 20%);
   box-shadow: 0 8px 32px oklch(0.17 0.02 260 / 0.08);
+}
+
+/* App-wide gradient background (cream → lavender) */
+@utility bg-app-gradient {
+  background: linear-gradient(135deg, oklch(0.98 0.005 80) 0%, oklch(0.97 0.01 280) 100%);
+  background-attachment: fixed;
+}
+
+/* RSVP festive gradient (adds subtle color orbs) */
+@utility bg-app-gradient-rsvp {
+  background:
+    radial-gradient(circle at 20% 80%, oklch(0.55 0.19 255 / 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, oklch(0.65 0.13 175 / 0.04) 0%, transparent 50%),
+    linear-gradient(135deg, oklch(0.98 0.005 80) 0%, oklch(0.96 0.015 280) 100%);
+  background-attachment: fixed;
 }
 
 /* Gradient mesh background utility */

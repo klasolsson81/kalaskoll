@@ -216,12 +216,12 @@ export function Footer() {
 
   return (
     <>
-      <footer className="border-t bg-muted/40 print:hidden">
+      <footer className="border-t bg-white/60 backdrop-blur-md print:hidden">
         <div className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
             {/* Brand — full width on mobile */}
             <div className="col-span-2 sm:col-span-1">
-              <Link href="/" className="text-lg font-extrabold tracking-tight text-primary hover:text-primary/80 transition-colors">
+              <Link href="/" className="text-lg font-extrabold tracking-tight text-primary hover:text-primary/80 transition-colors font-display">
                 KalasKoll
               </Link>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -242,7 +242,7 @@ export function Footer() {
 
             {/* Navigation */}
             <div>
-              <p className="mb-2 text-sm font-semibold text-foreground">Navigation</p>
+              <p className="mb-2 text-sm font-semibold text-foreground font-display">Navigation</p>
               <ul className="space-y-1.5">
                 <li>
                   <button
@@ -265,7 +265,7 @@ export function Footer() {
 
             {/* Legal */}
             <div>
-              <p className="mb-2 text-sm font-semibold text-foreground">Juridiskt</p>
+              <p className="mb-2 text-sm font-semibold text-foreground font-display">Juridiskt</p>
               <ul className="space-y-1.5">
                 <li>
                   <button

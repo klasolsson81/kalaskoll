@@ -149,10 +149,10 @@ export function FeedbackWidget() {
 
       {/* Feedback panel */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 bg-card border rounded-xl shadow-xl overflow-hidden">
+        <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 glass-card border rounded-xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="flex justify-between items-center p-4 border-b bg-muted/30">
-            <h3 className="font-semibold">Skicka feedback</h3>
+          <div className="flex justify-between items-center p-4 border-b bg-white/50">
+            <h3 className="font-semibold font-display">Skicka feedback</h3>
             <Button
               variant="ghost"
               size="icon"

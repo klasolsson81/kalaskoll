@@ -95,7 +95,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sv" className={`${inter.variable} ${fredoka.variable}`}>
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body className="min-h-screen bg-app-gradient font-sans antialiased">
         {children}
         <FeedbackWidget />
         <Footer />

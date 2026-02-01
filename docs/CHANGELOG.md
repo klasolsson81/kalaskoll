@@ -6,6 +6,23 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+#### Complete "Festive Modern" UI Makeover — Entire App
+- **App-wide gradient background** — body uses fixed cream-to-lavender gradient (`bg-app-gradient`) instead of flat off-white, creating a cohesive warm feel across all pages
+- **CSS variable updates** — `--card` at 90% opacity and `--popover` at 95% opacity so the gradient subtly peeks through card surfaces
+- **RSVP festive gradient** — dedicated `bg-app-gradient-rsvp` with radial color orbs for the mobile RSVP experience
+- **Glass-morphism everywhere** — all cards across auth, dashboard, RSVP, profile, and guest list pages use `glass-card` (frosted backdrop-blur, translucent white, soft shadow)
+- **Fredoka headings everywhere** — all page headings, card titles, and brand logos use `font-display` (Fredoka) for a friendly, rounded aesthetic
+- **Auth pages** — removed blurred blobs, replaced with confetti-dots pattern overlay; all cards converted from `shadow-lifted` to `glass-card`; "eller" divider changed from `bg-card` to `bg-white/75`
+- **Dashboard header** — glass header (`bg-white/70 backdrop-blur-xl`) with 2px gradient-celebration accent strip below
+- **Dashboard content** — welcome section, stat boxes, party cards, children section, and empty states all use glass-card
+- **Party detail/edit/guests** — all detail cards, guest stat boxes, attending/declined lists use glass-card with font-display headings
+- **Profile pages** — profile and password cards use glass-card
+- **RSVP pages** — both main and edit RSVP pages use festive gradient background; all form cards (attending toggle, email, child info, contact, allergies, message) use glass-card
+- **PartyHeader** — festive header card gets glass-card treatment
+- **Footer** — translucent `bg-white/60 backdrop-blur-md` instead of opaque muted; brand and section headings use font-display
+- **FooterModal** — panel uses glass-card instead of plain white
+- **FeedbackWidget** — panel uses glass-card; header uses `bg-white/50`; title uses font-display
+
 #### Landing Page "Festive Modern" UI Overhaul
 - **Animated gradient mesh hero** — blue-purple-pink-teal gradient background with slow 20s CSS animation, replacing flat off-white with blurred blobs
 - **Frosted glass hero card** — hero content wrapped in glass-morphism card (`backdrop-blur`, translucent white) over the gradient

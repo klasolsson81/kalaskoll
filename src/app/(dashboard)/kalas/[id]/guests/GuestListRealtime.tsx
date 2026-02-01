@@ -80,24 +80,24 @@ export function GuestListRealtime({
       )}
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-lg bg-muted p-4 text-center">
+        <div className="rounded-lg glass-card p-4 text-center">
           <p className="text-2xl font-bold">{guests.length}</p>
           <p className="text-sm text-muted-foreground">Totalt svar</p>
         </div>
-        <div className="rounded-lg bg-green-50 p-4 text-center">
+        <div className="rounded-lg glass-card p-4 text-center">
           <p className="text-2xl font-bold text-green-700">{attending.length}</p>
           <p className="text-sm text-green-600">Kommer</p>
         </div>
-        <div className="rounded-lg bg-red-50 p-4 text-center">
+        <div className="rounded-lg glass-card p-4 text-center">
           <p className="text-2xl font-bold text-red-700">{declined.length}</p>
           <p className="text-sm text-red-600">Kan inte</p>
         </div>
       </div>
 
       {attending.length > 0 && (
-        <Card>
+        <Card className="border-0 glass-card">
           <CardHeader>
-            <CardTitle className="text-green-700">Kommer ({attending.length})</CardTitle>
+            <CardTitle className="text-green-700 font-display">Kommer ({attending.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-4">
@@ -115,9 +115,9 @@ export function GuestListRealtime({
       )}
 
       {declined.length > 0 && (
-        <Card>
+        <Card className="border-0 glass-card">
           <CardHeader>
-            <CardTitle className="text-red-700">Kan inte ({declined.length})</CardTitle>
+            <CardTitle className="text-red-700 font-display">Kan inte ({declined.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-4">
@@ -134,9 +134,9 @@ export function GuestListRealtime({
       )}
 
       {invitedGuests.length > 0 && (
-        <Card>
+        <Card className="border-0 glass-card">
           <CardHeader>
-            <CardTitle>Skickade inbjudningar ({invitedGuests.length})</CardTitle>
+            <CardTitle className="font-display">Skickade inbjudningar ({invitedGuests.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
@@ -170,7 +170,7 @@ export function GuestListRealtime({
       )}
 
       {guests.length === 0 && invitedGuests.length === 0 && !showAddForm && (
-        <Card>
+        <Card className="border-0 glass-card">
           <CardContent className="py-8 text-center">
             <p className="text-muted-foreground">
               Inga svar ännu. Dela QR-koden med gästerna eller lägg till gäster manuellt!

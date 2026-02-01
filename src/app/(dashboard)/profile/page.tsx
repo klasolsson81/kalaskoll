@@ -20,7 +20,7 @@ export default function ProfilePage() {
             &larr; Tillbaka
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">Ändra profil</h1>
+        <h1 className="text-2xl font-bold font-display">Ändra profil</h1>
       </div>
 
       <form action={formAction} className="space-y-6">
@@ -35,9 +35,9 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <Card className="border-0 shadow-soft">
+        <Card className="border-0 glass-card">
           <CardHeader>
-            <CardTitle>Dina uppgifter</CardTitle>
+            <CardTitle className="font-display">Dina uppgifter</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">

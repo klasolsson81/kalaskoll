@@ -15,12 +15,12 @@ export default function ConfirmedPage() {
   }, [fireConfettiCannon]);
 
   return (
-    <Card className="border-0 shadow-lifted text-center">
+    <Card className="border-0 glass-card text-center">
       <CardHeader className="space-y-4 pb-2">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-3xl">
           ✅
         </div>
-        <CardTitle className="text-2xl">Konto verifierat!</CardTitle>
+        <CardTitle className="text-2xl font-display">Konto verifierat!</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-muted-foreground">

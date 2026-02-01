@@ -153,7 +153,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold sm:text-3xl">{party.child_name}s kalas</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl font-display">{party.child_name}s kalas</h1>
             <Badge variant={isUpcoming ? 'success' : 'outline'}>
               {isUpcoming ? 'Kommande' : 'Avslutat'}
             </Badge>
@@ -217,9 +217,9 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
       {/* Details & Guests grid */}
       <div className="grid gap-6 sm:grid-cols-2 print:hidden">
-        <Card className="border-0 shadow-soft">
+        <Card className="border-0 glass-card">
           <CardHeader>
-            <CardTitle>Detaljer</CardTitle>
+            <CardTitle className="font-display">Detaljer</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-3">
@@ -292,9 +292,9 @@ export default async function PartyPage({ params }: PartyPageProps) {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-soft">
+        <Card className="border-0 glass-card">
           <CardHeader>
-            <CardTitle>Gäster</CardTitle>
+            <CardTitle className="font-display">Gäster</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">

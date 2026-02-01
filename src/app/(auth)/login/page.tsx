@@ -15,15 +15,15 @@ export default function LoginPage() {
   );
 
   return (
-    <Card className="border-0 shadow-lifted">
+    <Card className="border-0 glass-card">
       <CardHeader className="text-center space-y-3 pb-2">
         <Link href="/" className="mx-auto block">
-          <span className="text-3xl font-extrabold tracking-tight text-primary">
+          <span className="text-3xl font-extrabold tracking-tight text-primary font-display">
             KalasKoll
           </span>
         </Link>
         <div>
-          <CardTitle className="text-2xl">Välkommen tillbaka!</CardTitle>
+          <CardTitle className="text-2xl font-display">Välkommen tillbaka!</CardTitle>
           <CardDescription className="mt-1 text-base">
             Logga in för att planera magiska kalas
           </CardDescription>
@@ -67,7 +67,7 @@ export default function LoginPage() {
             <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-3 text-muted-foreground">eller</span>
+            <span className="bg-white/75 px-3 text-muted-foreground">eller</span>
           </div>
         </div>
 
