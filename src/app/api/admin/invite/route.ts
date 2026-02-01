@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/utils/admin-guard';
 import { logAudit } from '@/lib/utils/audit';
@@ -10,6 +11,15 @@ const inviteSchema = z.object({
   email: z.string().email('Ogiltig e-postadress'),
   name: z.string().max(100).optional(),
 });
+
+/** HMAC-sign the invite parameters so the callback can trust them. */
+function signInvite(email: string, uid: string, expires: number): string {
+  const data = `${email}:${uid}:${expires}`;
+  return crypto
+    .createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    .update(data)
+    .digest('hex');
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,28 +35,46 @@ export async function POST(request: NextRequest) {
 
     const { email, name } = result.data;
 
-    // Single generateLink call — creates the user AND produces the invite OTP.
-    // Previously we called generateLink(invite) + updateUserById(email_confirm)
-    // + generateLink(magiclink), but the second generateLink was invalidating the
-    // token before the user could click the email link.
-    const { data: linkData, error: linkError } =
-      await adminClient.auth.admin.generateLink({
-        type: 'invite',
+    // Create the user via admin API (confirmed email, no tokens generated)
+    const { data: userData, error: createError } =
+      await adminClient.auth.admin.createUser({
         email,
+        email_confirm: true,
       });
 
-    if (linkError || !linkData) {
-      console.error('[Admin invite] generateLink failed:', linkError?.message);
-      return NextResponse.json(
-        { error: linkError?.message || 'Kunde inte skapa inbjudningslänk' },
-        { status: 500 },
-      );
+    if (createError) {
+      // If user already exists, try to fetch them
+      if (createError.message?.includes('already been registered')) {
+        const { data: listData } = await adminClient.auth.admin.listUsers();
+        const existing = listData?.users?.find(
+          (u) => u.email?.toLowerCase() === email.toLowerCase(),
+        );
+        if (!existing) {
+          return NextResponse.json(
+            { error: 'Användaren finns redan men kunde inte hittas' },
+            { status: 400 },
+          );
+        }
+        // Continue with existing user ID below
+        Object.assign(userData ?? {}, { user: existing });
+      } else {
+        console.error('[Admin invite] createUser failed:', createError.message);
+        return NextResponse.json(
+          { error: createError.message || 'Kunde inte skapa användare' },
+          { status: 500 },
+        );
+      }
     }
 
-    // Upsert profile with tester role — all testers expire on BETA_END_DATE
+    const userId = userData?.user?.id;
+    if (!userId) {
+      return NextResponse.json({ error: 'Kunde inte hämta användar-ID' }, { status: 500 });
+    }
+
+    // Upsert profile with tester role
     const { error: profileError } = await adminClient.from('profiles').upsert(
       {
-        id: linkData.user.id,
+        id: userId,
         role: 'tester',
         full_name: name || null,
         beta_expires_at: new Date(`${BETA_END_DATE}T23:59:59`).toISOString(),
@@ -58,10 +86,19 @@ export async function POST(request: NextRequest) {
       console.error('[Admin invite] profile upsert failed:', profileError.message);
     }
 
-    // Use the invite token directly — verifyOtp(type:'invite') will confirm
-    // the email AND create a session in one step.
-    const emailOtp = linkData.properties.email_otp;
-    const inviteUrl = `${APP_URL}/auth/callback?email=${encodeURIComponent(email)}&token=${encodeURIComponent(emailOtp)}&type=invite&next=/set-password`;
+    // Build HMAC-signed invite URL. The callback will verify the signature,
+    // then generate + verify a magic link in the same request (no pre-generated
+    // tokens that can expire or be invalidated).
+    const expires = Math.floor(Date.now() / 1000) + 86400; // 24 hours
+    const sig = signInvite(email, userId, expires);
+
+    const inviteUrl =
+      `${APP_URL}/auth/callback` +
+      `?invite_email=${encodeURIComponent(email)}` +
+      `&invite_uid=${encodeURIComponent(userId)}` +
+      `&expires=${expires}` +
+      `&sig=${sig}` +
+      `&next=/set-password`;
 
     // Send custom invite email
     const emailResult = await sendTesterInvite({
@@ -82,7 +119,7 @@ export async function POST(request: NextRequest) {
       userId: adminUser.id,
       action: 'admin.user.invite',
       resourceType: 'user',
-      resourceId: linkData.user.id,
+      resourceId: userId,
       metadata: { email, name: name || null, invitedBy: adminUser.email },
     });
 

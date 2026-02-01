@@ -1,7 +1,24 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { createServerClient } from '@supabase/ssr';
+import { createAdminClient } from '@/lib/supabase/admin';
 import type { Database } from '@/types/database';
 import type { CookieOptions } from '@supabase/ssr';
+
+/** Verify the HMAC signature from the invite URL. */
+function verifyInviteSignature(
+  email: string,
+  uid: string,
+  expires: number,
+  sig: string,
+): boolean {
+  const data = `${email}:${uid}:${expires}`;
+  const expected = crypto
+    .createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    .update(data)
+    .digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -9,8 +26,12 @@ export async function GET(request: Request) {
   const tokenHash = searchParams.get('token_hash');
   const type = searchParams.get('type');
   const next = searchParams.get('next');
-  const emailParam = searchParams.get('email');
-  const token = searchParams.get('token');
+
+  // Signed invite parameters
+  const inviteEmail = searchParams.get('invite_email');
+  const inviteUid = searchParams.get('invite_uid');
+  const expires = searchParams.get('expires');
+  const sig = searchParams.get('sig');
 
   const successUrl = next && next.startsWith('/') ? `${origin}${next}` : `${origin}/confirmed`;
 
@@ -54,26 +75,69 @@ export async function GET(request: Request) {
     }
   }
 
-  // Flow 2: email + raw token (admin-generated magic link for tester invites)
-  if (!verified && emailParam && token && type) {
-    const { error } = await supabase.auth.verifyOtp({
-      email: emailParam,
-      token,
-      type: type as 'magiclink' | 'signup' | 'email' | 'invite',
-    });
-    if (!error) {
-      verified = true;
+  // Flow 2: HMAC-signed invite (admin tester invites)
+  // The token is generated and verified in the SAME request, so it can never
+  // expire or be invalidated between generation and the user clicking the link.
+  if (!verified && inviteEmail && inviteUid && expires && sig) {
+    const expiresNum = Number(expires);
+    if (Number.isNaN(expiresNum) || expiresNum < Date.now() / 1000) {
+      lastError = 'invite: link expired';
+      console.error('[auth/callback] invite link expired');
+    } else if (!verifyInviteSignature(inviteEmail, inviteUid, expiresNum, sig)) {
+      lastError = 'invite: invalid signature';
+      console.error('[auth/callback] invite signature invalid');
     } else {
-      lastError = `otp_email: ${error.message}`;
-      console.error('[auth/callback] verifyOtp(email+token) failed:', error.message);
+      // Signature valid — generate a fresh magic link and immediately verify it
+      try {
+        const adminClient = createAdminClient();
+        const { data: magicData, error: magicError } =
+          await adminClient.auth.admin.generateLink({
+            type: 'magiclink',
+            email: inviteEmail,
+          });
+
+        if (magicError || !magicData) {
+          lastError = `invite_gen: ${magicError?.message ?? 'no data'}`;
+          console.error('[auth/callback] generateLink failed:', magicError?.message);
+        } else {
+          // Try token_hash form first
+          const { error: hashError } = await supabase.auth.verifyOtp({
+            token_hash: magicData.properties.hashed_token,
+            type: 'magiclink',
+          });
+
+          if (!hashError) {
+            verified = true;
+          } else {
+            console.error('[auth/callback] verifyOtp(hash) failed:', hashError.message);
+
+            // Fallback: try email + token form
+            const { error: otpError } = await supabase.auth.verifyOtp({
+              email: inviteEmail,
+              token: magicData.properties.email_otp,
+              type: 'magiclink',
+            });
+
+            if (!otpError) {
+              verified = true;
+            } else {
+              lastError = `invite_otp: hash=${hashError.message}, email=${otpError.message}`;
+              console.error('[auth/callback] verifyOtp(email) failed:', otpError.message);
+            }
+          }
+        }
+      } catch (err) {
+        lastError = `invite_err: ${err instanceof Error ? err.message : 'unknown'}`;
+        console.error('[auth/callback] invite flow error:', err);
+      }
     }
   }
 
-  // Flow 3: token_hash + type (legacy / Supabase default email links)
+  // Flow 3: token_hash + type (legacy Supabase email links, signup confirmation)
   if (!verified && tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
-      type: type as 'signup' | 'email' | 'invite' | 'magiclink',
+      type: type as 'signup' | 'email' | 'invite' | 'magiclink' | 'recovery',
     });
     if (!error) {
       verified = true;
