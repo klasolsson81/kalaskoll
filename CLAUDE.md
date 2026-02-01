@@ -124,7 +124,7 @@ Allergidata ar halsodata (GDPR artikel 9). Krav:
 Definieras i `src/lib/constants.ts`:
 
 ```typescript
-export const ADMIN_EMAILS = ['klasolsson81@gmail.com', 'zeback_@hotmail.com'];
+export const ADMIN_EMAILS = ['klasolsson81@gmail.com'];
 ```
 
 Superadmins har: obegransat SMS, obegransade AI-bilder, forceLive i mock mode.
