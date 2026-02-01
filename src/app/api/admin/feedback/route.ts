@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/utils/admin-guard';
 import { adminUpdateFeedbackSchema } from '@/lib/utils/validation';
+import { z } from 'zod';
 
 export async function GET() {
   try {
@@ -51,5 +52,33 @@ export async function PATCH(request: NextRequest) {
   } catch (error) {
     console.error('Admin feedback update error:', error);
     return NextResponse.json({ error: 'Failed to update feedback' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const guard = await requireAdmin();
+    if (guard instanceof NextResponse) return guard;
+    const { adminClient } = guard;
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    const parsed = z.string().uuid().safeParse(id);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid feedback ID' }, { status: 400 });
+    }
+
+    const { error } = await adminClient
+      .from('feedback')
+      .delete()
+      .eq('id', parsed.data);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Admin feedback delete error:', error);
+    return NextResponse.json({ error: 'Failed to delete feedback' }, { status: 500 });
   }
 }

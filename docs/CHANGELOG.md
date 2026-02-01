@@ -11,7 +11,8 @@ All notable changes to this project will be documented in this file.
 - **Admin stats cards** showing total users, testers, parties, RSVPs, feedback, waitlist, AI images, SMS
 - **User management** table with search, role change (user/tester/admin), and delete actions
 - **Audit log viewer** with pagination and action type filtering
-- **Feedback management** (`/admin/feedback`) with status tracking (new/reviewed/in_progress/resolved/dismissed) and admin notes
+- **Feedback management** (`/admin/feedback`) with status tracking (new/reviewed/in_progress/resolved/dismissed), admin notes, and delete
+- **Screenshot lightbox** — click feedback screenshots to view full-size in a popup overlay (Escape to close)
 - **AI feedback summary** using OpenAI `gpt-4o-mini` — categorizes feedback into bugs, feature requests, UX issues, and praise with severity and Claude Code prompt generation
 - **Admin guard** utility (`admin-guard.ts`) for server-side admin route protection
 - **OpenAI Chat helper** (`openai-chat.ts`) for chat completions with Zod validation and timeout
