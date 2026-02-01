@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollReveal } from '@/components/shared/ScrollReveal';
+import { GradientMeshBg } from '@/components/landing/GradientMeshBg';
+import { FloatingBalloons } from '@/components/landing/FloatingBalloons';
+import { ConfettiTrigger } from '@/components/landing/ConfettiTrigger';
 import { APP_URL } from '@/lib/constants';
 
 export default function HomePage() {
@@ -91,7 +94,7 @@ export default function HomePage() {
         <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
           <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-extrabold tracking-tight text-primary">
+              <span className="font-display text-2xl font-extrabold tracking-tight text-primary">
                 KalasKoll
               </span>
             </Link>
@@ -113,59 +116,68 @@ export default function HomePage() {
         <main className="flex-1">
           {/* Hero */}
           <section className="relative overflow-hidden">
-            {/* Decorative background blobs */}
-            <div className="pointer-events-none absolute -top-32 right-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-32 left-0 h-96 w-96 rounded-full bg-secondary/5 blur-3xl" />
-            <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-3xl" />
+            {/* Animated gradient mesh background */}
+            <GradientMeshBg />
+            {/* Floating balloons */}
+            <FloatingBalloons />
 
             <div className="relative mx-auto max-w-5xl px-4 py-24 text-center sm:py-32">
-              <ScrollReveal>
-                <p className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                  Gratis att börja
-                </p>
-              </ScrollReveal>
-              <ScrollReveal delay={100}>
-                <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                  Smarta inbjudningar
-                  <br />
-                  <span className="bg-gradient-to-r from-primary via-indigo-400 to-secondary bg-clip-text text-transparent">
-                    för barnkalas
-                  </span>
-                </h1>
-              </ScrollReveal>
-              <ScrollReveal delay={200}>
-                <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-                  Skriv ut inbjudningskort med QR-kod, lägg dem i barnens fack och låt
-                  vårdnadshavarna svara direkt via mobilen. Slipp kaos med papperslappar,
-                  SMS och anteckningar.
-                </p>
-              </ScrollReveal>
-              <ScrollReveal delay={300}>
-                <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                  <Link href="/register">
-                    <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
-                      Skapa ditt första kalas
-                    </Button>
-                  </Link>
-                  <a href="#hur-det-fungerar">
-                    <Button size="lg" variant="outline" className="h-12 px-8 text-base hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all">
-                      Se hur det fungerar
-                    </Button>
-                  </a>
-                </div>
-              </ScrollReveal>
+              <div className="mx-auto max-w-3xl glass-card rounded-3xl px-6 py-12 sm:px-12 sm:py-16">
+                <ScrollReveal>
+                  <p className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+                    Gratis att börja
+                  </p>
+                </ScrollReveal>
+                <ScrollReveal delay={100}>
+                  <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+                    Smarta inbjudningar
+                    <br />
+                    <span className="bg-gradient-to-r from-primary via-indigo-400 to-secondary bg-clip-text text-transparent">
+                      för barnkalas
+                    </span>
+                  </h1>
+                </ScrollReveal>
+                <ScrollReveal delay={200}>
+                  <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+                    Skriv ut inbjudningskort med QR-kod, lägg dem i barnens fack och låt
+                    vårdnadshavarna svara direkt via mobilen. Slipp kaos med papperslappar,
+                    SMS och anteckningar.
+                  </p>
+                </ScrollReveal>
+                <ScrollReveal delay={300}>
+                  <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                    <Link href="/register">
+                      <Button size="lg" className="relative h-12 overflow-hidden px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
+                        Skapa ditt första kalas
+                        <span
+                          aria-hidden="true"
+                          className="animate-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                          style={{
+                            animation: 'shimmer-sweep 3s ease-in-out infinite',
+                          }}
+                        />
+                      </Button>
+                    </Link>
+                    <a href="#hur-det-fungerar">
+                      <Button size="lg" variant="outline" className="h-12 px-8 text-base bg-white/60 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all">
+                        Se hur det fungerar
+                      </Button>
+                    </a>
+                  </div>
+                </ScrollReveal>
+              </div>
             </div>
           </section>
 
           {/* How it works */}
-          <section id="hur-det-fungerar" className="border-t bg-muted/40 py-20">
+          <section id="hur-det-fungerar" className="border-t bg-gradient-to-br from-pink-50/50 via-white to-blue-50/50 py-20">
             <div className="mx-auto max-w-5xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
                   <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
                     Enkelt som 1-2-3
                   </p>
-                  <h2 className="text-3xl font-bold tracking-tight">Så här fungerar KalasKoll</h2>
+                  <h2 className="font-display text-3xl font-bold tracking-tight">Så här fungerar KalasKoll</h2>
                 </div>
               </ScrollReveal>
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -176,6 +188,7 @@ export default function HomePage() {
                     title: 'Skapa kalas',
                     description:
                       'Fyll i datum, plats och tema. Välj en gratis mall eller låt AI generera ett unikt inbjudningskort.',
+                    glow: 'shadow-[0_0_20px_oklch(0.55_0.19_255/0.15)]',
                     color: 'bg-primary/10 text-primary',
                   },
                   {
@@ -184,6 +197,7 @@ export default function HomePage() {
                     title: 'Dela inbjudan',
                     description:
                       'Skriv ut inbjudan med QR-kod och ge till barnen. Eller skicka via SMS och e-post.',
+                    glow: 'shadow-[0_0_20px_oklch(0.65_0.13_175/0.15)]',
                     color: 'bg-secondary/10 text-secondary',
                   },
                   {
@@ -192,13 +206,14 @@ export default function HomePage() {
                     title: 'Samla svar',
                     description:
                       'Gästerna scannar QR-koden och svarar direkt på mobilen. Du ser allt i realtid.',
+                    glow: 'shadow-[0_0_20px_oklch(0.80_0.14_75/0.15)]',
                     color: 'bg-accent/10 text-accent-foreground',
                   },
                 ].map((feature, i) => (
                   <ScrollReveal key={feature.step} delay={i * 120}>
-                    <Card className="relative overflow-hidden border-0 shadow-soft h-full transition-shadow hover:shadow-warm">
+                    <Card className="glass-card relative overflow-hidden border-0 h-full transition-all duration-300 hover:shadow-warm hover:-translate-y-1">
                       <CardContent className="pt-8 pb-6">
-                        <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${feature.color}`}>
+                        <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${feature.color} ${feature.glow}`}>
                           {feature.icon}
                         </div>
                         <div className="mb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -222,7 +237,7 @@ export default function HomePage() {
                   <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary">
                     Funktioner
                   </p>
-                  <h2 className="text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
+                  <h2 className="font-display text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
                 </div>
               </ScrollReveal>
               <div className="grid gap-6 sm:grid-cols-2">
@@ -231,29 +246,33 @@ export default function HomePage() {
                     icon: '🎨',
                     title: 'AI-genererade inbjudningar',
                     description: 'Välj mellan 9 illustrerade mallar eller skapa en unik AI-genererad inbjudan med ditt eget tema.',
+                    gradient: 'bg-gradient-to-br from-primary/15 to-indigo-400/15',
                   },
                   {
                     icon: '📱',
                     title: 'QR-kod för enkel OSA',
                     description: 'Gästerna behöver bara scanna QR-koden med mobilen. Inget konto krävs. Svaret tar under 30 sekunder.',
+                    gradient: 'bg-gradient-to-br from-secondary/15 to-teal-400/15',
                   },
                   {
                     icon: '🛡️',
                     title: 'Allergihantering med GDPR',
                     description:
                       'Samla in allergiinfo säkert med samtycke. Data raderas automatiskt 7 dagar efter kalaset.',
+                    gradient: 'bg-gradient-to-br from-emerald-400/15 to-green-400/15',
                   },
                   {
                     icon: '⚡',
                     title: 'Gästlista i realtid',
                     description:
                       'Se direkt när någon svarar. Full överblick över vilka som kommer, allergier och kontaktuppgifter.',
+                    gradient: 'bg-gradient-to-br from-amber-400/15 to-orange-400/15',
                   },
                 ].map((feature, i) => (
                   <ScrollReveal key={feature.title} delay={i * 100}>
-                    <Card className="border-0 shadow-soft h-full transition-shadow hover:shadow-warm">
+                    <Card className="glass-card border-0 h-full transition-all duration-300 hover:shadow-warm hover:-translate-y-1">
                       <CardContent className="flex gap-4 pt-6">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted text-2xl">
+                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl ${feature.gradient}`}>
                           {feature.icon}
                         </div>
                         <div>
@@ -269,14 +288,14 @@ export default function HomePage() {
           </section>
 
           {/* FAQ */}
-          <section className="border-t bg-muted/40 py-20">
+          <section className="border-t bg-confetti-dots py-20">
             <div className="mx-auto max-w-3xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
                   <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
                     FAQ
                   </p>
-                  <h2 className="text-3xl font-bold tracking-tight">Vanliga frågor</h2>
+                  <h2 className="font-display text-3xl font-bold tracking-tight">Vanliga frågor</h2>
                 </div>
               </ScrollReveal>
               <div className="space-y-4">
@@ -303,7 +322,7 @@ export default function HomePage() {
                   },
                 ].map((faq, i) => (
                   <ScrollReveal key={faq.q} delay={i * 80}>
-                    <Card className="border-0 shadow-soft">
+                    <Card className="glass-card border-0">
                       <CardContent className="pt-6">
                         <h3 className="mb-2 font-bold">{faq.q}</h3>
                         <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
@@ -316,24 +335,33 @@ export default function HomePage() {
           </section>
 
           {/* CTA */}
-          <section className="relative overflow-hidden py-20 text-center">
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-primary/3 to-transparent" />
-            <div className="relative mx-auto max-w-2xl px-4">
-              <ScrollReveal>
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
-                <p className="mt-4 text-lg text-muted-foreground">
-                  Skapa ditt konto gratis och ha full koll på nästa barnkalas.
-                </p>
-                <div className="mt-8">
-                  <Link href="/register">
-                    <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
-                      Kom igång gratis
-                    </Button>
-                  </Link>
-                </div>
-              </ScrollReveal>
-            </div>
-          </section>
+          <ConfettiTrigger>
+            <section className="relative overflow-hidden py-20 text-center">
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-400/5 to-secondary/5" />
+              <div className="relative mx-auto max-w-2xl px-4">
+                <ScrollReveal>
+                  <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
+                  <p className="mt-4 text-lg text-muted-foreground">
+                    Skapa ditt konto gratis och ha full koll på nästa barnkalas.
+                  </p>
+                  <div className="mt-8">
+                    <Link href="/register">
+                      <Button size="lg" className="relative h-12 overflow-hidden px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
+                        Kom igång gratis
+                        <span
+                          aria-hidden="true"
+                          className="animate-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                          style={{
+                            animation: 'shimmer-sweep 3s ease-in-out infinite',
+                          }}
+                        />
+                      </Button>
+                    </Link>
+                  </div>
+                </ScrollReveal>
+              </div>
+            </section>
+          </ConfettiTrigger>
         </main>
 
       </div>

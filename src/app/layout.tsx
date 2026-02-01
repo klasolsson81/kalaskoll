@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Fredoka } from 'next/font/google';
 import { DevBadge } from '@/components/shared/DevBadge';
 import { FeedbackWidget } from '@/components/shared/FeedbackWidget';
 import { Footer } from '@/components/layout/Footer';
@@ -8,6 +8,12 @@ import './globals.css';
 
 const inter = Inter({
   variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const fredoka = Fredoka({
+  variable: '--font-display',
   subsets: ['latin'],
   display: 'swap',
 });
@@ -88,7 +94,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" className={inter.variable}>
+    <html lang="sv" className={`${inter.variable} ${fredoka.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
         {children}
         <FeedbackWidget />

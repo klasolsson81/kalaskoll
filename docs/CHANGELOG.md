@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Landing Page "Festive Modern" UI Overhaul
+- **Animated gradient mesh hero** — blue-purple-pink-teal gradient background with slow 20s CSS animation, replacing flat off-white with blurred blobs
+- **Frosted glass hero card** — hero content wrapped in glass-morphism card (`backdrop-blur`, translucent white) over the gradient
+- **Fredoka display font** — rounded, friendly heading font via `next/font/google` for all h1/h2 headings; Inter stays for body text
+- **Floating balloons** — 6 translucent inline SVG balloons (3 on mobile) with CSS float animation in the hero section. `aria-hidden`, `pointer-events-none`, hidden on `prefers-reduced-motion`
+- **Glass-morphism cards** — step cards, feature cards, and FAQ cards use `glass-card` utility with backdrop blur and translucent backgrounds
+- **Colored icon glow** — step card icons have colored box-shadow glow matching their theme color
+- **Gradient icon containers** — feature card icons use gradient backgrounds instead of flat muted
+- **Confetti-dot FAQ background** — CSS radial-gradient pattern replacing flat muted background
+- **CTA confetti burst** — single gentle confetti burst (via existing `useConfetti` hook) when CTA section scrolls 50% into view
+- **Shimmer CTA buttons** — diagonal light sweep animation every 3s on gradient buttons
+- **Section background gradients** — "Hur det fungerar" uses soft pink-to-blue gradient; CTA section uses primary-to-secondary gradient
+- **Hover lift on cards** — step and feature cards lift 4px on hover with smooth transition
+- **Accessibility** — all decorative elements are `aria-hidden` with `pointer-events-none`; `prefers-reduced-motion` disables gradient animation, hides balloons, skips confetti, and stops shimmer
+
 ### Fixed
 
 #### Footer Mobile Layout

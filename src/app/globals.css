@@ -7,6 +7,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -190,6 +191,100 @@
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+/* Gradient mesh animation (hero background) */
+@keyframes gradient-mesh {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Balloon float animation */
+@keyframes balloon-float {
+  0% {
+    transform: translateY(110%) translateX(0px);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(40%) translateX(15px);
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20%) translateX(-10px);
+    opacity: 0;
+  }
+}
+
+/* Shimmer sweep animation (CTA buttons) */
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+/* Glass card utility */
+@utility glass-card {
+  background: oklch(1 0 0 / 75%);
+  backdrop-filter: blur(20px);
+  border: 1px solid oklch(1 0 0 / 20%);
+  box-shadow: 0 8px 32px oklch(0.17 0.02 260 / 0.08);
+}
+
+/* Gradient mesh background utility */
+@utility bg-gradient-mesh {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.55 0.19 255),
+    oklch(0.50 0.18 280),
+    oklch(0.65 0.15 330),
+    oklch(0.65 0.13 175)
+  );
+  background-size: 400% 400%;
+}
+
+/* Animate gradient mesh */
+@utility animate-gradient-mesh {
+  animation: gradient-mesh 20s ease infinite;
+}
+
+/* Confetti dots pattern background */
+@utility bg-confetti-dots {
+  background-image:
+    radial-gradient(circle, oklch(0.55 0.19 255 / 0.06) 1px, transparent 1px),
+    radial-gradient(circle, oklch(0.65 0.13 175 / 0.06) 1px, transparent 1px),
+    radial-gradient(circle, oklch(0.80 0.14 75 / 0.06) 1px, transparent 1px);
+  background-size: 40px 40px, 60px 60px, 50px 50px;
+  background-position: 0 0, 20px 20px, 10px 35px;
+}
+
+/* Font display utility for headings */
+@utility font-display {
+  font-family: var(--font-display), var(--font-inter), sans-serif;
+}
+
+/* Reduced motion: disable decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-mesh {
+    animation: none;
+  }
+  .animate-balloon-float {
+    display: none;
+  }
+  .animate-shimmer {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 /* Print styles for invitation cards */
