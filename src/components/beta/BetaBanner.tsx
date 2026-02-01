@@ -30,7 +30,7 @@ export function BetaBanner({ stats }: BetaBannerProps) {
     <div className={`rounded-xl border p-4 mb-6 ${getUrgencyClass()}`}>
       <div className="flex items-center gap-2 mb-2">
         <h2 className="font-semibold">
-          {isFull ? 'Beta är full' : 'Beta-test pågår'}
+          {isFull ? 'Beta är full' : 'Testa KalasKoll gratis'}
         </h2>
       </div>
 
@@ -42,8 +42,10 @@ export function BetaBanner({ stats }: BetaBannerProps) {
       ) : (
         <>
           <p className="text-sm text-muted-foreground mb-3">
-            Just nu söker vi {BETA_CONFIG.maxTesters} föräldrar som vill testa KalasKoll.
-            Du får alla premium-funktioner gratis i {BETA_CONFIG.expiresInDays} dagar!
+            Vi söker {BETA_CONFIG.maxTesters} föräldrar som vill prova KalasKoll
+            inför sitt barns kalas. Det här är ingen demo
+            &mdash; skapa riktiga inbjudningar, skicka dem till gästerna
+            och samla in OSA-svar. Allt fungerar fullt ut!
           </p>
 
           <BetaProgressBar
@@ -58,15 +60,19 @@ export function BetaBanner({ stats }: BetaBannerProps) {
           <ul className="mt-3 space-y-1 text-sm">
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
-              {BETA_CONFIG.freeAiImages} AI-genererade inbjudningar
+              {BETA_CONFIG.freeAiImages} AI-genererade inbjudningskort
             </li>
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
-              {BETA_CONFIG.freeSmsInvites} SMS-utskick
+              {BETA_CONFIG.freeSmsInvites} SMS-inbjudningar
             </li>
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
-              Alla funktioner i {BETA_CONFIG.expiresInDays} dagar
+              QR-kod, OSA-hantering och allergiinfo
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-green-600">&#10003;</span>
+              Gratis i {BETA_CONFIG.expiresInDays} dagar &mdash; inga kortuppgifter
             </li>
           </ul>
         </>
