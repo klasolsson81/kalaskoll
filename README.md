@@ -7,7 +7,7 @@
 [![Tests](https://img.shields.io/badge/Tests-133%20unit%20%2B%2041%20E2E-brightgreen?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 [![GDPR](https://img.shields.io/badge/GDPR-AES--256--GCM-blue?style=for-the-badge&logo=shieldsdotio)](https://gdpr.eu/)
 
-**Digitala barnkalas-inbjudningar med AI-genererade kort, QR-kod-OSA och GDPR-sakrad allergihantering.**
+**Digitala barnkalas-inbjudningar med AI-genererade kort, QR-kod-OSA och GDPR-säkrad allergihantering.**
 
 [Live Demo](https://kalaskoll.se) | [Dokumentation](./CLAUDE.md) | [Changelog](./docs/CHANGELOG.md)
 
@@ -17,18 +17,18 @@
 
 ## Om Projektet
 
-KalasKoll forenklar kalasplanering for svenska foraldrar. Istallet for papperslappar, SMS-grupper och WhatsApp-meddelanden skapar du en digital inbjudan med QR-kod — gasterna skannar och svarar direkt fran mobilen.
+KalasKoll förenklar kalasplanering för svenska föräldrar. Istället för papperslappar, SMS-grupper och WhatsApp-meddelanden skapar du en digital inbjudan med QR-kod — gästerna skannar och svarar direkt från mobilen.
 
-Projektet ar byggt av **Klas Olsson** som forberedelse for sin son Alexanders 7-arskalas (20 forskolebarn, Leo's Lekland).
+Projektet är byggt av **Klas Olsson** som förberedelse för sin son Alexanders 7-årskalas (20 förskolebarn, Leo's Lekland).
 
 ### Hur det fungerar
 
 ```
 1. Skapa konto och logga in
-2. Skapa kalas — valj gratis mall eller AI-genererad inbjudan
-3. Skriv ut inbjudan med QR-kod, lagg i facket pa forskolan
-4. Gasterna skannar QR → svarar ja/nej + allergiinfo via mobilen
-5. Du ser alla svar i realtid pa din dashboard
+2. Skapa kalas — välj gratis mall eller AI-genererad inbjudan
+3. Skriv ut inbjudan med QR-kod, lägg i facket på förskolan
+4. Gästerna skannar QR → svarar ja/nej + allergiinfo via mobilen
+5. Du ser alla svar i realtid på din dashboard
 ```
 
 ---
@@ -39,36 +39,36 @@ Projektet ar byggt av **Klas Olsson** som forberedelse for sin son Alexanders 7-
 - **9 gratis illustrerade mallar** — dinosaurier, prinsessor, rymden, pirater m.fl.
 - **AI-genererade inbjudningar (Guldkalas)** — Replicate Flux Schnell / OpenAI DALL-E 3
 - **4 AI-stilar** — tecknat, 3D, akvarell, fotorealistisk
-- **Barnfoto pa inbjudan** — upload, beskaring, dekorativa ramar (cirkel/stjarna/hjarta/diamant)
-- **QR-kod** — genereras automatiskt, gasterna skannar med mobilen
+- **Barnfoto på inbjudan** — upload, beskärning, dekorativa ramar (cirkel/stjärna/hjärta/diamant)
+- **QR-kod** — genereras automatiskt, gästerna skannar med mobilen
 
-### Gasthantering
-- **Realtids-gastlista** — Supabase Realtime, uppdateras live
-- **Manuell gasthantering** — lagg till, redigera, ta bort gaster
+### Gästhantering
+- **Realtids-gästlista** — Supabase Realtime, uppdateras live
+- **Manuell gästhantering** — lägg till, redigera, ta bort gäster
 - **E-post och SMS-inbjudningar** — Resend + 46elks
-- **OSA-redigering** — gaster kan andra sitt svar
+- **OSA-redigering** — gäster kan ändra sitt svar
 
-### Sakerhet & GDPR
-- **Allergidata krypterad** — AES-256-GCM (GDPR artikel 9, halsodata)
-- **Separat samtycke** — for bade forvalda allergier och fritext
+### Säkerhet & GDPR
+- **Allergidata krypterad** — AES-256-GCM (GDPR artikel 9, hälsodata)
+- **Separat samtycke** — för både förvalda allergier och fritext
 - **Auto-radering** — allergidata raderas automatiskt 7 dagar efter kalaset
-- **Row Level Security** — Supabase RLS pa alla tabeller
-- **Rate limiting** — Upstash Redis pa RSVP och AI-generering
+- **Row Level Security** — Supabase RLS på alla tabeller
+- **Rate limiting** — Upstash Redis på RSVP och AI-generering
 
-### Ovriga funktioner
-- **Sparade barn** — spara profil med foto, ateranvands i nya kalas
-- **Profilhantering** — namn, telefon, losenord
+### Övriga funktioner
+- **Sparade barn** — spara profil med foto, återanvänds i nya kalas
+- **Profilhantering** — namn, telefon, lösenord
 - **SEO** — JSON-LD, sitemap, robots.txt, Open Graph
-- **Tillganglighet** — ARIA-attribut, lang="sv", heading-hierarki
+- **Tillgänglighet** — ARIA-attribut, lang="sv", heading-hierarki
 
 ---
 
 ## Teknisk Stack
 
-| Omrade | Teknologi |
+| Område | Teknologi |
 |--------|-----------|
 | **Framework** | Next.js 16 (App Router) |
-| **Sprak** | TypeScript 5 |
+| **Språk** | TypeScript 5 |
 | **Styling** | Tailwind CSS 4 + shadcn/ui |
 | **Databas** | Supabase (PostgreSQL, Auth, Storage, Realtime) |
 | **Rate Limiting** | Upstash Redis |
@@ -84,7 +84,7 @@ Projektet ar byggt av **Klas Olsson** som forberedelse for sin son Alexanders 7-
 
 ## Snabbstart
 
-### Forutsattningar
+### Förutsättningar
 
 - **Node.js 18+** och pnpm
 - **Supabase-projekt** (EU-region)
@@ -107,7 +107,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Oppna [http://localhost:3000](http://localhost:3000).
+Öppna [http://localhost:3000](http://localhost:3000).
 
 ---
 
@@ -130,7 +130,7 @@ pnpm test:coverage    # Coverage-rapport
 src/
 ├── app/
 │   ├── (auth)/              # Login, register, check-email, confirmed
-│   ├── (dashboard)/         # Dashboard, kalas CRUD, gastlista, profil
+│   ├── (dashboard)/         # Dashboard, kalas CRUD, gästlista, profil
 │   ├── api/                 # RSVP, invitation, auth, children
 │   └── r/[token]/           # Publik RSVP-sida + redigera svar
 ├── components/
@@ -157,61 +157,61 @@ tests/
 ### Testsvit
 
 ```
-Unit (Vitest):   133 tester across 9 testfiler
-E2E (Playwright): 41 tester across 5 spec-filer
+Unit (Vitest):    133 tester i 9 testfiler
+E2E (Playwright):  41 tester i 5 spec-filer
 ```
 
-| Testfil | Tester | Tackningsomrade |
+| Testfil | Tester | Täckningsområde |
 |---------|--------|-----------------|
 | format.test.ts | 25 | Datum, telefon, formatering |
 | validation.test.ts | 10 | Zod-schemas |
 | rsvp-validation.test.ts | 28 | RSVP input-validering |
-| party-validation.test.ts | 24 | Kalasformular-validering |
+| party-validation.test.ts | 24 | Kalasformulär-validering |
 | sms-validation.test.ts | 13 | Telefonnummer, SMS-regler |
 | crypto.test.ts | 7 | AES-256-GCM kryptering |
-| guest-validation.test.ts | 16 | Gastformular-validering |
-| child-validation.test.ts | 6 | Barnformular-validering |
+| guest-validation.test.ts | 16 | Gästformulär-validering |
+| child-validation.test.ts | 6 | Barnformulär-validering |
 | sms-message.test.ts | 4 | SMS-meddelandebyggare |
 
 ### E2E-tester (Playwright)
 
-| Spec-fil | Tester | Tackningsomrade |
+| Spec-fil | Tester | Täckningsområde |
 |----------|--------|-----------------|
 | landing.spec.ts | 8 | Landing page, CTA, navigation |
 | footer.spec.ts | 8 | Footer-modaler, brand link |
 | auth.spec.ts | 7 | Login, register, verifiering |
-| rsvp.spec.ts | 9 | RSVP-flode, allergi-samtycke, mobil |
-| navigation.spec.ts | 9 | Skyddade routes, SEO, tillganglighet |
+| rsvp.spec.ts | 9 | RSVP-flöde, allergi-samtycke, mobil |
+| navigation.spec.ts | 9 | Skyddade routes, SEO, tillgänglighet |
 
 ---
 
 ## Deployment
 
-Projektet ar konfigurerat for automatisk deployment via Vercel:
+Projektet är konfigurerat för automatisk deployment via Vercel:
 
 1. Push till `main` → Vercel deployer automatiskt
-2. Environment variables satts i Vercel Dashboard
+2. Environment variables sätts i Vercel Dashboard
 3. Custom domain: **kalaskoll.se** med SSL
 
 ### Deployment-checklista
 
-- Alla tester passar (`pnpm test`)
+- Alla tester passerar (`pnpm test`)
 - Bygget lyckas (`pnpm build`)
-- Lint ar rent (`pnpm lint`)
+- Lint är rent (`pnpm lint`)
 - Environment variables satta i Vercel
 - CHANGELOG uppdaterad
 
 ---
 
-## Sakerhet
+## Säkerhet
 
-| Atgard | Implementation |
+| Åtgärd | Implementation |
 |--------|---------------|
-| **Input-validering** | Zod-schemas pa alla API-routes |
+| **Input-validering** | Zod-schemas på alla API-routes |
 | **XSS-skydd** | DOMPurify-sanitering |
 | **Allergi-kryptering** | AES-256-GCM (ALLERGY_ENCRYPTION_KEY) |
 | **Rate limiting** | Upstash Redis (RSVP: 10/min, AI: 10/h) |
-| **RLS** | Supabase Row Level Security pa alla tabeller |
+| **RLS** | Supabase Row Level Security på alla tabeller |
 | **Auth** | Supabase Auth med e-postverifiering |
 | **Secrets** | Enbart i environment variables, aldrig i kod |
 | **Auto-radering** | Allergidata raderas 7 dagar efter kalas |
@@ -220,12 +220,22 @@ Projektet ar konfigurerat for automatisk deployment via Vercel:
 
 ## Dokumentation
 
-| Fil | Innehall |
+| Fil | Innehåll |
 |-----|----------|
-| [CLAUDE.md](./CLAUDE.md) | Projektinstruktion for Claude Code |
-| [docs/CHANGELOG.md](./docs/CHANGELOG.md) | Alla andringar |
+| [CLAUDE.md](./CLAUDE.md) | Projektinstruktion för Claude Code |
+| [docs/CHANGELOG.md](./docs/CHANGELOG.md) | Alla ändringar |
 | [docs/API.md](./docs/API.md) | API-dokumentation |
 | [docs/DATABASE.md](./docs/DATABASE.md) | Databasschema och RLS |
+
+---
+
+## Licens
+
+Detta projekt är licensierat under **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+Du får fritt studera och köra koden, men all modifierad eller härledd version som görs tillgänglig som nätverkstjänst måste publiceras under samma licens med fullständig källkod. Kommersiell användning utan att öppna källkoden är inte tillåten.
+
+Se [LICENSE](./LICENSE) för fullständiga villkor.
 
 ---
 
