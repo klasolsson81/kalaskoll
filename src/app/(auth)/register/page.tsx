@@ -44,7 +44,25 @@ export default async function RegisterPage() {
         <BetaBanner stats={stats} />
 
         {isFull ? (
-          <WaitlistForm />
+          <>
+            <div className="mb-4 rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground leading-relaxed">
+              <p className="mb-2">
+                Just nu är alla testplatser bokade. Håll utkik — vi öppnar fler platser inom kort!
+              </p>
+              <p>
+                Om du har ett riktigt barnkalas på gång och vill testa på riktigt, skicka ett mail
+                till{' '}
+                <a
+                  href="mailto:klasolsson81@gmail.com"
+                  className="font-semibold text-primary hover:underline"
+                >
+                  klasolsson81@gmail.com
+                </a>{' '}
+                så kanske Klas släpper in dig.
+              </p>
+            </div>
+            <WaitlistForm />
+          </>
         ) : (
           <BetaRegisterForm spotsRemaining={spotsRemaining} />
         )}

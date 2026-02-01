@@ -133,6 +133,85 @@ export async function sendRsvpConfirmation({
   }
 }
 
+interface SendTesterInviteParams {
+  to: string;
+  name?: string;
+  inviteUrl: string;
+}
+
+export async function sendTesterInvite({
+  to,
+  name,
+  inviteUrl,
+}: SendTesterInviteParams): Promise<SendResult> {
+  const greeting = name ? `Hej ${escapeHtml(name)}` : 'Hej';
+
+  const html = `
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;">
+  <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
+    <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">
+        Du har blivit inbjuden att testa KalasKoll!
+      </h1>
+      <p style="font-size:16px;color:#6b7280;margin:0 0 24px;">
+        ${greeting}, du har blivit utvald som testare.
+      </p>
+
+      <p style="font-size:14px;color:#374151;margin:0 0 16px;">
+        KalasKoll hjälper dig skapa smarta inbjudningar till barnkalas med AI-genererade kort,
+        QR-kod-baserad OSA och enkel allergihantering.
+      </p>
+
+      <p style="font-size:14px;color:#374151;margin:0 0 24px;">
+        Klicka på knappen nedan för att aktivera ditt konto och sätta ett lösenord:
+      </p>
+
+      <a href="${inviteUrl}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+        Aktivera mitt konto
+      </a>
+
+      <p style="font-size:12px;color:#9ca3af;margin:24px 0 0;">
+        Länken är giltig i 24 timmar. Om du inte förväntade dig detta mail kan du ignorera det.
+      </p>
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:16px;">
+      Skickat via KalasKoll – Smarta inbjudningar för barnkalas
+    </p>
+  </div>
+</body>
+</html>`.trim();
+
+  const resend = getResendClient();
+
+  try {
+    const { error } = await resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to,
+      subject: 'Du har blivit inbjuden att testa KalasKoll!',
+      html,
+    });
+
+    if (error) {
+      console.error('[Email] Tester invite failed:', { to, error: error.message });
+      return { success: false, error: error.message };
+    }
+
+    console.log('[Email] Tester invite sent:', { to });
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Email] Tester invite error:', { to, error: msg });
+    return { success: false, error: msg };
+  }
+}
+
 interface SendPartyInvitationParams {
   to: string;
   partyChildName: string;

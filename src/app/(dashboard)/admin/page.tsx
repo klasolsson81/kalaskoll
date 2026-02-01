@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isAdminEmail } from '@/lib/utils/admin-guard';
 import { AdminStatsCards } from './AdminStatsCards';
+import { AdminInviteForm } from './AdminInviteForm';
 import { AdminUserList } from './AdminUserList';
 import { AuditLogList } from './AuditLogList';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -24,6 +25,8 @@ export default async function AdminPage() {
           Översikt och hantering av KalasKoll
         </p>
       </div>
+
+      <AdminInviteForm />
 
       <AdminStatsCards />
 

@@ -6,6 +6,10 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const tokenHash = searchParams.get('token_hash');
   const type = searchParams.get('type');
+  const next = searchParams.get('next');
+
+  // Determine post-auth redirect: use `next` if it's a safe relative path
+  const successUrl = next && next.startsWith('/') ? `${origin}${next}` : `${origin}/confirmed`;
 
   const supabase = await createClient();
 
@@ -13,7 +17,7 @@ export async function GET(request: Request) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}/confirmed`);
+      return NextResponse.redirect(successUrl);
     }
     console.error('[auth/callback] exchangeCodeForSession failed:', error.message);
 
@@ -23,7 +27,7 @@ export async function GET(request: Request) {
       type: 'signup',
     });
     if (!otpError) {
-      return NextResponse.redirect(`${origin}/confirmed`);
+      return NextResponse.redirect(successUrl);
     }
     console.error('[auth/callback] verifyOtp fallback failed:', otpError.message);
   }
@@ -35,7 +39,7 @@ export async function GET(request: Request) {
       type: type as 'signup' | 'email',
     });
     if (!error) {
-      return NextResponse.redirect(`${origin}/confirmed`);
+      return NextResponse.redirect(successUrl);
     }
     console.error('[auth/callback] verifyOtp failed:', error.message);
   }

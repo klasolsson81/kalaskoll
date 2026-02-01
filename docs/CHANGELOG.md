@@ -6,6 +6,19 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Admin Invite Tester
+- **Admin invite form** on `/admin` — enter email + optional name to invite a tester directly (bypasses signup limit)
+- **Invite API** (`POST /api/admin/invite`) — uses `auth.admin.generateLink` to create invite, upserts profile with `tester` role and 30-day expiry, sends custom email via Resend
+- **Tester invite email** (`sendTesterInvite`) — Swedish-language invite email with activation CTA button
+- **Set-password page** (`/set-password`) — invited testers set their password after clicking the invite link, with confetti on success
+- **Auth callback `next` param** — `/auth/callback` now reads `next` searchParam for post-auth redirect (e.g. to `/set-password`)
+- **Audit logging** for `admin.user.invite` actions
+
+### Changed
+
+#### Register Page Full Message
+- **Register page** now shows a warm personal message when all beta spots are taken, with a direct email link to request access from Klas
+
 #### Admin Dashboard & Feedback Management
 - **Admin dashboard** (`/admin`) with stats overview, user management, and audit log viewer
 - **Admin stats cards** showing total users, testers, parties, RSVPs, feedback, waitlist, AI images, SMS
