@@ -25,14 +25,14 @@ export async function POST(request: NextRequest) {
 
     const { email, name } = result.data;
 
-    // Generate invite link (bypasses the 100-user Supabase signup limit)
+    // Single generateLink call — creates the user AND produces the invite OTP.
+    // Previously we called generateLink(invite) + updateUserById(email_confirm)
+    // + generateLink(magiclink), but the second generateLink was invalidating the
+    // token before the user could click the email link.
     const { data: linkData, error: linkError } =
       await adminClient.auth.admin.generateLink({
         type: 'invite',
         email,
-        options: {
-          redirectTo: `${APP_URL}/auth/callback?next=/set-password`,
-        },
       });
 
     if (linkError || !linkData) {
@@ -41,16 +41,6 @@ export async function POST(request: NextRequest) {
         { error: linkError?.message || 'Kunde inte skapa inbjudningslänk' },
         { status: 500 },
       );
-    }
-
-    // Confirm the user's email immediately (they were just created by generateLink)
-    const { error: confirmError } = await adminClient.auth.admin.updateUserById(
-      linkData.user.id,
-      { email_confirm: true },
-    );
-
-    if (confirmError) {
-      console.error('[Admin invite] confirm user failed:', confirmError.message);
     }
 
     // Upsert profile with tester role — all testers expire on BETA_END_DATE
@@ -68,28 +58,10 @@ export async function POST(request: NextRequest) {
       console.error('[Admin invite] profile upsert failed:', profileError.message);
     }
 
-    // Generate a magic link for the confirmed user. This bypasses PKCE issues
-    // entirely — the invite token_hash + verifyOtp(type:'invite') is unreliable
-    // when PKCE is enabled and the user opens the link in a new browser.
-    const { data: magicData, error: magicError } =
-      await adminClient.auth.admin.generateLink({
-        type: 'magiclink',
-        email,
-      });
-
-    if (magicError || !magicData) {
-      console.error('[Admin invite] generateLink(magiclink) failed:', magicError?.message);
-      return NextResponse.json(
-        { error: 'Användare skapad men kunde inte skapa inloggningslänk' },
-        { status: 500 },
-      );
-    }
-
-    // Use email_otp (raw token) + email instead of hashed_token.
-    // The token_hash form of verifyOtp uses a different GoTrue endpoint
-    // that has proven unreliable with PKCE-enabled projects.
-    const emailOtp = magicData.properties.email_otp;
-    const inviteUrl = `${APP_URL}/auth/callback?email=${encodeURIComponent(email)}&token=${encodeURIComponent(emailOtp)}&type=magiclink&next=/set-password`;
+    // Use the invite token directly — verifyOtp(type:'invite') will confirm
+    // the email AND create a session in one step.
+    const emailOtp = linkData.properties.email_otp;
+    const inviteUrl = `${APP_URL}/auth/callback?email=${encodeURIComponent(email)}&token=${encodeURIComponent(emailOtp)}&type=invite&next=/set-password`;
 
     // Send custom invite email
     const emailResult = await sendTesterInvite({
