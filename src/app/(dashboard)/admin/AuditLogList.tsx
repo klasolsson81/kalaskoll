@@ -19,6 +19,8 @@ export function AuditLogList() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [actionFilter, setActionFilter] = useState('');
+  const [userMap, setUserMap] = useState<Record<string, string>>({});
+  const [partyMap, setPartyMap] = useState<Record<string, string>>({});
   const limit = 50;
 
   useEffect(() => {
@@ -36,6 +38,8 @@ export function AuditLogList() {
         const data = await res.json();
         setLogs(data.logs);
         setTotal(data.total);
+        setUserMap(data.users ?? {});
+        setPartyMap(data.parties ?? {});
       }
     } catch (err) {
       console.error('Failed to fetch audit logs:', err);
@@ -75,6 +79,7 @@ export function AuditLogList() {
           <option value="account.delete">account.delete</option>
           <option value="admin.user.delete">admin.user.delete</option>
           <option value="admin.user.role_change">admin.user.role_change</option>
+          <option value="admin.user.invite">admin.user.invite</option>
         </select>
         <span className="text-sm text-muted-foreground">{total} poster totalt</span>
       </div>
@@ -109,16 +114,22 @@ export function AuditLogList() {
                   <td className="hidden px-3 py-2 sm:table-cell">
                     <span className="text-xs">{log.resource_type}</span>
                     {log.resource_id && (
-                      <span className="ml-1 font-mono text-xs text-muted-foreground">
-                        {log.resource_id.slice(0, 8)}...
+                      <span className="ml-1 text-xs text-muted-foreground" title={log.resource_id}>
+                        {log.resource_type === 'user' && userMap[log.resource_id]
+                          ? userMap[log.resource_id]
+                          : log.resource_type === 'party' && partyMap[log.resource_id]
+                            ? partyMap[log.resource_id]
+                            : `${log.resource_id.slice(0, 8)}...`}
                       </span>
                     )}
                   </td>
                   <td className="hidden max-w-xs truncate px-3 py-2 text-xs text-muted-foreground md:table-cell">
                     {formatMetadata(log.metadata)}
                   </td>
-                  <td className="hidden px-3 py-2 font-mono text-xs text-muted-foreground lg:table-cell">
-                    {log.user_id ? `${log.user_id.slice(0, 8)}...` : '—'}
+                  <td className="hidden px-3 py-2 text-xs text-muted-foreground lg:table-cell" title={log.user_id ?? undefined}>
+                    {log.user_id
+                      ? userMap[log.user_id] || `${log.user_id.slice(0, 8)}...`
+                      : '—'}
                   </td>
                 </tr>
               ))}
