@@ -7,9 +7,11 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 #### 3D Floating Balloons (Landing Page)
-- **React Three Fiber balloons** — 10 glossy 3D party balloons floating in the background using `three`, `@react-three/fiber`, and `@react-three/drei`
-- Each balloon has an oval body with `meshPhysicalMaterial` (clearcoat, slight transparency), a fake specular highlight, a knot, and a dangling string (TubeGeometry)
-- Gentle bobbing and swaying animation via `useFrame` with unique phase offsets per balloon
+- **16 glossy 3D party balloons** (React Three Fiber) spread across the full viewport width, covering far edges on ultrawide monitors
+- Each balloon: oval body with `meshPhysicalMaterial` (clearcoat, transparency), specular highlight, knot, and a **dynamic string** that sways with breeze and trails behind motion
+- **Layered sine animation** — two overlapping frequencies per axis for organic, non-repetitive drift (±0.8 X, ±1.0 Y amplitude)
+- **Mouse repulsion** — balloons near the cursor get pushed away with velocity impulse, then spring back smoothly
+- **Dynamic strings** — each string's 14 segments update per-frame: trail behind balloon velocity (inertia), sway with a gentle breeze sine, and curve more at the bottom (gravity-like)
 - Dynamically imported (`ssr: false`) to avoid blocking initial page load
 - Respects `prefers-reduced-motion` — balloons are hidden entirely
 - Positioned at `z-[1]` between the gradient mesh (`z-0`) and page content (`z-[2]`)
@@ -18,6 +20,10 @@ All notable changes to this project will be documented in this file.
 
 #### CTA Text Contrast (Landing Page)
 - **CTA section wrapped in glass-card** — "Redo att planera kalas?" heading and subtitle now sit inside a frosted glass card, preventing text from disappearing against the animated gradient background
+
+#### Section Label Contrast (Landing Page)
+- **Removed "Enkelt som 1-2-3"** subtitle — unnecessary, heading speaks for itself
+- **Section labels** ("Funktioner", "Vanliga frågor") changed from `text-primary`/`text-secondary` (blue/teal) to `text-foreground/50` for reliable contrast on the gradient background
 
 #### Footer Text Contrast
 - **Footer background** increased from `bg-white/25` to `bg-white/55 backdrop-blur-2xl` for stronger readability

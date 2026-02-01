@@ -177,9 +177,6 @@ export default function HomePage() {
             <div className="mx-auto max-w-5xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
-                    Enkelt som 1-2-3
-                  </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight">Så här fungerar KalasKoll</h2>
                 </div>
               </ScrollReveal>
@@ -237,7 +234,7 @@ export default function HomePage() {
             <div className="mx-auto max-w-5xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/50">
                     Funktioner
                   </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
@@ -295,8 +292,8 @@ export default function HomePage() {
             <div className="mx-auto max-w-3xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
-                    FAQ
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/50">
+                    Vanliga frågor
                   </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight">Vanliga frågor</h2>
                 </div>
