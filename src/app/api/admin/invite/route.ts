@@ -85,8 +85,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const tokenHash = magicData.properties.hashed_token;
-    const inviteUrl = `${APP_URL}/auth/callback?token_hash=${tokenHash}&type=magiclink&next=/set-password`;
+    // Use email_otp (raw token) + email instead of hashed_token.
+    // The token_hash form of verifyOtp uses a different GoTrue endpoint
+    // that has proven unreliable with PKCE-enabled projects.
+    const emailOtp = magicData.properties.email_otp;
+    const inviteUrl = `${APP_URL}/auth/callback?email=${encodeURIComponent(email)}&token=${encodeURIComponent(emailOtp)}&type=magiclink&next=/set-password`;
 
     // Send custom invite email
     const emailResult = await sendTesterInvite({

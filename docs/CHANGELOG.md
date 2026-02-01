@@ -13,8 +13,8 @@ All notable changes to this project will be documented in this file.
 - **Email dark mode fix** — all email templates now include `color-scheme: light` meta tag to prevent email clients from inverting colors in dark mode
 
 #### Invite Link Bug
-- **Invite link PKCE fix** — invited testers clicking the email link now land on `/set-password` instead of `/login?error=verification_failed`. Uses `hashed_token` from `generateLink().properties` instead of `action_link` to bypass PKCE code exchange (which fails in new browser without `code_verifier` cookie).
-- **Auth callback invite type** — `/auth/callback` now accepts `type=invite` in `verifyOtp` call
+- **Invite link fix (v3)** — switched from `token_hash` to raw `email_otp` token for tester invites. The `verifyOtp({ token_hash })` form proved unreliable with PKCE-enabled projects. Now uses `verifyOtp({ email, token, type })` which hits a different GoTrue endpoint. Also adds `&detail=` error info to redirect URL for debugging.
+- **Auth callback** — supports 3 verification flows: PKCE code exchange, email+token OTP (new), and token_hash OTP (legacy)
 
 ### Changed
 

@@ -9,6 +9,8 @@ export async function GET(request: Request) {
   const tokenHash = searchParams.get('token_hash');
   const type = searchParams.get('type');
   const next = searchParams.get('next');
+  const emailParam = searchParams.get('email');
+  const token = searchParams.get('token');
 
   const successUrl = next && next.startsWith('/') ? `${origin}${next}` : `${origin}/confirmed`;
 
@@ -39,6 +41,7 @@ export async function GET(request: Request) {
   );
 
   let verified = false;
+  let lastError = '';
 
   // Flow 1: PKCE code exchange (normal Supabase redirect flow)
   if (code) {
@@ -46,22 +49,27 @@ export async function GET(request: Request) {
     if (!error) {
       verified = true;
     } else {
+      lastError = `pkce: ${error.message}`;
       console.error('[auth/callback] exchangeCodeForSession failed:', error.message);
-
-      // Fallback: try as OTP token (some email templates send raw token as "code")
-      const { error: otpError } = await supabase.auth.verifyOtp({
-        token_hash: code,
-        type: 'signup',
-      });
-      if (!otpError) {
-        verified = true;
-      } else {
-        console.error('[auth/callback] verifyOtp fallback failed:', otpError.message);
-      }
     }
   }
 
-  // Flow 2: token_hash + type parameters (invite magic link, signup, etc.)
+  // Flow 2: email + raw token (admin-generated magic link for tester invites)
+  if (!verified && emailParam && token && type) {
+    const { error } = await supabase.auth.verifyOtp({
+      email: emailParam,
+      token,
+      type: type as 'magiclink' | 'signup' | 'email' | 'invite',
+    });
+    if (!error) {
+      verified = true;
+    } else {
+      lastError = `otp_email: ${error.message}`;
+      console.error('[auth/callback] verifyOtp(email+token) failed:', error.message);
+    }
+  }
+
+  // Flow 3: token_hash + type (legacy / Supabase default email links)
   if (!verified && tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
@@ -70,11 +78,14 @@ export async function GET(request: Request) {
     if (!error) {
       verified = true;
     } else {
-      console.error('[auth/callback] verifyOtp failed:', error.message);
+      lastError = `otp_hash: ${error.message}`;
+      console.error('[auth/callback] verifyOtp(token_hash) failed:', error.message);
     }
   }
 
-  const redirectUrl = verified ? successUrl : `${origin}/login?error=verification_failed`;
+  const redirectUrl = verified
+    ? successUrl
+    : `${origin}/login?error=verification_failed&detail=${encodeURIComponent(lastError)}`;
   const response = NextResponse.redirect(redirectUrl);
 
   // Apply session cookies to the redirect response
