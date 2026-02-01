@@ -475,6 +475,35 @@ export type Database = {
           },
         ];
       };
+      audit_log: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          action: string;
+          resource_type: string;
+          resource_id: string | null;
+          metadata: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          action: string;
+          resource_type: string;
+          resource_id?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          action?: string;
+          resource_type?: string;
+          resource_id?: string | null;
+          metadata?: Json;
+        };
+        Relationships: [];
+      };
       beta_rate_limit: {
         Row: {
           ip_address: string;

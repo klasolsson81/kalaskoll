@@ -266,6 +266,22 @@ export const feedbackSchema = z.object({
   screenSize: z.string().optional(),
 });
 
+// Admin schemas
+export const adminUpdateUserSchema = z.object({
+  userId: z.string().uuid(),
+  role: z.enum(['user', 'tester', 'admin']).optional(),
+  action: z.enum(['delete', 'update']),
+});
+
+export const adminUpdateFeedbackSchema = z.object({
+  feedbackId: z.string().uuid(),
+  status: z.enum(['new', 'reviewed', 'in_progress', 'resolved', 'dismissed']).optional(),
+  adminNotes: z.string().max(2000).optional(),
+});
+
+export type AdminUpdateUserFormData = z.infer<typeof adminUpdateUserSchema>;
+export type AdminUpdateFeedbackFormData = z.infer<typeof adminUpdateFeedbackSchema>;
+
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type PasswordFormData = z.infer<typeof passwordSchema>;
 export type BetaRegisterFormData = z.infer<typeof betaRegisterSchema>;

@@ -6,6 +6,25 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Admin Dashboard & Feedback Management
+- **Admin dashboard** (`/admin`) with stats overview, user management, and audit log viewer
+- **Admin stats cards** showing total users, testers, parties, RSVPs, feedback, waitlist, AI images, SMS
+- **User management** table with search, role change (user/tester/admin), and delete actions
+- **Audit log viewer** with pagination and action type filtering
+- **Feedback management** (`/admin/feedback`) with status tracking (new/reviewed/in_progress/resolved/dismissed) and admin notes
+- **AI feedback summary** using OpenAI `gpt-4o-mini` — categorizes feedback into bugs, feature requests, UX issues, and praise with severity and Claude Code prompt generation
+- **Admin guard** utility (`admin-guard.ts`) for server-side admin route protection
+- **OpenAI Chat helper** (`openai-chat.ts`) for chat completions with Zod validation and timeout
+- **Admin API routes**: `/api/admin/stats`, `/api/admin/users`, `/api/admin/feedback`, `/api/admin/feedback/summarize`, `/api/admin/audit`
+- **Admin nav links** in dashboard header (visible only for admins)
+- **Tabs UI component** (`tabs.tsx`) via `@radix-ui/react-tabs`
+- **Zod schemas** for admin user updates and feedback status changes
+- **Audit logging** for admin actions (user delete, role change)
+
+### Changed
+- **Middleware** now protects `/admin` routes (redirects unauthenticated users to login)
+- **Database types** updated with `audit_log` table types
+
 #### Closed Beta System
 - **Beta registration** with 100 tester spots, automatic tester role assignment, and 30-day expiry
 - **Waitlist** when beta is full — email-only signup with honeypot spam protection
