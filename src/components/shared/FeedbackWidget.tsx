@@ -131,7 +131,7 @@ export function FeedbackWidget() {
           <span className="absolute inset-0 rounded-2xl bg-[length:300%_300%] animate-[gradient-shift_4s_ease_infinite] bg-[linear-gradient(135deg,oklch(0.55_0.19_255),oklch(0.65_0.22_310),oklch(0.60_0.20_170),oklch(0.55_0.19_255))]" />
 
           {/* Inner content */}
-          <span className="relative flex flex-col items-start gap-0.5 rounded-[14px] bg-card px-4 py-2.5 shadow-lg">
+          <span className="relative flex flex-col items-start gap-0.5 rounded-[14px] bg-white px-4 py-2.5 shadow-lg">
             <span className="text-sm font-semibold text-foreground">
               Skicka Feedback
             </span>
