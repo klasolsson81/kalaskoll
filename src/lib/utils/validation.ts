@@ -275,7 +275,7 @@ export const adminUpdateUserSchema = z.object({
 
 export const adminUpdateFeedbackSchema = z.object({
   feedbackId: z.string().uuid(),
-  status: z.enum(['new', 'reviewed', 'in_progress', 'resolved', 'dismissed']).optional(),
+  status: z.enum(['new', 'read', 'resolved', 'wontfix']).optional(),
   adminNotes: z.string().max(2000).optional(),
 });
 

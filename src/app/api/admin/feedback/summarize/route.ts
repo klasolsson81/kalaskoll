@@ -11,7 +11,7 @@ export async function POST() {
     const { data: feedback, error } = await adminClient
       .from('feedback')
       .select('*')
-      .in('status', ['new', 'reviewed'])
+      .in('status', ['new', 'read'])
       .order('created_at', { ascending: false });
 
     if (error) throw error;

@@ -48,10 +48,9 @@ export async function GET() {
     const feedbackItems = feedbackRes.data ?? [];
     const feedbackByStatus = {
       new: feedbackItems.filter((f) => f.status === 'new').length,
-      reviewed: feedbackItems.filter((f) => f.status === 'reviewed').length,
-      in_progress: feedbackItems.filter((f) => f.status === 'in_progress').length,
+      read: feedbackItems.filter((f) => f.status === 'read').length,
       resolved: feedbackItems.filter((f) => f.status === 'resolved').length,
-      dismissed: feedbackItems.filter((f) => f.status === 'dismissed').length,
+      wontfix: feedbackItems.filter((f) => f.status === 'wontfix').length,
     };
     const totalFeedback = feedbackItems.length;
 

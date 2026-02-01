@@ -19,19 +19,17 @@ interface FeedbackItem {
   admin_notes: string | null;
 }
 
-const STATUS_OPTIONS = ['new', 'reviewed', 'in_progress', 'resolved', 'dismissed'] as const;
+const STATUS_OPTIONS = ['new', 'read', 'resolved', 'wontfix'] as const;
 
 function statusBadgeVariant(status: string) {
   switch (status) {
     case 'new':
       return 'default' as const;
-    case 'reviewed':
+    case 'read':
       return 'secondary' as const;
-    case 'in_progress':
-      return 'warning' as const;
     case 'resolved':
       return 'success' as const;
-    case 'dismissed':
+    case 'wontfix':
       return 'outline' as const;
     default:
       return 'outline' as const;
@@ -41,10 +39,9 @@ function statusBadgeVariant(status: string) {
 function statusLabel(status: string) {
   switch (status) {
     case 'new': return 'Ny';
-    case 'reviewed': return 'Granskad';
-    case 'in_progress': return 'Pågår';
+    case 'read': return 'Läst';
     case 'resolved': return 'Löst';
-    case 'dismissed': return 'Avfärdad';
+    case 'wontfix': return 'Skippad';
     default: return status;
   }
 }
