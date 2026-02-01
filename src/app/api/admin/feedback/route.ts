@@ -62,20 +62,24 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
     }
 
-    const { error, count } = await adminClient
+    const { error } = await adminClient
       .from('feedback')
       .update(updateData)
       .eq('id', feedbackId);
 
     if (error) {
       console.error('Supabase feedback update error:', error);
-      throw error;
+      return NextResponse.json(
+        { error: `DB: ${error.message} (${error.code})` },
+        { status: 500 },
+      );
     }
 
-    return NextResponse.json({ success: true, updated: count });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Admin feedback update error:', error);
-    return NextResponse.json({ error: 'Failed to update feedback' }, { status: 500 });
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: `Server: ${msg}` }, { status: 500 });
   }
 }
 
@@ -98,11 +102,18 @@ export async function DELETE(request: NextRequest) {
       .delete()
       .eq('id', parsed.data);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase feedback delete error:', error);
+      return NextResponse.json(
+        { error: `DB: ${error.message} (${error.code})` },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Admin feedback delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete feedback' }, { status: 500 });
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: `Server: ${msg}` }, { status: 500 });
   }
 }
