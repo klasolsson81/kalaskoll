@@ -22,6 +22,18 @@ function generateEditToken(): string {
 }
 
 export async function POST(request: NextRequest) {
+  try {
+    return await handlePost(request);
+  } catch (err) {
+    console.error('Unhandled RSVP error:', err);
+    return NextResponse.json(
+      { error: 'Oväntat fel. Försök igen om en stund.' },
+      { status: 500 },
+    );
+  }
+}
+
+async function handlePost(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
   if (await isRateLimited(ip)) {
     return NextResponse.json(

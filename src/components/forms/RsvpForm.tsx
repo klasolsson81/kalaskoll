@@ -102,8 +102,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
       }
 
       setSubmitted(true);
-    } catch {
-      setError('Kunde inte skicka svar. Försök igen.');
+    } catch (err) {
+      console.error('RSVP submit error:', err);
+      setError('Kunde inte nå servern. Kontrollera din internetanslutning och försök igen.');
     } finally {
       setLoading(false);
     }

@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **PartyHeader description label**: Description field on RSVP page now shows "Info" label above the text for clarity
 - **"Om oss" personal story**: Updated footer modal with Klas Olsson's personal backstory — son Alexander, 20 preschool kids, free-first philosophy
 - **Hero subtitle**: Landing page hero now emphasizes the QR-in-the-cubby workflow
 - **FAQ "Vem ligger bakom?"**: New FAQ entry (visible + JSON-LD) about Klas and the origin of KalasKoll
@@ -25,6 +26,9 @@ All notable changes to this project will be documented in this file.
 - **SMS text for non-gold users**: Changed "SMS ej tillgängligt" to "Köp Guldpaket för att få tillgång till SMS-aviseringar"
 
 ### Fixed
+
+- **RSVP submission crash**: Added defensive try-catch to rate limiter (`rate-limit.ts`) and top-level error handlers to RSVP API routes, so they always return JSON even on unexpected failures
+- **RSVP client error message**: Improved catch-all error to suggest checking internet connection instead of generic "Försök igen"
 
 #### Code Review Fixes (HI-10, MI-03, MI-05, MI-06, MI-09, MI-10)
 - **Image header validation** (HI-10): Server-side magic byte validation in `uploadPhotoToStorage()` rejects files with mismatched MIME type and actual content (JPEG/PNG/WebP)

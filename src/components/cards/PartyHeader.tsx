@@ -65,6 +65,7 @@ export function PartyHeader({
         {/* Description */}
         {description && (
           <div className="rounded-xl bg-muted/50 p-3">
+            <p className="text-xs font-medium text-muted-foreground/70 mb-0.5">Info</p>
             <p className="text-sm text-muted-foreground">{description}</p>
           </div>
         )}

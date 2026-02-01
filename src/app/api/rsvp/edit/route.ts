@@ -17,6 +17,18 @@ function createServiceClient() {
 
 // GET: Fetch existing RSVP data for edit form pre-fill
 export async function GET(request: NextRequest) {
+  try {
+    return await handleGet(request);
+  } catch (err) {
+    console.error('Unhandled RSVP GET error:', err);
+    return NextResponse.json(
+      { error: 'Oväntat fel. Försök igen om en stund.' },
+      { status: 500 },
+    );
+  }
+}
+
+async function handleGet(request: NextRequest) {
   const editToken = request.nextUrl.searchParams.get('editToken');
   if (!editToken) {
     return NextResponse.json({ error: 'Edit-token krävs' }, { status: 400 });
@@ -65,6 +77,18 @@ export async function GET(request: NextRequest) {
 
 // POST: Update existing RSVP via edit_token
 export async function POST(request: NextRequest) {
+  try {
+    return await handlePost(request);
+  } catch (err) {
+    console.error('Unhandled RSVP edit error:', err);
+    return NextResponse.json(
+      { error: 'Oväntat fel. Försök igen om en stund.' },
+      { status: 500 },
+    );
+  }
+}
+
+async function handlePost(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
   if (await isRateLimited(ip)) {
     return NextResponse.json(

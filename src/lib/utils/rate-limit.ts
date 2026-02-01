@@ -37,8 +37,12 @@ export async function isRateLimited(ip: string): Promise<boolean> {
     return false;
   }
 
-  const { success } = await limiter.limit(ip);
-  return !success;
+  try {
+    const { success } = await limiter.limit(ip);
+    return !success;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -53,6 +57,10 @@ export async function isAiRateLimited(userId: string): Promise<boolean> {
     return false;
   }
 
-  const { success } = await limiter.limit(userId);
-  return !success;
+  try {
+    const { success } = await limiter.limit(userId);
+    return !success;
+  } catch {
+    return false;
+  }
 }
