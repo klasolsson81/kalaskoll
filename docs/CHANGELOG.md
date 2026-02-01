@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### Tester Feedback (feb 2026)
+- **"Hej du!" → "Hej [namn]!"** — dashboard greeting now checks profiles table for name (invited testers had name on profile but not in auth metadata). Falls back to "Hej kompis!" instead of "Hej du!"
+- **Invitations sent counter** — party "Gäster" card now shows "X inbjudningar skickade" when invitations have been sent
+- **Max guests field alignment** — added helper text ("Hur många barn som får plats") so the input aligns with the OSA-datum field next to it
+- **Email dark mode fix** — all email templates now include `color-scheme: light` meta tag to prevent email clients from inverting colors in dark mode
+
 #### Invite Link Bug
 - **Invite link PKCE fix** — invited testers clicking the email link now land on `/set-password` instead of `/login?error=verification_failed`. Uses `hashed_token` from `generateLink().properties` instead of `action_link` to bypass PKCE code exchange (which fails in new browser without `code_verifier` cookie).
 - **Auth callback invite type** — `/auth/callback` now accepts `type=invite` in `verifyOtp` call

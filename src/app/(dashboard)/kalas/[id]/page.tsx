@@ -307,6 +307,11 @@ export default async function PartyPage({ params }: PartyPageProps) {
                 <p className="text-sm text-muted-foreground">Svar totalt</p>
               </div>
             </div>
+            {(invitedGuests ?? []).length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                {(invitedGuests ?? []).length} inbjudningar skickade
+              </p>
+            )}
             {party.max_guests && (
               <p className="text-sm text-muted-foreground">
                 Max {party.max_guests} gäster

@@ -53,8 +53,10 @@ export async function sendRsvpConfirmation({
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
 </head>
-<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;">
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;color:#111827;">
   <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
     <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
       <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">
@@ -152,8 +154,10 @@ export async function sendTesterInvite({
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
 </head>
-<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;">
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;color:#111827;">
   <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
     <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
       <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">
@@ -275,8 +279,10 @@ export async function sendPartyInvitation({
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
 </head>
-<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;">
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;color:#111827;">
   <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
     <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
       <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">

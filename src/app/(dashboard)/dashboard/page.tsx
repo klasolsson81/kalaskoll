@@ -14,7 +14,19 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const displayName = user?.user_metadata?.full_name?.split(' ')[0] || 'du';
+  // Try auth metadata first, then fall back to profiles table
+  let displayName = user?.user_metadata?.full_name?.split(' ')[0] || '';
+
+  if (!displayName && user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single();
+    displayName = profile?.full_name?.split(' ')[0] || '';
+  }
+
+  if (!displayName) displayName = 'kompis';
 
   const partiesQuery = supabase.from('parties').select('*').order('party_date', { ascending: true });
   const childrenQuery = supabase.from('children').select('*').order('name', { ascending: true });

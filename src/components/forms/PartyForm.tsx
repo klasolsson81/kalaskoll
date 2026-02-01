@@ -296,6 +296,9 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
             </div>
             <div className="space-y-2">
               <Label htmlFor="maxGuests">Max antal gäster (valfritt)</Label>
+              <p className="text-xs text-muted-foreground">
+                Hur många barn som får plats
+              </p>
               <Input
                 id="maxGuests"
                 name="maxGuests"
