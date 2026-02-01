@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { ScrollReveal } from '@/components/shared/ScrollReveal';
 import { APP_URL } from '@/lib/constants';
 
 export default function HomePage() {
@@ -96,10 +97,12 @@ export default function HomePage() {
             </Link>
             <nav className="flex gap-2">
               <Link href="/login">
-                <Button variant="ghost" className="font-medium">Logga in</Button>
+                <Button variant="ghost" className="font-medium hover:bg-primary/10 hover:text-primary">
+                  Logga in
+                </Button>
               </Link>
               <Link href="/register">
-                <Button className="gradient-celebration font-semibold text-white shadow-warm">
+                <Button className="gradient-celebration font-semibold text-white shadow-warm hover:shadow-lg">
                   Kom igång gratis
                 </Button>
               </Link>
@@ -116,45 +119,55 @@ export default function HomePage() {
             <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-3xl" />
 
             <div className="relative mx-auto max-w-5xl px-4 py-24 text-center sm:py-32">
-              <p className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                Gratis att börja
-              </p>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                Smarta inbjudningar
-                <br />
-                <span className="bg-gradient-to-r from-primary via-indigo-400 to-secondary bg-clip-text text-transparent">
-                  för barnkalas
-                </span>
-              </h1>
-              <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-                Skriv ut inbjudningskort med QR-kod, lägg dem i barnens fack och låt
-                vårdnadshavarna svara direkt via mobilen. Slipp kaos med papperslappar,
-                SMS och anteckningar.
-              </p>
-              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Link href="/register">
-                  <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm">
-                    Skapa ditt första kalas
-                  </Button>
-                </Link>
-                <a href="#hur-det-fungerar">
-                  <Button size="lg" variant="outline" className="h-12 px-8 text-base">
-                    Se hur det fungerar
-                  </Button>
-                </a>
-              </div>
+              <ScrollReveal>
+                <p className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+                  Gratis att börja
+                </p>
+              </ScrollReveal>
+              <ScrollReveal delay={100}>
+                <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+                  Smarta inbjudningar
+                  <br />
+                  <span className="bg-gradient-to-r from-primary via-indigo-400 to-secondary bg-clip-text text-transparent">
+                    för barnkalas
+                  </span>
+                </h1>
+              </ScrollReveal>
+              <ScrollReveal delay={200}>
+                <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+                  Skriv ut inbjudningskort med QR-kod, lägg dem i barnens fack och låt
+                  vårdnadshavarna svara direkt via mobilen. Slipp kaos med papperslappar,
+                  SMS och anteckningar.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal delay={300}>
+                <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                  <Link href="/register">
+                    <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
+                      Skapa ditt första kalas
+                    </Button>
+                  </Link>
+                  <a href="#hur-det-fungerar">
+                    <Button size="lg" variant="outline" className="h-12 px-8 text-base hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all">
+                      Se hur det fungerar
+                    </Button>
+                  </a>
+                </div>
+              </ScrollReveal>
             </div>
           </section>
 
           {/* How it works */}
           <section id="hur-det-fungerar" className="border-t bg-muted/40 py-20">
             <div className="mx-auto max-w-5xl px-4">
-              <div className="mb-12 text-center">
-                <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
-                  Enkelt som 1-2-3
-                </p>
-                <h2 className="text-3xl font-bold tracking-tight">Så här fungerar KalasKoll</h2>
-              </div>
+              <ScrollReveal>
+                <div className="mb-12 text-center">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
+                    Enkelt som 1-2-3
+                  </p>
+                  <h2 className="text-3xl font-bold tracking-tight">Så här fungerar KalasKoll</h2>
+                </div>
+              </ScrollReveal>
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {[
                   {
@@ -181,19 +194,21 @@ export default function HomePage() {
                       'Gästerna scannar QR-koden och svarar direkt på mobilen. Du ser allt i realtid.',
                     color: 'bg-accent/10 text-accent-foreground',
                   },
-                ].map((feature) => (
-                  <Card key={feature.step} className="relative overflow-hidden border-0 shadow-soft">
-                    <CardContent className="pt-8 pb-6">
-                      <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${feature.color}`}>
-                        {feature.icon}
-                      </div>
-                      <div className="mb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        Steg {feature.step}
-                      </div>
-                      <h3 className="mb-2 text-lg font-bold">{feature.title}</h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
-                    </CardContent>
-                  </Card>
+                ].map((feature, i) => (
+                  <ScrollReveal key={feature.step} delay={i * 120}>
+                    <Card className="relative overflow-hidden border-0 shadow-soft h-full transition-shadow hover:shadow-warm">
+                      <CardContent className="pt-8 pb-6">
+                        <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${feature.color}`}>
+                          {feature.icon}
+                        </div>
+                        <div className="mb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          Steg {feature.step}
+                        </div>
+                        <h3 className="mb-2 text-lg font-bold">{feature.title}</h3>
+                        <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+                      </CardContent>
+                    </Card>
+                  </ScrollReveal>
                 ))}
               </div>
             </div>
@@ -202,12 +217,14 @@ export default function HomePage() {
           {/* Features */}
           <section className="py-20">
             <div className="mx-auto max-w-5xl px-4">
-              <div className="mb-12 text-center">
-                <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary">
-                  Funktioner
-                </p>
-                <h2 className="text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
-              </div>
+              <ScrollReveal>
+                <div className="mb-12 text-center">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary">
+                    Funktioner
+                  </p>
+                  <h2 className="text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
+                </div>
+              </ScrollReveal>
               <div className="grid gap-6 sm:grid-cols-2">
                 {[
                   {
@@ -232,18 +249,20 @@ export default function HomePage() {
                     description:
                       'Se direkt när någon svarar. Full överblick över vilka som kommer, allergier och kontaktuppgifter.',
                   },
-                ].map((feature) => (
-                  <Card key={feature.title} className="border-0 shadow-soft transition-shadow hover:shadow-warm">
-                    <CardContent className="flex gap-4 pt-6">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted text-2xl">
-                        {feature.icon}
-                      </div>
-                      <div>
-                        <h3 className="mb-1 font-bold">{feature.title}</h3>
-                        <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                ].map((feature, i) => (
+                  <ScrollReveal key={feature.title} delay={i * 100}>
+                    <Card className="border-0 shadow-soft h-full transition-shadow hover:shadow-warm">
+                      <CardContent className="flex gap-4 pt-6">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted text-2xl">
+                          {feature.icon}
+                        </div>
+                        <div>
+                          <h3 className="mb-1 font-bold">{feature.title}</h3>
+                          <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </ScrollReveal>
                 ))}
               </div>
             </div>
@@ -252,12 +271,14 @@ export default function HomePage() {
           {/* FAQ */}
           <section className="border-t bg-muted/40 py-20">
             <div className="mx-auto max-w-3xl px-4">
-              <div className="mb-12 text-center">
-                <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
-                  FAQ
-                </p>
-                <h2 className="text-3xl font-bold tracking-tight">Vanliga frågor</h2>
-              </div>
+              <ScrollReveal>
+                <div className="mb-12 text-center">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
+                    FAQ
+                  </p>
+                  <h2 className="text-3xl font-bold tracking-tight">Vanliga frågor</h2>
+                </div>
+              </ScrollReveal>
               <div className="space-y-4">
                 {[
                   {
@@ -280,13 +301,15 @@ export default function HomePage() {
                     q: 'Vem ligger bakom KalasKoll?',
                     a: 'KalasKoll är skapat av Klas Olsson i Göteborg. Idén föddes ur ett verkligt behov \u2013 att bjuda in 20 förskolebarn till ett kalas utan kaos med papperslappar och SMS. Allt nödvändigt är gratis, utan reklam.',
                   },
-                ].map((faq) => (
-                  <Card key={faq.q} className="border-0 shadow-soft">
-                    <CardContent className="pt-6">
-                      <h3 className="mb-2 font-bold">{faq.q}</h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
-                    </CardContent>
-                  </Card>
+                ].map((faq, i) => (
+                  <ScrollReveal key={faq.q} delay={i * 80}>
+                    <Card className="border-0 shadow-soft">
+                      <CardContent className="pt-6">
+                        <h3 className="mb-2 font-bold">{faq.q}</h3>
+                        <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+                      </CardContent>
+                    </Card>
+                  </ScrollReveal>
                 ))}
               </div>
             </div>
@@ -296,17 +319,19 @@ export default function HomePage() {
           <section className="relative overflow-hidden py-20 text-center">
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-primary/3 to-transparent" />
             <div className="relative mx-auto max-w-2xl px-4">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                Skapa ditt konto gratis och ha full koll på nästa barnkalas.
-              </p>
-              <div className="mt-8">
-                <Link href="/register">
-                  <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm">
-                    Kom igång gratis
-                  </Button>
-                </Link>
-              </div>
+              <ScrollReveal>
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
+                <p className="mt-4 text-lg text-muted-foreground">
+                  Skapa ditt konto gratis och ha full koll på nästa barnkalas.
+                </p>
+                <div className="mt-8">
+                  <Link href="/register">
+                    <Button size="lg" className="h-12 px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
+                      Kom igång gratis
+                    </Button>
+                  </Link>
+                </div>
+              </ScrollReveal>
             </div>
           </section>
         </main>

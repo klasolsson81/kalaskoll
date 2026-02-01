@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### Footer Mobile Layout
+- **Compact 2-column grid on mobile** — brand spans full width, Navigation and Juridiskt sit side by side below. Reduced vertical spacing. Added `pb-14` on mobile to prevent feedback widget from overlapping the copyright text.
+
+#### Button Hover Effects + Scroll Animations
+- **`gradient-celebration` hover** — all gradient buttons now brighten on hover via CSS utility (`filter: brightness(1.12)`), applied globally so every gradient-celebration button gets it
+- **Header "Logga in"** — changed hover from amber (`hover:bg-accent`) to subtle blue (`hover:bg-primary/10 hover:text-primary`)
+- **Header "Se hur det fungerar"** — outline button hover now matches primary color scheme
+- **Scroll reveal animations** — new `ScrollReveal` component using IntersectionObserver. All landing page sections fade-in-up as they scroll into view with staggered delays. Lightweight CSS transitions (no framer-motion runtime for this).
+
 #### Beta Messaging — Account Deletion Clarity
 - **All beta surfaces updated** — changed "Beta avslutas 28 feb" to "Testkonton raderas 1 mars" across BetaLimitsDisplay, BetaBanner, BetaRegisterForm, and invite email. Makes clear that test accounts + data are deleted, and users can register a new regular account after beta.
 

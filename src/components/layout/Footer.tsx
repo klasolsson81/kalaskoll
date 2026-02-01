@@ -217,19 +217,17 @@ export function Footer() {
   return (
     <>
       <footer className="border-t bg-muted/40 print:hidden">
-        <div className="mx-auto max-w-5xl px-4 py-10">
-          <div className="grid gap-8 sm:grid-cols-3">
-            {/* Brand */}
-            <div>
+        <div className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
+            {/* Brand — full width on mobile */}
+            <div className="col-span-2 sm:col-span-1">
               <Link href="/" className="text-lg font-extrabold tracking-tight text-primary hover:text-primary/80 transition-colors">
                 KalasKoll
               </Link>
               <p className="mt-1 text-sm text-muted-foreground">
-                Smarta inbjudningar
-                <br />
-                för barnkalas
+                Smarta inbjudningar för barnkalas
               </p>
-              <p className="mt-3 text-xs text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground">
                 Skapad av{' '}
                 <a
                   href="https://klasolsson.se"
@@ -244,12 +242,12 @@ export function Footer() {
 
             {/* Navigation */}
             <div>
-              <p className="mb-3 text-sm font-semibold text-foreground">Navigation</p>
-              <ul className="space-y-2">
+              <p className="mb-2 text-sm font-semibold text-foreground">Navigation</p>
+              <ul className="space-y-1.5">
                 <li>
                   <button
                     onClick={() => setActiveModal('om-oss')}
-                    className="text-sm text-muted-foreground hover:text-foreground"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Om oss
                   </button>
@@ -257,7 +255,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('priser')}
-                    className="text-sm text-muted-foreground hover:text-foreground"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Priser
                   </button>
@@ -267,12 +265,12 @@ export function Footer() {
 
             {/* Legal */}
             <div>
-              <p className="mb-3 text-sm font-semibold text-foreground">Juridiskt</p>
-              <ul className="space-y-2">
+              <p className="mb-2 text-sm font-semibold text-foreground">Juridiskt</p>
+              <ul className="space-y-1.5">
                 <li>
                   <button
                     onClick={() => setActiveModal('integritetspolicy')}
-                    className="text-sm text-muted-foreground hover:text-foreground"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Integritetspolicy
                   </button>
@@ -280,7 +278,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('anvandarvillkor')}
-                    className="text-sm text-muted-foreground hover:text-foreground"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Användarvillkor
                   </button>
@@ -288,7 +286,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('cookiepolicy')}
-                    className="text-sm text-muted-foreground hover:text-foreground"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Cookiepolicy
                   </button>
@@ -297,8 +295,8 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Copyright */}
-          <div className="mt-8 border-t pt-6 text-center text-xs text-muted-foreground">
+          {/* Copyright — extra bottom padding to clear feedback widget on mobile */}
+          <div className="mt-6 border-t pt-4 pb-14 sm:pb-0 text-center text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} KalasKoll. Alla rättigheter förbehållna.
           </div>
         </div>
