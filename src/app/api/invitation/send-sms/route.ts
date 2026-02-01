@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { sendSmsInvitationSchema } from '@/lib/utils/validation';
 import { sendPartySms } from '@/lib/sms/elks';
 import { APP_URL, SMS_MAX_PER_PARTY, ADMIN_EMAILS } from '@/lib/constants';
+import { BETA_CONFIG } from '@/lib/beta-config';
 import type { SendSmsInvitationResponse } from '@/types/api';
 
 function getCurrentMonth(): string {
@@ -62,6 +63,28 @@ export async function POST(request: Request) {
 
   const isAdmin = ADMIN_EMAILS.includes(user.email ?? '');
   const currentMonth = getCurrentMonth();
+
+  // Beta tester SMS limit check
+  if (!isAdmin) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, beta_sms_used')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role === 'tester') {
+      const used = profile.beta_sms_used || 0;
+      if (used + phones.length > BETA_CONFIG.freeSmsInvites) {
+        return NextResponse.json(
+          {
+            error: `Du har ${BETA_CONFIG.freeSmsInvites - used} gratis SMS kvar i beta.`,
+            remainingSmsThisParty: Math.max(0, BETA_CONFIG.freeSmsInvites - used),
+          },
+          { status: 429 },
+        );
+      }
+    }
+  }
 
   // Check SMS limits (skip for admins)
   if (!isAdmin) {
@@ -139,6 +162,22 @@ export async function POST(request: Request) {
 
   const sent = results.filter((r) => r.status === 'fulfilled').length;
   const failed = results.filter((r) => r.status === 'rejected').length;
+
+  // Increment beta SMS counter for testers
+  if (sent > 0 && !isAdmin) {
+    const { data: testerProfile } = await supabase
+      .from('profiles')
+      .select('role, beta_sms_used')
+      .eq('id', user.id)
+      .single();
+
+    if (testerProfile?.role === 'tester') {
+      await supabase
+        .from('profiles')
+        .update({ beta_sms_used: (testerProfile.beta_sms_used || 0) + sent })
+        .eq('id', user.id);
+    }
+  }
 
   // Update sms_usage (upsert: insert or increment)
   if (sent > 0) {

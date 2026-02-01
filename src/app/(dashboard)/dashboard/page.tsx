@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { ChildrenSection } from './ChildrenSection';
+import { BetaLimitsDisplay } from '@/components/beta/BetaLimitsDisplay';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -129,6 +130,9 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
+
+      {/* Beta limits */}
+      <BetaLimitsDisplay />
 
       {/* Children */}
       <ChildrenSection savedChildren={children ?? []} />

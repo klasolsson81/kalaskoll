@@ -17,6 +17,11 @@ export type Database = {
           id: string;
           full_name: string | null;
           phone: string | null;
+          role: string;
+          beta_ai_images_used: number;
+          beta_sms_used: number;
+          beta_expires_at: string | null;
+          beta_registered_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -24,6 +29,11 @@ export type Database = {
           id: string;
           full_name?: string | null;
           phone?: string | null;
+          role?: string;
+          beta_ai_images_used?: number;
+          beta_sms_used?: number;
+          beta_expires_at?: string | null;
+          beta_registered_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -31,6 +41,11 @@ export type Database = {
           id?: string;
           full_name?: string | null;
           phone?: string | null;
+          role?: string;
+          beta_ai_images_used?: number;
+          beta_sms_used?: number;
+          beta_expires_at?: string | null;
+          beta_registered_at?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -388,12 +403,108 @@ export type Database = {
           },
         ];
       };
+      waitlist: {
+        Row: {
+          id: string;
+          email: string;
+          created_at: string;
+          notified_at: string | null;
+          converted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          created_at?: string;
+          notified_at?: string | null;
+          converted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          notified_at?: string | null;
+          converted_at?: string | null;
+        };
+        Relationships: [];
+      };
+      feedback: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          user_email: string | null;
+          page_url: string;
+          message: string;
+          screenshot_url: string | null;
+          user_agent: string | null;
+          screen_size: string | null;
+          created_at: string;
+          status: string;
+          admin_notes: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          user_email?: string | null;
+          page_url: string;
+          message: string;
+          screenshot_url?: string | null;
+          user_agent?: string | null;
+          screen_size?: string | null;
+          created_at?: string;
+          status?: string;
+          admin_notes?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          user_email?: string | null;
+          page_url?: string;
+          message?: string;
+          screenshot_url?: string | null;
+          user_agent?: string | null;
+          screen_size?: string | null;
+          status?: string;
+          admin_notes?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "feedback_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      beta_rate_limit: {
+        Row: {
+          ip_address: string;
+          attempts: number;
+          first_attempt_at: string;
+          last_attempt_at: string;
+        };
+        Insert: {
+          ip_address: string;
+          attempts?: number;
+          first_attempt_at?: string;
+          last_attempt_at?: string;
+        };
+        Update: {
+          ip_address?: string;
+          attempts?: number;
+          first_attempt_at?: string;
+          last_attempt_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      get_beta_stats: {
+        Args: Record<string, never>;
+        Returns: Json;
+      };
     };
     Enums: {
       [_ in never]: never;

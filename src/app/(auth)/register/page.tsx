@@ -1,18 +1,25 @@
-'use client';
-
-import { useActionState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { SubmitButton } from '@/components/forms/SubmitButton';
-import { register, type AuthResult } from '@/app/(auth)/actions';
 import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BetaBanner } from '@/components/beta/BetaBanner';
+import { BetaRegisterForm } from './BetaRegisterForm';
+import { WaitlistForm } from '@/components/forms/WaitlistForm';
+import { createClient } from '@/lib/supabase/server';
+import { BETA_CONFIG } from '@/lib/beta-config';
 
-export default function RegisterPage() {
-  const [state, formAction] = useActionState<AuthResult, FormData>(
-    async (_prev, formData) => register(formData),
-    {},
-  );
+export default async function RegisterPage() {
+  const supabase = await createClient();
+
+  const { count: testerCount } = await supabase
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('role', 'tester');
+
+  const totalTesters = testerCount || 0;
+  const spotsRemaining = Math.max(0, BETA_CONFIG.maxTesters - totalTesters);
+  const percentFull = Math.round((totalTesters / BETA_CONFIG.maxTesters) * 100);
+  const isFull = spotsRemaining <= 0;
+
+  const stats = { totalTesters, spotsRemaining, percentFull };
 
   return (
     <Card className="border-0 shadow-lifted">
@@ -23,43 +30,24 @@ export default function RegisterPage() {
           </span>
         </Link>
         <div>
-          <CardTitle className="text-2xl">Skapa konto</CardTitle>
+          <CardTitle className="text-2xl">
+            {isFull ? 'Gå med i väntelistan' : 'Skapa beta-konto'}
+          </CardTitle>
           <CardDescription className="mt-1 text-base">
-            Kom igång med KalasKoll – helt gratis
+            {isFull
+              ? 'Alla platser är tagna — skriv upp dig!'
+              : 'Testa KalasKoll gratis som beta-testare'}
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-4">
-          {state.error && (
-            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-              {state.error}
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Namn</Label>
-            <Input id="fullName" name="fullName" placeholder="Ditt namn" className="h-11" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">E-post</Label>
-            <Input id="email" name="email" type="email" placeholder="din@email.se" className="h-11" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Lösenord</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              minLength={6}
-              placeholder="Minst 6 tecken"
-              className="h-11"
-              required
-            />
-          </div>
-          <SubmitButton className="w-full h-11 font-semibold gradient-celebration text-white">
-            Skapa konto
-          </SubmitButton>
-        </form>
+        <BetaBanner stats={stats} />
+
+        {isFull ? (
+          <WaitlistForm />
+        ) : (
+          <BetaRegisterForm spotsRemaining={spotsRemaining} />
+        )}
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">

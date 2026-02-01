@@ -7,6 +7,7 @@ import { ADMIN_EMAILS, AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
 import type { AiStyle } from '@/lib/constants';
 import { generateImageSchema } from '@/lib/utils/validation';
 import { isAiRateLimited } from '@/lib/utils/rate-limit';
+import { BETA_CONFIG } from '@/lib/beta-config';
 
 /**
  * Download a temporary AI image and upload to Supabase Storage.
@@ -100,6 +101,25 @@ export async function POST(request: NextRequest) {
 
   const isAdmin = ADMIN_EMAILS.includes(user.email ?? '');
 
+  // Beta tester limit check
+  if (!isAdmin) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, beta_ai_images_used')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role === 'tester') {
+      const used = profile.beta_ai_images_used || 0;
+      if (used >= BETA_CONFIG.freeAiImages) {
+        return NextResponse.json(
+          { error: `Du har använt alla dina ${BETA_CONFIG.freeAiImages} gratis AI-bilder.` },
+          { status: 403 },
+        );
+      }
+    }
+  }
+
   // Per-user rate limit (skip for admins)
   if (!isAdmin && await isAiRateLimited(user.id)) {
     return NextResponse.json(
@@ -160,6 +180,22 @@ export async function POST(request: NextRequest) {
 
   // Persist to Supabase Storage (temporary URLs expire after ~1h)
   const imageUrl = await persistImage(tempImageUrl, partyId);
+
+  // Increment beta AI image counter for testers
+  if (!isAdmin) {
+    const { data: testerProfile } = await supabase
+      .from('profiles')
+      .select('role, beta_ai_images_used')
+      .eq('id', user.id)
+      .single();
+
+    if (testerProfile?.role === 'tester') {
+      await supabase
+        .from('profiles')
+        .update({ beta_ai_images_used: (testerProfile.beta_ai_images_used || 0) + 1 })
+        .eq('id', user.id);
+    }
+  }
 
   // Try to insert into party_images (if table exists)
   if (tableExists) {

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { DevBadge } from '@/components/shared/DevBadge';
+import { FeedbackWidget } from '@/components/shared/FeedbackWidget';
 import { Footer } from '@/components/layout/Footer';
 import { APP_URL } from '@/lib/constants';
 import './globals.css';
@@ -90,6 +91,7 @@ export default function RootLayout({
     <html lang="sv" className={inter.variable}>
       <body className="min-h-screen bg-background font-sans antialiased">
         {children}
+        <FeedbackWidget />
         <Footer />
         <DevBadge />
       </body>

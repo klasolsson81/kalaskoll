@@ -243,5 +243,31 @@ export type PartyFormData = z.infer<typeof partySchema>;
 export type ManualGuestFormData = z.infer<typeof manualGuestSchema>;
 export type SendInvitationFormData = z.infer<typeof sendInvitationSchema>;
 export type SendSmsInvitationFormData = z.infer<typeof sendSmsInvitationSchema>;
+// Beta registration schema
+export const betaRegisterSchema = z.object({
+  name: z.string().min(1, 'Namn krävs').max(100),
+  email: z.string().email('Ogiltig e-postadress'),
+  password: z.string().min(6, 'Lösenordet måste vara minst 6 tecken'),
+  honeypot: z.string().max(0).optional(),
+});
+
+// Waitlist schema
+export const waitlistSchema = z.object({
+  email: z.string().email('Ogiltig e-postadress').transform((e) => e.toLowerCase()),
+  honeypot: z.string().max(0).optional(),
+});
+
+// Feedback schema
+export const feedbackSchema = z.object({
+  message: z.string().min(1, 'Meddelande krävs').max(5000),
+  screenshot: z.string().optional(),
+  pageUrl: z.string().url(),
+  userAgent: z.string().optional(),
+  screenSize: z.string().optional(),
+});
+
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type PasswordFormData = z.infer<typeof passwordSchema>;
+export type BetaRegisterFormData = z.infer<typeof betaRegisterSchema>;
+export type WaitlistFormData = z.infer<typeof waitlistSchema>;
+export type FeedbackFormData = z.infer<typeof feedbackSchema>;

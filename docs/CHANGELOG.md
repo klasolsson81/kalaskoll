@@ -6,6 +6,31 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Closed Beta System
+- **Beta registration** with 100 tester spots, automatic tester role assignment, and 30-day expiry
+- **Waitlist** when beta is full — email-only signup with honeypot spam protection
+- **Feedback widget** — floating button on all pages, supports text + screenshot paste/upload, requires auth
+- **Beta limits** — testers get 5 free AI images and 5 free SMS invites, tracked per profile
+- **Beta progress banner** on register page with dynamic urgency (color changes as spots fill up)
+- **Beta limits display** on dashboard showing remaining AI images, SMS, and days for testers
+- **IP-based rate limiting** on beta registration (max 3 per hour per IP via `beta_rate_limit` table)
+- **Beta stats API** (`GET /api/beta/stats`) — public endpoint for tester count and spots remaining
+- **Beta register API** (`POST /api/beta/register`) — creates account with tester role
+- **Waitlist API** (`POST /api/waitlist`) — adds email to waitlist with duplicate detection
+- **Feedback API** (`POST /api/feedback`) — saves feedback with optional screenshot
+- **Validation schemas** — `betaRegisterSchema`, `waitlistSchema`, `feedbackSchema` (Zod)
+- **`useBetaStatus` hook** — client-side beta status with remaining counts and expiry
+- **Database migration** `00020_beta_system.sql` — role/beta columns on profiles, waitlist, feedback, beta_rate_limit tables, RLS policies, `get_beta_stats()` function
+- **Textarea UI component** (`src/components/ui/textarea.tsx`) — shadcn/ui style
+
+### Changed
+
+- **Register page** rewritten as server component with beta banner, BetaRegisterForm (client), or WaitlistForm when full
+- **AI generate route** enforces beta AI image limit for testers (5 free, 403 when exceeded)
+- **SMS send route** enforces beta SMS limit for testers (5 free, 429 when exceeded)
+- **Root layout** includes FeedbackWidget before Footer
+- **Dashboard** shows BetaLimitsDisplay after welcome section for testers
+
 - **OG image** (`opengraph-image.tsx`): Dynamic Open Graph image (1200x630) with brand colors, tagline and feature pills — shows when sharing links on Discord/Facebook/LinkedIn
 - **Apple touch icon** (`apple-icon.tsx`): Dynamic 180x180 icon for iOS homescreen
 
