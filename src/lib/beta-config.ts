@@ -21,6 +21,7 @@ export interface BetaStatus {
   smsRemaining: number;
   expiresAt: Date | null;
   daysRemaining: number;
+  feedbackCount: number;
 }
 
 export interface BetaStats {

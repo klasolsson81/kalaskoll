@@ -1,12 +1,23 @@
 'use client';
 
 import { useBetaStatus } from '@/hooks/useBetaStatus';
-import { Sparkles, MessageSquare, Clock } from 'lucide-react';
+import { Sparkles, MessageSquare, Clock, Heart } from 'lucide-react';
+
+function getFeedbackMood(count: number): { emoji: string; label: string } {
+  if (count === 0) return { emoji: '😶', label: 'Ingen feedback ännu' };
+  if (count === 1) return { emoji: '🙂', label: '1 inskickad' };
+  if (count === 2) return { emoji: '😊', label: '2 inskickade' };
+  if (count <= 4) return { emoji: '😄', label: `${count} inskickade` };
+  if (count <= 9) return { emoji: '🤩', label: `${count} inskickade` };
+  return { emoji: '🏆', label: `${count} inskickade!` };
+}
 
 export function BetaLimitsDisplay() {
   const status = useBetaStatus();
 
   if (!status?.isTester) return null;
+
+  const mood = getFeedbackMood(status.feedbackCount);
 
   return (
     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
@@ -42,6 +53,16 @@ export function BetaLimitsDisplay() {
           </div>
           <span className="font-medium">
             {status.daysRemaining} dagar
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <Heart className="h-4 w-4 text-amber-600" />
+            <span>Feedback</span>
+          </div>
+          <span className="font-medium">
+            {mood.emoji} {mood.label}
           </span>
         </div>
       </div>

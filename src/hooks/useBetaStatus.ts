@@ -23,6 +23,12 @@ export function useBetaStatus(): BetaStatus | null {
 
       if (!profile) return;
 
+      // Count feedback submitted by this user
+      const { count: feedbackCount } = await supabase
+        .from('feedback')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
       const expiresAt = profile.beta_expires_at ? new Date(profile.beta_expires_at) : null;
       const isExpired = expiresAt ? expiresAt < new Date() : false;
       const daysRemaining = expiresAt
@@ -41,6 +47,7 @@ export function useBetaStatus(): BetaStatus | null {
         smsRemaining: Math.max(0, BETA_CONFIG.freeSmsInvites - (profile.beta_sms_used || 0)),
         expiresAt,
         daysRemaining,
+        feedbackCount: feedbackCount || 0,
       });
     }
 

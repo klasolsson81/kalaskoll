@@ -1,10 +1,17 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { MessageSquare, X, Camera, Send, Loader2, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const NUDGE_MESSAGES = [
+  'Skicka feedback',
+  'Hittade en bugg?',
+  'Berätta vad du tycker!',
+  'Vi lyssnar!',
+];
 
 export function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +19,27 @@ export function FeedbackWidget() {
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [nudgeText, setNudgeText] = useState(NUDGE_MESSAGES[0]);
+  const [nudgeVisible, setNudgeVisible] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Rotate nudge text at gentle intervals
+  const rotateNudge = useCallback(() => {
+    setNudgeVisible(false);
+    setTimeout(() => {
+      setNudgeText((prev) => {
+        const idx = NUDGE_MESSAGES.indexOf(prev);
+        return NUDGE_MESSAGES[(idx + 1) % NUDGE_MESSAGES.length];
+      });
+      setNudgeVisible(true);
+    }, 300);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) return;
+    const interval = setInterval(rotateNudge, 8000);
+    return () => clearInterval(interval);
+  }, [isOpen, rotateNudge]);
 
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData.items;
@@ -88,19 +115,33 @@ export function FeedbackWidget() {
 
   return (
     <>
-      {/* Floating button */}
-      <Button
-        onClick={() => setIsOpen(true)}
+      {/* Floating button with label */}
+      <div
         className={cn(
-          'fixed bottom-4 right-4 z-50 rounded-full h-14 w-14 shadow-lg',
-          'bg-primary hover:bg-primary/90 transition-transform hover:scale-105',
+          'fixed bottom-4 right-4 z-50 flex flex-col items-center gap-1.5',
           isOpen && 'hidden',
         )}
-        size="icon"
-        aria-label="Skicka feedback"
       >
-        <MessageSquare className="h-6 w-6" />
-      </Button>
+        <Button
+          onClick={() => setIsOpen(true)}
+          className={cn(
+            'rounded-full h-14 w-14 shadow-lg',
+            'bg-primary hover:bg-primary/90 transition-transform hover:scale-105',
+          )}
+          size="icon"
+          aria-label="Skicka feedback"
+        >
+          <MessageSquare className="h-6 w-6" />
+        </Button>
+        <span
+          className={cn(
+            'text-[11px] font-medium text-muted-foreground bg-card/90 backdrop-blur-sm px-2 py-0.5 rounded-full shadow-sm border transition-opacity duration-300',
+            nudgeVisible ? 'opacity-100' : 'opacity-0',
+          )}
+        >
+          {nudgeText}
+        </span>
+      </div>
 
       {/* Feedback panel */}
       {isOpen && (
