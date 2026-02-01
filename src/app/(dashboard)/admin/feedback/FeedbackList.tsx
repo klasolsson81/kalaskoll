@@ -3,9 +3,21 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Trash2, X, Check } from 'lucide-react';
-import type { Database } from '@/types/database';
 
-type FeedbackRow = Database['public']['Tables']['feedback']['Row'];
+interface FeedbackItem {
+  id: string;
+  user_id: string | null;
+  user_email: string | null;
+  user_name: string | null;
+  page_url: string;
+  message: string;
+  screenshot_url: string | null;
+  user_agent: string | null;
+  screen_size: string | null;
+  created_at: string;
+  status: string;
+  admin_notes: string | null;
+}
 
 const STATUS_OPTIONS = ['new', 'reviewed', 'in_progress', 'resolved', 'dismissed'] as const;
 
@@ -73,12 +85,14 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
 }
 
 export function FeedbackList() {
-  const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
+  const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingNotes, setEditingNotes] = useState<string | null>(null);
   const [notesValue, setNotesValue] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [errorId, setErrorId] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   useEffect(() => {
@@ -101,7 +115,14 @@ export function FeedbackList() {
 
   function showSaved(id: string) {
     setSavedId(id);
+    setErrorId(null);
     setTimeout(() => setSavedId(null), 1500);
+  }
+
+  function showError(id: string, msg: string) {
+    setErrorId(id);
+    setErrorMsg(msg);
+    setTimeout(() => { setErrorId(null); setErrorMsg(null); }, 4000);
   }
 
   async function handleStatusChange(id: string, newStatus: string) {
@@ -117,9 +138,14 @@ export function FeedbackList() {
           prev.map((f) => (f.id === id ? { ...f, status: newStatus } : f)),
         );
         showSaved(id);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        console.error('Status change failed:', res.status, errData);
+        showError(id, `Misslyckades (${res.status}): ${errData.error || 'Okänt fel'}`);
       }
     } catch (err) {
       console.error('Failed to update status:', err);
+      showError(id, 'Nätverksfel — kunde inte uppdatera status');
     } finally {
       setActionLoading(null);
     }
@@ -139,9 +165,13 @@ export function FeedbackList() {
         );
         setEditingNotes(null);
         showSaved(id);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        showError(id, `Misslyckades: ${errData.error || 'Okänt fel'}`);
       }
     } catch (err) {
       console.error('Failed to save notes:', err);
+      showError(id, 'Nätverksfel — kunde inte spara anteckning');
     } finally {
       setActionLoading(null);
     }
@@ -156,9 +186,13 @@ export function FeedbackList() {
       });
       if (res.ok) {
         setFeedback((prev) => prev.filter((f) => f.id !== id));
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        showError(id, `Radering misslyckades: ${errData.error || 'Okänt fel'}`);
       }
     } catch (err) {
       console.error('Failed to delete feedback:', err);
+      showError(id, 'Nätverksfel — kunde inte radera');
     } finally {
       setActionLoading(null);
     }
@@ -207,6 +241,9 @@ export function FeedbackList() {
                 {statusLabel(f.status)}
               </Badge>
               <span className="text-xs text-muted-foreground">{formatTimestamp(f.created_at)}</span>
+              {f.user_name && (
+                <span className="text-xs font-medium">{f.user_name}</span>
+              )}
               <span className="font-mono text-xs text-muted-foreground">{f.user_email ?? 'Anonym'}</span>
               {savedId === f.id && (
                 <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600">
@@ -214,6 +251,12 @@ export function FeedbackList() {
                 </span>
               )}
             </div>
+
+            {errorId === f.id && errorMsg && (
+              <div role="alert" className="mb-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-1.5 text-xs text-destructive">
+                {errorMsg}
+              </div>
+            )}
 
             <p className="mb-3 whitespace-pre-wrap text-sm">{f.message}</p>
 

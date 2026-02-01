@@ -20,7 +20,7 @@ export const SMS_MAX_PER_PARTY = 15;
 export const AI_MAX_IMAGES_PER_PARTY = 5;
 
 // Admin emails – bypass all SMS limits (configured via env var)
-export const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').filter(Boolean);
+export const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim()).filter(Boolean);
 
 // Swedish allergies commonly found at children's parties
 export const COMMON_ALLERGIES = [

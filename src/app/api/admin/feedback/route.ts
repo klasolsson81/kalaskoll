@@ -9,14 +9,31 @@ export async function GET() {
     if (guard instanceof NextResponse) return guard;
     const { adminClient } = guard;
 
-    const { data, error } = await adminClient
+    // Fetch feedback + profiles separately (service role can't do FK joins to auth)
+    const { data: feedbackData, error } = await adminClient
       .from('feedback')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
 
-    return NextResponse.json({ feedback: data });
+    // Get user names from profiles
+    const userIds = [...new Set((feedbackData ?? []).map((f) => f.user_id).filter(Boolean))] as string[];
+    let profileMap = new Map<string, string>();
+    if (userIds.length > 0) {
+      const { data: profiles } = await adminClient
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', userIds);
+      profileMap = new Map((profiles ?? []).map((p) => [p.id, p.full_name ?? '']));
+    }
+
+    const feedback = (feedbackData ?? []).map((f) => ({
+      ...f,
+      user_name: f.user_id ? profileMap.get(f.user_id) ?? null : null,
+    }));
+
+    return NextResponse.json({ feedback });
   } catch (error) {
     console.error('Admin feedback error:', error);
     return NextResponse.json({ error: 'Failed to fetch feedback' }, { status: 500 });
@@ -38,17 +55,24 @@ export async function PATCH(request: NextRequest) {
     const { feedbackId, status, adminNotes } = result.data;
 
     const updateData: Record<string, string> = {};
-    if (status) updateData.status = status;
+    if (status !== undefined) updateData.status = status;
     if (adminNotes !== undefined) updateData.admin_notes = adminNotes;
 
-    const { error } = await adminClient
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
+    }
+
+    const { error, count } = await adminClient
       .from('feedback')
       .update(updateData)
       .eq('id', feedbackId);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase feedback update error:', error);
+      throw error;
+    }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, updated: count });
   } catch (error) {
     console.error('Admin feedback update error:', error);
     return NextResponse.json({ error: 'Failed to update feedback' }, { status: 500 });
