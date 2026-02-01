@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServerClient } from '@supabase/ssr';
+import type { Database } from '@/types/database';
+import type { CookieOptions } from '@supabase/ssr';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -8,42 +10,77 @@ export async function GET(request: Request) {
   const type = searchParams.get('type');
   const next = searchParams.get('next');
 
-  // Determine post-auth redirect: use `next` if it's a safe relative path
   const successUrl = next && next.startsWith('/') ? `${origin}${next}` : `${origin}/confirmed`;
 
-  const supabase = await createClient();
+  // Collect cookies set by Supabase auth so we can attach them to the
+  // redirect response. Using cookies() from next/headers does NOT work
+  // because NextResponse.redirect() creates a new response object and
+  // the cookies from the implicit response are lost.
+  const cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }> = [];
+
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          const header = request.headers.get('cookie') ?? '';
+          if (!header) return [];
+          return header.split('; ').map((c) => {
+            const idx = c.indexOf('=');
+            return { name: c.slice(0, idx), value: c.slice(idx + 1) };
+          });
+        },
+        setAll(cookies) {
+          cookiesToSet.push(...cookies);
+        },
+      },
+    },
+  );
+
+  let verified = false;
 
   // Flow 1: PKCE code exchange (normal Supabase redirect flow)
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(successUrl);
-    }
-    console.error('[auth/callback] exchangeCodeForSession failed:', error.message);
+      verified = true;
+    } else {
+      console.error('[auth/callback] exchangeCodeForSession failed:', error.message);
 
-    // Fallback: try as OTP token (some email templates send raw token as "code")
-    const { error: otpError } = await supabase.auth.verifyOtp({
-      token_hash: code,
-      type: 'signup',
-    });
-    if (!otpError) {
-      return NextResponse.redirect(successUrl);
+      // Fallback: try as OTP token (some email templates send raw token as "code")
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        token_hash: code,
+        type: 'signup',
+      });
+      if (!otpError) {
+        verified = true;
+      } else {
+        console.error('[auth/callback] verifyOtp fallback failed:', otpError.message);
+      }
     }
-    console.error('[auth/callback] verifyOtp fallback failed:', otpError.message);
   }
 
-  // Flow 2: token_hash + type parameters (Supabase default email template / invite)
-  if (tokenHash && type) {
+  // Flow 2: token_hash + type parameters (invite magic link, signup, etc.)
+  if (!verified && tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
       type: type as 'signup' | 'email' | 'invite' | 'magiclink',
     });
     if (!error) {
-      return NextResponse.redirect(successUrl);
+      verified = true;
+    } else {
+      console.error('[auth/callback] verifyOtp failed:', error.message);
     }
-    console.error('[auth/callback] verifyOtp failed:', error.message);
   }
 
-  // All flows failed
-  return NextResponse.redirect(`${origin}/login?error=verification_failed`);
+  const redirectUrl = verified ? successUrl : `${origin}/login?error=verification_failed`;
+  const response = NextResponse.redirect(redirectUrl);
+
+  // Apply session cookies to the redirect response
+  for (const { name, value, options } of cookiesToSet) {
+    response.cookies.set(name, value, options);
+  }
+
+  return response;
 }
