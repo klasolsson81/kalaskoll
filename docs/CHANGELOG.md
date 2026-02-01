@@ -7,36 +7,37 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 #### Complete "Festive Modern" UI Makeover — Entire App
-- **App-wide gradient background** — body uses fixed cream-to-lavender gradient (`bg-app-gradient`) instead of flat off-white, creating a cohesive warm feel across all pages
-- **CSS variable updates** — `--card` at 90% opacity and `--popover` at 95% opacity so the gradient subtly peeks through card surfaces
-- **RSVP festive gradient** — dedicated `bg-app-gradient-rsvp` with radial color orbs for the mobile RSVP experience
-- **Glass-morphism everywhere** — all cards across auth, dashboard, RSVP, profile, and guest list pages use `glass-card` (frosted backdrop-blur, translucent white, soft shadow)
-- **Fredoka headings everywhere** — all page headings, card titles, and brand logos use `font-display` (Fredoka) for a friendly, rounded aesthetic
-- **Auth pages** — removed blurred blobs, replaced with confetti-dots pattern overlay; all cards converted from `shadow-lifted` to `glass-card`; "eller" divider changed from `bg-card` to `bg-white/75`
-- **Dashboard header** — glass header (`bg-white/70 backdrop-blur-xl`) with 2px gradient-celebration accent strip below
+- **App-wide gradient background** — body uses fixed cream-to-lavender-to-mint gradient (`bg-app-gradient`) with strong chroma, creating a cohesive warm feel across all pages
+- **Glass-card 3D overhaul** — `glass-card` utility now features 45% translucent white, `blur(24px) saturate(1.4)`, directional 3D borders (bright top/left, subtle dark bottom/right), multi-layer box-shadow with inset highlights. Top-level cards lift 2px on hover with glow; nested glass-cards get subtle-only hover.
+- **CSS variable updates** — `--card` at 50% opacity and `--popover` at 85% opacity so the gradient shows through card surfaces
+- **RSVP festive gradient** — dedicated `bg-app-gradient-rsvp` with 3 radial color orbs (primary, secondary, amber) at 8-12% opacity
+- **Confetti dots pattern** — 4-color radial-gradient dots at 18-22% opacity, 2px size, used as auth page overlay
+- **Glass-morphism everywhere** — all cards across auth, dashboard, RSVP, profile, and guest list pages use `glass-card`
+- **Fredoka headings everywhere** — all page headings, card titles, and brand logos use `font-display` (Fredoka)
+- **Auth pages** — confetti-dots overlay at 70% opacity + blurred color blobs; all cards `glass-card`; "eller" divider `bg-white/75`
+- **Dashboard header** — glass header (`bg-white/30 backdrop-blur-xl border-white/30`) with 3px gradient-celebration accent strip
 - **Dashboard content** — welcome section, stat boxes, party cards, children section, and empty states all use glass-card
 - **Party detail/edit/guests** — all detail cards, guest stat boxes, attending/declined lists use glass-card with font-display headings
 - **Profile pages** — profile and password cards use glass-card
-- **RSVP pages** — both main and edit RSVP pages use festive gradient background; all form cards (attending toggle, email, child info, contact, allergies, message) use glass-card
+- **RSVP pages** — both main and edit RSVP pages use festive gradient background; all form cards use glass-card
 - **PartyHeader** — festive header card gets glass-card treatment
-- **Footer** — translucent `bg-white/60 backdrop-blur-md` instead of opaque muted; brand and section headings use font-display
-- **FooterModal** — panel uses glass-card instead of plain white
+- **Footer** — translucent `bg-white/25 backdrop-blur-xl border-white/30` blends with gradient background
+- **FooterModal** — panel uses glass-card
 - **FeedbackWidget** — panel uses glass-card; header uses `bg-white/50`; title uses font-display
+- **Input/Textarea** — explicit `bg-white/80` background for readability on translucent cards
 
 #### Landing Page "Festive Modern" UI Overhaul
-- **Animated gradient mesh hero** — blue-purple-pink-teal gradient background with slow 20s CSS animation, replacing flat off-white with blurred blobs
-- **Frosted glass hero card** — hero content wrapped in glass-morphism card (`backdrop-blur`, translucent white) over the gradient
+- **Full-viewport animated gradient mesh** — blue-purple-pink-teal gradient with slow 20s CSS animation now covers the entire landing page (fixed position), not just the hero
+- **Frosted glass hero card** — hero content wrapped in glass-morphism card over the gradient
 - **Fredoka display font** — rounded, friendly heading font via `next/font/google` for all h1/h2 headings; Inter stays for body text
-- **Floating balloons** — 6 translucent inline SVG balloons (3 on mobile) with CSS float animation in the hero section. `aria-hidden`, `pointer-events-none`, hidden on `prefers-reduced-motion`
-- **Glass-morphism cards** — step cards, feature cards, and FAQ cards use `glass-card` utility with backdrop blur and translucent backgrounds
+- **Removed floating balloons** — decorative balloons removed in favor of the full-page gradient mesh
+- **Glass-morphism cards** — step cards, feature cards, and FAQ cards use `glass-card` with 3D edges and hover animations
 - **Colored icon glow** — step card icons have colored box-shadow glow matching their theme color
 - **Gradient icon containers** — feature card icons use gradient backgrounds instead of flat muted
-- **Confetti-dot FAQ background** — CSS radial-gradient pattern replacing flat muted background
 - **CTA confetti burst** — single gentle confetti burst (via existing `useConfetti` hook) when CTA section scrolls 50% into view
 - **Shimmer CTA buttons** — diagonal light sweep animation every 3s on gradient buttons
-- **Section background gradients** — "Hur det fungerar" uses soft pink-to-blue gradient; CTA section uses primary-to-secondary gradient
-- **Hover lift on cards** — step and feature cards lift 4px on hover with smooth transition
-- **Accessibility** — all decorative elements are `aria-hidden` with `pointer-events-none`; `prefers-reduced-motion` disables gradient animation, hides balloons, skips confetti, and stops shimmer
+- **Transparent header** — `bg-white/30 backdrop-blur-xl` with `border-white/30` lets gradient show through
+- **Accessibility** — all decorative elements are `aria-hidden` with `pointer-events-none`; `prefers-reduced-motion` disables gradient animation, skips confetti, and stops shimmer
 
 ### Fixed
 

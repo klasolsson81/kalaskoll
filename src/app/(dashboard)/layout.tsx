@@ -24,7 +24,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-50 border-b bg-white/70 backdrop-blur-xl print:hidden">
+      <header className="sticky top-0 z-50 border-b border-white/30 bg-white/30 backdrop-blur-xl print:hidden">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center gap-2">

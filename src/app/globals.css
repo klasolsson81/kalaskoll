@@ -60,9 +60,9 @@
   --foreground: oklch(0.17 0.02 260);
 
   /* Surfaces */
-  --card: oklch(1 0 0 / 70%);
+  --card: oklch(1 0 0 / 50%);
   --card-foreground: oklch(0.17 0.02 260);
-  --popover: oklch(1 0 0 / 90%);
+  --popover: oklch(1 0 0 / 85%);
   --popover-foreground: oklch(0.17 0.02 260);
 
   /* Festblå (Primary) */
@@ -233,14 +233,42 @@
   }
 }
 
-/* Glass card utility */
+/* Glass card utility — frosted, 3D edges, hover-alive */
 @utility glass-card {
-  background: oklch(1 0 0 / 60%);
-  backdrop-filter: blur(24px) saturate(1.2);
-  border: 1px solid oklch(1 0 0 / 40%);
+  background: oklch(1 0 0 / 45%);
+  backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid oklch(1 0 0 / 50%);
+  border-top-color: oklch(1 0 0 / 70%);
+  border-left-color: oklch(1 0 0 / 60%);
+  border-bottom-color: oklch(0.8 0.02 260 / 15%);
+  border-right-color: oklch(0.8 0.02 260 / 12%);
   box-shadow:
-    0 8px 32px oklch(0.17 0.02 260 / 0.08),
-    inset 0 1px 0 oklch(1 0 0 / 30%);
+    0 8px 32px oklch(0.17 0.02 260 / 0.07),
+    0 2px 8px oklch(0.17 0.02 260 / 0.04),
+    inset 0 1px 0 oklch(1 0 0 / 40%),
+    inset 0 -1px 0 oklch(0.17 0.02 260 / 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Glass card hover — lift, glow, brighter edges (skip nested glass-cards) */
+.glass-card:hover:not(.glass-card .glass-card:hover) {
+  transform: translateY(-2px);
+  border-top-color: oklch(1 0 0 / 80%);
+  box-shadow:
+    0 16px 48px oklch(0.17 0.02 260 / 0.10),
+    0 4px 12px oklch(0.55 0.19 255 / 0.06),
+    inset 0 1px 0 oklch(1 0 0 / 50%),
+    inset 0 -1px 0 oklch(0.17 0.02 260 / 0.04);
+}
+
+/* Nested glass-cards (stat boxes etc.) get subtle hover only */
+.glass-card .glass-card:hover {
+  border-top-color: oklch(1 0 0 / 80%);
+  box-shadow:
+    0 8px 32px oklch(0.17 0.02 260 / 0.10),
+    0 2px 8px oklch(0.55 0.19 255 / 0.04),
+    inset 0 1px 0 oklch(1 0 0 / 50%),
+    inset 0 -1px 0 oklch(0.17 0.02 260 / 0.04);
 }
 
 /* App-wide gradient background (warm peach → soft lavender) */

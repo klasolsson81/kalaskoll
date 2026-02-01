@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollReveal } from '@/components/shared/ScrollReveal';
 import { GradientMeshBg } from '@/components/landing/GradientMeshBg';
-import { FloatingBalloons } from '@/components/landing/FloatingBalloons';
 import { ConfettiTrigger } from '@/components/landing/ConfettiTrigger';
 import { APP_URL } from '@/lib/constants';
 
@@ -91,7 +90,7 @@ export default function HomePage() {
 
       <div className="flex min-h-screen flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
+        <header className="sticky top-0 z-50 border-b border-white/30 bg-white/30 backdrop-blur-xl">
           <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
             <Link href="/" className="flex items-center gap-2">
               <span className="font-display text-2xl font-extrabold tracking-tight text-primary">
@@ -113,14 +112,12 @@ export default function HomePage() {
           </div>
         </header>
 
-        <main className="flex-1">
+        <main className="relative flex-1">
+          {/* Animated gradient mesh — covers entire page */}
+          <GradientMeshBg />
+
           {/* Hero */}
           <section className="relative overflow-hidden">
-            {/* Animated gradient mesh background */}
-            <GradientMeshBg />
-            {/* Floating balloons */}
-            <FloatingBalloons />
-
             <div className="relative mx-auto max-w-5xl px-4 py-24 text-center sm:py-32">
               <div className="mx-auto max-w-3xl glass-card rounded-3xl px-6 py-12 sm:px-12 sm:py-16">
                 <ScrollReveal>
@@ -170,7 +167,7 @@ export default function HomePage() {
           </section>
 
           {/* How it works */}
-          <section id="hur-det-fungerar" className="border-t bg-gradient-to-br from-pink-50/50 via-white to-blue-50/50 py-20">
+          <section id="hur-det-fungerar" className="relative py-20">
             <div className="mx-auto max-w-5xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
@@ -211,7 +208,7 @@ export default function HomePage() {
                   },
                 ].map((feature, i) => (
                   <ScrollReveal key={feature.step} delay={i * 120}>
-                    <Card className="glass-card relative overflow-hidden border-0 h-full transition-all duration-300 hover:shadow-warm hover:-translate-y-1">
+                    <Card className="glass-card relative overflow-hidden border-0 h-full">
                       <CardContent className="pt-8 pb-6">
                         <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${feature.color} ${feature.glow}`}>
                           {feature.icon}
@@ -230,7 +227,7 @@ export default function HomePage() {
           </section>
 
           {/* Features */}
-          <section className="py-20">
+          <section className="relative py-20">
             <div className="mx-auto max-w-5xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
@@ -270,7 +267,7 @@ export default function HomePage() {
                   },
                 ].map((feature, i) => (
                   <ScrollReveal key={feature.title} delay={i * 100}>
-                    <Card className="glass-card border-0 h-full transition-all duration-300 hover:shadow-warm hover:-translate-y-1">
+                    <Card className="glass-card border-0 h-full">
                       <CardContent className="flex gap-4 pt-6">
                         <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl ${feature.gradient}`}>
                           {feature.icon}
@@ -288,7 +285,7 @@ export default function HomePage() {
           </section>
 
           {/* FAQ */}
-          <section className="border-t bg-confetti-dots py-20">
+          <section className="relative py-20">
             <div className="mx-auto max-w-3xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
@@ -337,7 +334,6 @@ export default function HomePage() {
           {/* CTA */}
           <ConfettiTrigger>
             <section className="relative overflow-hidden py-20 text-center">
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-400/5 to-secondary/5" />
               <div className="relative mx-auto max-w-2xl px-4">
                 <ScrollReveal>
                   <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>

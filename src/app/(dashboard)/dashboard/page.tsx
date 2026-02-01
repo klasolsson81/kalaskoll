@@ -164,7 +164,7 @@ export default async function DashboardPage() {
               const pending = counts ? counts.total - counts.attending - counts.declined : 0;
               return (
                 <Link key={party.id} href={`/kalas/${party.id}`}>
-                  <Card className="h-full border-0 glass-card transition-all hover:shadow-warm hover:-translate-y-0.5">
+                  <Card className="h-full border-0 glass-card">
                     {/* Theme accent strip */}
                     <div className="h-1.5 rounded-t-[inherit] gradient-celebration" />
                     <CardHeader className="pb-2">

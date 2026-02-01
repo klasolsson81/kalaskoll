@@ -216,7 +216,7 @@ export function Footer() {
 
   return (
     <>
-      <footer className="border-t bg-white/60 backdrop-blur-md print:hidden">
+      <footer className="border-t border-white/30 bg-white/25 backdrop-blur-xl print:hidden">
         <div className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
             {/* Brand — full width on mobile */}
