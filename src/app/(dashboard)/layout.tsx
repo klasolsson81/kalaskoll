@@ -51,7 +51,7 @@ export default async function DashboardLayout({
           </div>
           <ProfileDropdown displayName={displayName} email={email} />
         </div>
-        <div className="h-0.5 gradient-celebration" />
+        <div className="h-[3px] gradient-celebration" />
       </header>
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
     </div>

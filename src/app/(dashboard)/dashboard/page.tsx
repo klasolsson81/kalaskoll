@@ -100,7 +100,8 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       {/* Welcome section */}
       <section className="relative overflow-hidden rounded-2xl glass-card p-6 sm:p-8">
-        <div className="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-secondary/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <h1 className="text-2xl font-bold sm:text-3xl font-display">
