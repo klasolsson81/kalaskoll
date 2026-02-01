@@ -43,6 +43,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Confirm the user's email immediately (they were just created by generateLink)
+    const { error: confirmError } = await adminClient.auth.admin.updateUserById(
+      linkData.user.id,
+      { email_confirm: true },
+    );
+
+    if (confirmError) {
+      console.error('[Admin invite] confirm user failed:', confirmError.message);
+    }
+
     // Upsert profile with tester role — all testers expire on BETA_END_DATE
     const { error: profileError } = await adminClient.from('profiles').upsert(
       {
@@ -58,10 +68,25 @@ export async function POST(request: NextRequest) {
       console.error('[Admin invite] profile upsert failed:', profileError.message);
     }
 
-    // Build invite URL using hashed_token to bypass PKCE (action_link fails
-    // when clicked from email because there's no code_verifier cookie).
-    const tokenHash = linkData.properties.hashed_token;
-    const inviteUrl = `${APP_URL}/auth/callback?token_hash=${tokenHash}&type=invite&next=/set-password`;
+    // Generate a magic link for the confirmed user. This bypasses PKCE issues
+    // entirely — the invite token_hash + verifyOtp(type:'invite') is unreliable
+    // when PKCE is enabled and the user opens the link in a new browser.
+    const { data: magicData, error: magicError } =
+      await adminClient.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+      });
+
+    if (magicError || !magicData) {
+      console.error('[Admin invite] generateLink(magiclink) failed:', magicError?.message);
+      return NextResponse.json(
+        { error: 'Användare skapad men kunde inte skapa inloggningslänk' },
+        { status: 500 },
+      );
+    }
+
+    const tokenHash = magicData.properties.hashed_token;
+    const inviteUrl = `${APP_URL}/auth/callback?token_hash=${tokenHash}&type=magiclink&next=/set-password`;
 
     // Send custom invite email
     const emailResult = await sendTesterInvite({

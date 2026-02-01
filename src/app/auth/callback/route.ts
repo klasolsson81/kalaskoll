@@ -36,7 +36,7 @@ export async function GET(request: Request) {
   if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
-      type: type as 'signup' | 'email' | 'invite',
+      type: type as 'signup' | 'email' | 'invite' | 'magiclink',
     });
     if (!error) {
       return NextResponse.redirect(successUrl);
