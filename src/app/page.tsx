@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { APP_URL } from '@/lib/constants';
 
 export default function HomePage() {
   const appJsonLd = {
@@ -9,7 +10,7 @@ export default function HomePage() {
     name: 'KalasKoll',
     description:
       'Skapa inbjudningar för barnkalas med AI-genererade kort och digital OSA-hantering',
-    url: 'https://kalaskoll.se',
+    url: APP_URL,
     applicationCategory: 'LifestyleApplication',
     operatingSystem: 'Web',
     offers: {

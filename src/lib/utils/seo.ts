@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { APP_NAME } from '@/lib/constants';
+import { APP_NAME, APP_URL } from '@/lib/constants';
 
 interface SeoProps {
   title: string;
@@ -14,7 +14,7 @@ export function generateMetadata({
   path = '',
   image = '/og-image.png',
 }: SeoProps): Metadata {
-  const url = `https://kalaskoll.se${path}`;
+  const url = `${APP_URL}${path}`;
 
   return {
     title,

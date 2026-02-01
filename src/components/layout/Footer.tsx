@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { FooterModal } from './FooterModal';
 
 type ModalId = 'om-oss' | 'priser' | 'integritetspolicy' | 'anvandarvillkor' | 'cookiepolicy';
@@ -220,7 +221,9 @@ export function Footer() {
           <div className="grid gap-8 sm:grid-cols-3">
             {/* Brand */}
             <div>
-              <p className="text-lg font-extrabold tracking-tight text-primary">KalasKoll</p>
+              <Link href="/" className="text-lg font-extrabold tracking-tight text-primary hover:text-primary/80 transition-colors">
+                KalasKoll
+              </Link>
               <p className="mt-1 text-sm text-muted-foreground">
                 Smarta inbjudningar
                 <br />

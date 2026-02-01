@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Code Review Fixes (LO-02, CR-09)
+- **E2E test suite** (CR-09): 5 Playwright test files with ~41 test cases covering landing page, footer modals, auth pages, RSVP flow, navigation/SEO, and accessibility
+- **Playwright config**: Support for `PLAYWRIGHT_BASE_URL` env var to run tests against deployed apps (skips webServer when external URL)
+
 #### Code Review Fixes (HI-10, MI-03, MI-05, MI-06, MI-09, MI-10)
 - **Loading skeletons** (MI-03): `loading.tsx` for dashboard and party detail pages with spinner + skeleton cards
 - **Per-user AI rate limiting** (MI-06): Factory-based rate limiter in `rate-limit.ts`. AI generation limited to 10 req/hour per user (admins exempt). RSVP limiter unchanged (backward-compatible).
@@ -15,6 +19,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Hardcoded URL replaced** (LO-02): All hardcoded `kalaskoll.se` references replaced with `APP_URL` constant from `NEXT_PUBLIC_APP_URL` env var (layout.tsx, sitemap.ts, robots.ts, seo.ts, page.tsx JSON-LD)
+- **Footer brand link**: "KalasKoll" in footer is now a clickable link to the landing page (`/`)
 - **PartyHeader description label**: Description field on RSVP page now shows "Info" label above the text for clarity
 - **"Om oss" personal story**: Updated footer modal with Klas Olsson's personal backstory — son Alexander, 20 preschool kids, free-first philosophy
 - **Hero subtitle**: Landing page hero now emphasizes the QR-in-the-cubby workflow

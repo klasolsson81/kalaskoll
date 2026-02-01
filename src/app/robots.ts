@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { APP_URL } from '@/lib/constants';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/dashboard/', '/r/'],
       },
     ],
-    sitemap: 'https://kalaskoll.se/sitemap.xml',
+    sitemap: `${APP_URL}/sitemap.xml`,
   };
 }

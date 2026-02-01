@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next';
+import { APP_URL } from '@/lib/constants';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://kalaskoll.se',
+      url: APP_URL,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1,

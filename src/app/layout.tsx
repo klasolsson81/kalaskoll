@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'sv_SE',
-    url: 'https://kalaskoll.se',
+    url: APP_URL,
     siteName: 'KalasKoll',
     title: 'KalasKoll – Smarta barnkalas-inbjudningar',
     description: 'Skapa digitala barnkalas-inbjudningar med QR-kod. Gästerna svarar via mobilen!',
@@ -83,9 +83,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://kalaskoll.se',
+    canonical: APP_URL,
     languages: {
-      'sv-SE': 'https://kalaskoll.se',
+      'sv-SE': APP_URL,
     },
   },
 };
