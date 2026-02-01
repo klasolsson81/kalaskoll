@@ -29,6 +29,8 @@ All notable changes to this project will be documented in this file.
 
 - **RSVP submission crash**: Added defensive try-catch to rate limiter (`rate-limit.ts`) and top-level error handlers to RSVP API routes, so they always return JSON even on unexpected failures
 - **RSVP client error message**: Improved catch-all error to suggest checking internet connection instead of generic "Försök igen"
+- **Theme badge hidden from guests**: Removed theme badge from PartyHeader (RSVP page) — theme is an internal field for card design, not guest-facing info
+- **Allergy consent for free-text**: Consent checkbox now appears when typing in "Annat (fritext)" field, not only when selecting predefined allergies (GDPR fix)
 
 #### Code Review Fixes (HI-10, MI-03, MI-05, MI-06, MI-09, MI-10)
 - **Image header validation** (HI-10): Server-side magic byte validation in `uploadPhotoToStorage()` rejects files with mismatched MIME type and actual content (JPEG/PNG/WebP)

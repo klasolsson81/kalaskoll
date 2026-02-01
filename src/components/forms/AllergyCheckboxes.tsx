@@ -14,8 +14,9 @@ interface AllergyCheckboxesProps {
 
 export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDietary }: AllergyCheckboxesProps) {
   const [selected, setSelected] = useState<string[]>(initialSelected ?? []);
+  const [otherText, setOtherText] = useState(initialOtherDietary ?? '');
   const [consentGiven, setConsentGiven] = useState(false);
-  const hasAllergies = selected.length > 0;
+  const hasAllergyData = selected.length > 0 || otherText.trim().length > 0;
 
   function toggleAllergy(allergy: string) {
     setSelected((prev) =>
@@ -51,13 +52,14 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
           id="otherDietary"
           name="otherDietary"
           placeholder="t.ex. vegetarian, vegan..."
-          defaultValue={initialOtherDietary ?? ''}
+          value={otherText}
+          onChange={(e) => setOtherText(e.target.value)}
           disabled={disabled}
           className="h-11"
         />
       </div>
 
-      {hasAllergies && (
+      {hasAllergyData && (
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
           <label className="flex items-start gap-3 text-sm">
             <Checkbox

@@ -11,7 +11,6 @@ interface PartyHeaderProps {
   venueName: string;
   venueAddress?: string | null;
   description?: string | null;
-  theme?: string | null;
   rsvpDeadline?: string | null;
 }
 
@@ -24,7 +23,6 @@ export function PartyHeader({
   venueName,
   venueAddress,
   description,
-  theme,
   rsvpDeadline,
 }: PartyHeaderProps) {
   return (
@@ -71,18 +69,13 @@ export function PartyHeader({
         )}
 
         {/* Meta info */}
-        <div className="flex flex-wrap gap-2">
-          {theme && (
-            <Badge variant="outline" className="capitalize">
-              {theme}
-            </Badge>
-          )}
-          {rsvpDeadline && (
+        {rsvpDeadline && (
+          <div>
             <Badge variant="warning">
               OSA senast {formatDate(rsvpDeadline)}
             </Badge>
-          )}
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

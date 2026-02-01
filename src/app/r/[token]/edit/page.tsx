@@ -80,7 +80,6 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
           venueName={party.venue_name}
           venueAddress={party.venue_address}
           description={party.description}
-          theme={party.theme}
           rsvpDeadline={party.rsvp_deadline}
         />
 
