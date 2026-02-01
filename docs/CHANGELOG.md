@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### 3D Floating Balloons (Landing Page)
+- **React Three Fiber balloons** — 10 glossy 3D party balloons floating in the background using `three`, `@react-three/fiber`, and `@react-three/drei`
+- Each balloon has an oval body with `meshPhysicalMaterial` (clearcoat, slight transparency), a fake specular highlight, a knot, and a dangling string (TubeGeometry)
+- Gentle bobbing and swaying animation via `useFrame` with unique phase offsets per balloon
+- Dynamically imported (`ssr: false`) to avoid blocking initial page load
+- Respects `prefers-reduced-motion` — balloons are hidden entirely
+- Positioned at `z-[1]` between the gradient mesh (`z-0`) and page content (`z-[2]`)
+
+### Fixed
+
+#### CTA Text Contrast (Landing Page)
+- **CTA section wrapped in glass-card** — "Redo att planera kalas?" heading and subtitle now sit inside a frosted glass card, preventing text from disappearing against the animated gradient background
+
+#### Footer Text Contrast
+- **Footer background** increased from `bg-white/25` to `bg-white/55 backdrop-blur-2xl` for stronger readability
+- **Footer text** changed from `text-muted-foreground` to `text-foreground/65` (links), `text-foreground/70` (description), `text-foreground/50` (copyright) for better contrast against the gradient
+
 ### Changed
 
 #### Complete "Festive Modern" UI Makeover — Entire App

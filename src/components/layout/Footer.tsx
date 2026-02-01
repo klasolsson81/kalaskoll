@@ -216,7 +216,7 @@ export function Footer() {
 
   return (
     <>
-      <footer className="border-t border-white/30 bg-white/25 backdrop-blur-xl print:hidden">
+      <footer className="relative z-[2] border-t border-white/30 bg-white/55 backdrop-blur-2xl print:hidden">
         <div className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
             {/* Brand — full width on mobile */}
@@ -224,10 +224,10 @@ export function Footer() {
               <Link href="/" className="text-lg font-extrabold tracking-tight text-primary hover:text-primary/80 transition-colors font-display">
                 KalasKoll
               </Link>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-foreground/70">
                 Smarta inbjudningar för barnkalas
               </p>
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="mt-2 text-xs text-foreground/60">
                 Skapad av{' '}
                 <a
                   href="https://klasolsson.se"
@@ -247,7 +247,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('om-oss')}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm text-foreground/65 hover:text-foreground transition-colors"
                   >
                     Om oss
                   </button>
@@ -255,7 +255,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('priser')}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm text-foreground/65 hover:text-foreground transition-colors"
                   >
                     Priser
                   </button>
@@ -270,7 +270,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('integritetspolicy')}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm text-foreground/65 hover:text-foreground transition-colors"
                   >
                     Integritetspolicy
                   </button>
@@ -278,7 +278,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('anvandarvillkor')}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm text-foreground/65 hover:text-foreground transition-colors"
                   >
                     Användarvillkor
                   </button>
@@ -286,7 +286,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('cookiepolicy')}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm text-foreground/65 hover:text-foreground transition-colors"
                   >
                     Cookiepolicy
                   </button>
@@ -296,7 +296,7 @@ export function Footer() {
           </div>
 
           {/* Copyright — extra bottom padding to clear feedback widget on mobile */}
-          <div className="mt-6 border-t pt-4 pb-14 sm:pb-0 text-center text-xs text-muted-foreground">
+          <div className="mt-6 border-t border-foreground/10 pt-4 pb-14 sm:pb-0 text-center text-xs text-foreground/50">
             &copy; {new Date().getFullYear()} KalasKoll. Alla rättigheter förbehållna.
           </div>
         </div>

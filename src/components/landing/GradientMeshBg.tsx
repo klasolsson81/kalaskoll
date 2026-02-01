@@ -16,7 +16,7 @@ export function GradientMeshBg() {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none fixed inset-0 bg-gradient-mesh ${reduced ? '' : 'animate-gradient-mesh'}`}
+      className={`pointer-events-none fixed inset-0 z-0 bg-gradient-mesh ${reduced ? '' : 'animate-gradient-mesh'}`}
     />
   );
 }

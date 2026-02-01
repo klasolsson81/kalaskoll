@@ -42,7 +42,7 @@ function CategorySection({
   showSeverity = false,
 }: {
   title: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   items?: { count: number; items: SummaryItem[] };
   showSeverity?: boolean;
 }) {

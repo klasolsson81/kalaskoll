@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollReveal } from '@/components/shared/ScrollReveal';
 import { GradientMeshBg } from '@/components/landing/GradientMeshBg';
+import { Balloons3DLoader } from '@/components/landing/Balloons3DLoader';
 import { ConfettiTrigger } from '@/components/landing/ConfettiTrigger';
 import { APP_URL } from '@/lib/constants';
 
@@ -115,6 +116,11 @@ export default function HomePage() {
         <main className="relative flex-1">
           {/* Animated gradient mesh — covers entire page */}
           <GradientMeshBg />
+          {/* 3D floating balloons */}
+          <Balloons3DLoader />
+
+          {/* All content above gradient + balloons */}
+          <div className="relative z-[2]">
 
           {/* Hero */}
           <section className="relative overflow-hidden">
@@ -336,28 +342,32 @@ export default function HomePage() {
             <section className="relative overflow-hidden py-20 text-center">
               <div className="relative mx-auto max-w-2xl px-4">
                 <ScrollReveal>
-                  <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
-                  <p className="mt-4 text-lg text-muted-foreground">
-                    Skapa ditt konto gratis och ha full koll på nästa barnkalas.
-                  </p>
-                  <div className="mt-8">
-                    <Link href="/register">
-                      <Button size="lg" className="relative h-12 overflow-hidden px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
-                        Kom igång gratis
-                        <span
-                          aria-hidden="true"
-                          className="animate-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                          style={{
-                            animation: 'shimmer-sweep 3s ease-in-out infinite',
-                          }}
-                        />
-                      </Button>
-                    </Link>
+                  <div className="glass-card rounded-3xl px-6 py-12 sm:px-12">
+                    <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
+                    <p className="mt-4 text-lg text-muted-foreground">
+                      Skapa ditt konto gratis och ha full koll på nästa barnkalas.
+                    </p>
+                    <div className="mt-8">
+                      <Link href="/register">
+                        <Button size="lg" className="relative h-12 overflow-hidden px-8 text-base font-semibold gradient-celebration text-white shadow-warm hover:shadow-lg">
+                          Kom igång gratis
+                          <span
+                            aria-hidden="true"
+                            className="animate-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                            style={{
+                              animation: 'shimmer-sweep 3s ease-in-out infinite',
+                            }}
+                          />
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </ScrollReveal>
               </div>
             </section>
           </ConfettiTrigger>
+
+          </div>{/* end content z-[2] wrapper */}
         </main>
 
       </div>
