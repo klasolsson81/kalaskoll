@@ -110,6 +110,11 @@ export function BetaRegisterForm({ spotsRemaining }: BetaRegisterFormProps) {
         </div>
       )}
 
+      <div className="rounded-lg bg-muted/50 border p-3 text-xs text-muted-foreground space-y-1">
+        <p>Betan pågår t.o.m. 28 februari 2026. Alla testkonton och data raderas automatiskt 1 mars.</p>
+        <p>Efter betan kan du registrera ett vanligt konto.</p>
+      </div>
+
       <Button type="submit" className="w-full h-11 font-semibold gradient-celebration text-white" disabled={isLoading}>
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />

@@ -72,9 +72,13 @@ export function BetaBanner({ stats }: BetaBannerProps) {
             </li>
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
-              Gratis t.o.m. 28 februari &mdash; inga kortuppgifter
+              Gratis t.o.m. 28 feb &mdash; testkonton raderas 1 mars
             </li>
           </ul>
+
+          <p className="text-xs text-muted-foreground mt-3">
+            Alla testkonton och data raderas automatiskt 1 mars. Efter betan kan du registrera ett vanligt konto.
+          </p>
         </>
       )}
     </div>

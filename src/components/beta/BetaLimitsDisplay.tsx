@@ -49,7 +49,7 @@ export function BetaLimitsDisplay() {
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-amber-600" />
-            <span>Beta avslutas 28 feb</span>
+            <span>Kontot raderas 1 mars</span>
           </div>
           <span className="font-medium">
             {status.daysRemaining} dagar kvar
@@ -67,11 +67,9 @@ export function BetaLimitsDisplay() {
         </div>
       </div>
 
-      {status.daysRemaining <= 7 && status.daysRemaining > 0 && (
-        <p className="text-xs text-amber-700 mt-3">
-          Betan stänger 28 februari. Tack för att du testat KalasKoll &mdash; vi hoppas du gillade det!
-        </p>
-      )}
+      <p className="text-xs text-amber-700 mt-3">
+        Testkonton raderas automatiskt 1 mars. Vill du fortsätta? Registrera ett vanligt konto efter betan.
+      </p>
     </div>
   );
 }

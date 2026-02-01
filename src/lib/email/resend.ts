@@ -180,7 +180,11 @@ export async function sendTesterInvite({
         Aktivera mitt konto
       </a>
 
-      <p style="font-size:12px;color:#9ca3af;margin:24px 0 0;">
+      <p style="font-size:12px;color:#6b7280;margin:24px 0 0;">
+        Betan pågår t.o.m. 28 feb 2026. Testkonton raderas automatiskt 1 mars.
+      </p>
+
+      <p style="font-size:12px;color:#9ca3af;margin:8px 0 0;">
         Länken är giltig i 24 timmar. Om du inte förväntade dig detta mail kan du ignorera det.
       </p>
     </div>

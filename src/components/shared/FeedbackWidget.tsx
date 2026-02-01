@@ -3,14 +3,14 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { MessageSquare, X, Camera, Send, Loader2, Check } from 'lucide-react';
+import { X, Camera, Send, Loader2, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NUDGE_MESSAGES = [
-  'Skicka feedback',
   'Hittade en bugg?',
   'Berätta vad du tycker!',
   'Vi lyssnar!',
+  'Förslag? Tipsa oss!',
 ];
 
 export function FeedbackWidget() {
@@ -115,32 +115,36 @@ export function FeedbackWidget() {
 
   return (
     <>
-      {/* Floating button with label */}
+      {/* Floating feedback button — pill shape with animated gradient border */}
       <div
         className={cn(
-          'fixed bottom-4 right-4 z-50 flex flex-col items-center gap-1.5',
+          'fixed bottom-4 right-4 z-50',
           isOpen && 'hidden',
         )}
       >
-        <Button
+        <button
           onClick={() => setIsOpen(true)}
-          className={cn(
-            'rounded-full h-14 w-14 shadow-lg',
-            'bg-primary hover:bg-primary/90 transition-transform hover:scale-105',
-          )}
-          size="icon"
+          className="group relative rounded-2xl p-[2px] transition-transform hover:scale-105 active:scale-95"
           aria-label="Skicka feedback"
         >
-          <MessageSquare className="h-6 w-6" />
-        </Button>
-        <span
-          className={cn(
-            'text-[11px] font-medium text-muted-foreground bg-card/90 backdrop-blur-sm px-2 py-0.5 rounded-full shadow-sm border transition-opacity duration-300',
-            nudgeVisible ? 'opacity-100' : 'opacity-0',
-          )}
-        >
-          {nudgeText}
-        </span>
+          {/* Animated gradient border */}
+          <span className="absolute inset-0 rounded-2xl bg-[length:300%_300%] animate-[gradient-shift_4s_ease_infinite] bg-[linear-gradient(135deg,oklch(0.55_0.19_255),oklch(0.65_0.22_310),oklch(0.60_0.20_170),oklch(0.55_0.19_255))]" />
+
+          {/* Inner content */}
+          <span className="relative flex flex-col items-start gap-0.5 rounded-[14px] bg-card px-4 py-2.5 shadow-lg">
+            <span className="text-sm font-semibold text-foreground">
+              Skicka Feedback
+            </span>
+            <span
+              className={cn(
+                'text-[11px] text-muted-foreground transition-opacity duration-300',
+                nudgeVisible ? 'opacity-100' : 'opacity-0',
+              )}
+            >
+              {nudgeText}
+            </span>
+          </span>
+        </button>
       </div>
 
       {/* Feedback panel */}
@@ -148,10 +152,7 @@ export function FeedbackWidget() {
         <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 bg-card border rounded-xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center p-4 border-b bg-muted/30">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold">Skicka feedback</h3>
-            </div>
+            <h3 className="font-semibold">Skicka feedback</h3>
             <Button
               variant="ghost"
               size="icon"

@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### Beta Messaging — Account Deletion Clarity
+- **All beta surfaces updated** — changed "Beta avslutas 28 feb" to "Testkonton raderas 1 mars" across BetaLimitsDisplay, BetaBanner, BetaRegisterForm, and invite email. Makes clear that test accounts + data are deleted, and users can register a new regular account after beta.
+
+#### Feedback Widget Redesign
+- **Pill-shaped button with animated gradient border** — replaced chat-bubble circle with a rounded pill showing "Skicka Feedback" title always visible plus rotating subtitle. Animated border uses shifting gradient (blue → purple → teal). Less chat-like, more tech/modern feel.
+
 #### Tester Feedback (feb 2026)
 - **"Hej du!" → "Hej [namn]!"** — dashboard greeting now checks profiles table for name (invited testers had name on profile but not in auth metadata). Falls back to "Hej kompis!" instead of "Hej du!"
 - **Invitations sent counter** — party "Gäster" card now shows "X inbjudningar skickade" when invitations have been sent
