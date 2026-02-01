@@ -3,8 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { BetaBanner } from '@/components/beta/BetaBanner';
 import { BetaRegisterForm } from './BetaRegisterForm';
 import { WaitlistForm } from '@/components/forms/WaitlistForm';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { BETA_CONFIG, isBetaEnded } from '@/lib/beta-config';
+
+export const dynamic = 'force-dynamic';
 
 export default async function RegisterPage() {
   if (isBetaEnded()) {
@@ -59,9 +61,9 @@ export default async function RegisterPage() {
     );
   }
 
-  const supabase = await createClient();
+  const adminClient = createAdminClient();
 
-  const { count: testerCount } = await supabase
+  const { count: testerCount } = await adminClient
     .from('profiles')
     .select('*', { count: 'exact', head: true })
     .eq('role', 'tester');
