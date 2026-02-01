@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **OG image** (`opengraph-image.tsx`): Dynamic Open Graph image (1200x630) with brand colors, tagline and feature pills — shows when sharing links on Discord/Facebook/LinkedIn
+- **Apple touch icon** (`apple-icon.tsx`): Dynamic 180x180 icon for iOS homescreen
+
+### Changed
+
+- **CLAUDE.md rewrite**: Stripped from ~1300 to ~150 lines — removed completed implementation plan, mock-first docs, duplicate schema/SEO content. Kept essential: overview, stack, structure, commands, env vars, rules.
+- **README.md rewrite**: Professional format with badges, feature sections, tech stack table, test matrix, security overview, contact info
+- **Removed leftover assets**: Deleted 5 Next.js template SVGs from `public/` (file.svg, globe.svg, next.svg, vercel.svg, window.svg)
+- **OG metadata cleanup**: Removed manual `images` from openGraph/twitter metadata — `opengraph-image.tsx` file convention takes priority
+
+### Added
+
 #### Code Review Fixes (LO-02, CR-09)
 - **E2E test suite** (CR-09): 5 Playwright test files with ~41 test cases covering landing page, footer modals, auth pages, RSVP flow, navigation/SEO, and accessibility
 - **Playwright config**: Support for `PLAYWRIGHT_BASE_URL` env var to run tests against deployed apps (skips webServer when external URL)

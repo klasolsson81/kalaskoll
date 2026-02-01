@@ -56,20 +56,11 @@ export const metadata: Metadata = {
     siteName: 'KalasKoll',
     title: 'KalasKoll – Smarta barnkalas-inbjudningar',
     description: 'Skapa digitala barnkalas-inbjudningar med QR-kod. Gästerna svarar via mobilen!',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'KalasKoll - Digitala barnkalas-inbjudningar',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'KalasKoll – Smarta barnkalas-inbjudningar',
     description: 'Skapa digitala inbjudningar med QR-kod. Gästerna svarar via mobilen!',
-    images: ['/og-image.png'],
   },
   robots: {
     index: true,
