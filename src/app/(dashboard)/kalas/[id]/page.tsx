@@ -8,7 +8,8 @@ import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { DeletePartyButton } from './DeletePartyButton';
 import { InvitationSection } from './InvitationSection';
 import { SendInvitationsSection } from './SendInvitationsSection';
-import { ADMIN_EMAILS } from '@/lib/constants';
+import { ADMIN_EMAILS, SMS_MAX_PER_PARTY } from '@/lib/constants';
+import { BETA_CONFIG } from '@/lib/beta-config';
 
 interface PartyPageProps {
   params: Promise<{ id: string }>;
@@ -118,6 +119,18 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
   const isAdmin = ADMIN_EMAILS.includes(user?.email ?? '');
 
+  // Fetch profile for beta role
+  const { data: profile } = user
+    ? await supabase
+        .from('profiles')
+        .select('role, beta_sms_used')
+        .eq('id', user.id)
+        .single()
+    : { data: null };
+
+  const isTester = profile?.role === 'tester';
+  const smsLimit = isTester ? BETA_CONFIG.freeSmsInvites : SMS_MAX_PER_PARTY;
+
   // Determine SMS availability
   // allowed = true when: no usage yet, same party, or party was deleted (reusable quota)
   let smsUsage: { smsCount: number; allowed: boolean } | undefined;
@@ -196,6 +209,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
             childName={party.child_name}
             invitedGuests={invitedGuestsWithStatus}
             smsUsage={smsUsage}
+            smsLimit={smsLimit}
             isAdmin={isAdmin}
           />
         )}

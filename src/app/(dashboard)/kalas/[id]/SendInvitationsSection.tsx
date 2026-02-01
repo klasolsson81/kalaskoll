@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { QRCode } from '@/components/shared/QRCode';
-import { APP_URL, SMS_MAX_PER_PARTY } from '@/lib/constants';
+import { APP_URL } from '@/lib/constants';
 import { sendSmsInvitationSchema } from '@/lib/utils/validation';
 
 type InviteMethod = 'email' | 'sms';
@@ -31,6 +31,7 @@ interface SendInvitationsSectionProps {
   childName: string;
   invitedGuests: InvitedGuest[];
   smsUsage?: SmsUsage;
+  smsLimit: number;
   isAdmin?: boolean;
 }
 
@@ -40,6 +41,7 @@ export function SendInvitationsSection({
   childName,
   invitedGuests,
   smsUsage,
+  smsLimit,
   isAdmin,
 }: SendInvitationsSectionProps) {
   const router = useRouter();
@@ -178,7 +180,7 @@ export function SendInvitationsSection({
 
   const smsCount = smsUsage?.smsCount ?? 0;
   const smsAllowed = smsUsage?.allowed ?? false;
-  const smsRemaining = SMS_MAX_PER_PARTY - smsCount;
+  const smsRemaining = smsLimit - smsCount;
 
   const canShare = typeof navigator !== 'undefined' && !!navigator.share;
 
@@ -286,7 +288,7 @@ export function SendInvitationsSection({
               </p>
             ) : (
               <p className="text-xs text-muted-foreground">
-                {smsCount} av {SMS_MAX_PER_PARTY} SMS använda för detta kalas
+                {smsCount} av {smsLimit} SMS använda
                 {smsRemaining > 0 && ` (${smsRemaining} kvar)`}
               </p>
             )}
