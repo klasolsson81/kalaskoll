@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isAdminEmail } from '@/lib/utils/admin-guard';
 import { ProfileDropdown } from './ProfileDropdown';
+import { AdminFeedbackBadge } from './AdminFeedbackBadge';
+import { IdleTimeout } from './IdleTimeout';
 
 export default async function DashboardLayout({
   children,
@@ -40,12 +42,7 @@ export default async function DashboardLayout({
                 >
                   Admin
                 </Link>
-                <Link
-                  href="/admin/feedback"
-                  className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  Feedback
-                </Link>
+                <AdminFeedbackBadge />
               </nav>
             )}
           </div>
@@ -54,6 +51,7 @@ export default async function DashboardLayout({
         <div className="h-[3px] gradient-celebration" />
       </header>
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+      <IdleTimeout isSuperAdmin={isAdmin} />
     </div>
   );
 }

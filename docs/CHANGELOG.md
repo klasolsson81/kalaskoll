@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Admin Feedback Badge
+- **Unread feedback count API** (`GET /api/admin/feedback/count`) — lightweight endpoint returning count of feedback with `status = 'new'`, admin-guarded
+- **AdminFeedbackBadge component** — replaces static "Feedback" link in admin nav. Polls count every 30 seconds, shows accent-colored badge with pulse animation when unread feedback exists
+
+#### Inactivity Timeout
+- **IdleTimeout component** — tracks `mousemove`, `keydown`, `scroll`, `touchstart`, `click` events. After 30 minutes idle, shows warning banner ("Du loggas ut om 2 minuter pga inaktivitet") with "Jag är kvar" button. Auto-logout after 32 minutes total via `/api/auth/logout`
+- **Superadmin exempt** — timeout is completely disabled for admin users
+
+### Added
+
 #### 3D Floating Balloons (Landing Page)
 - **16 glossy 3D party balloons** (React Three Fiber) spread across the full viewport width, covering far edges on ultrawide monitors
 - Each balloon: oval body with `meshPhysicalMaterial` (clearcoat, transparency), specular highlight, knot, and a **dynamic string** that sways with breeze and trails behind motion
