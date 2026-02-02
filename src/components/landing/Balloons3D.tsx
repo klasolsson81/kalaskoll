@@ -48,8 +48,8 @@ const BALLOONS: {
   { pos: [12.5, 1, -4.5], color: '#ec4899', scale: 0.30, speed: 0.25, phase: 1.9 },
 ];
 
-const REPULSION_RADIUS = 2.5;
-const REPULSION_STRENGTH = 12;
+const REPULSION_RADIUS = 3.5;
+const REPULSION_STRENGTH = 45;
 const STRING_SEGS = 14;
 
 /* ── Single balloon with dynamic string ────────────────── */
@@ -133,11 +133,11 @@ function Balloon({
     offsetRef.current.x += velocityRef.current.x * clampedDt;
     offsetRef.current.y += velocityRef.current.y * clampedDt;
 
-    const decay = Math.pow(0.92, clampedDt * 60);
+    const decay = Math.pow(0.97, clampedDt * 60);
     offsetRef.current.x *= decay;
     offsetRef.current.y *= decay;
 
-    const vDecay = Math.pow(0.88, clampedDt * 60);
+    const vDecay = Math.pow(0.94, clampedDt * 60);
     velocityRef.current.x *= vDecay;
     velocityRef.current.y *= vDecay;
 
