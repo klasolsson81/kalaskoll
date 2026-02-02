@@ -1,6 +1,6 @@
 # CLAUDE.md – KalasKoll
 
-> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-01
+> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-02
 
 ---
 
@@ -28,7 +28,8 @@ Foralder skapar konto → Verifierar e-post → Dashboard
 | Omrade | Teknologi |
 |--------|-----------|
 | Framework | Next.js 16 (App Router), TypeScript 5 |
-| Styling | Tailwind CSS 4, shadcn/ui |
+| Styling | Tailwind CSS 4, shadcn/ui (glass-morphism theme) |
+| 3D | Three.js, React Three Fiber, drei |
 | Databas | Supabase (PostgreSQL, Auth, Storage, Realtime) |
 | Rate Limiting | Upstash Redis |
 | AI-bilder | Replicate Flux Schnell / OpenAI DALL-E 3 |
@@ -62,11 +63,13 @@ src/
     api/                 # RSVP, invitation, auth, children
     r/[token]/           # Publik RSVP-sida + redigera svar
   components/
+    beta/                # BetaBanner, BetaLimitsDisplay, BetaProgressBar (DEMO)
+    landing/             # GradientMeshBg, Balloons3D, ConfettiTrigger
     templates/           # TemplateCard, TemplatePicker, theme-configs
     cards/               # AiInvitationCard, InvitationCard, PartyHeader
-    forms/               # RsvpForm, PartyForm, AllergyCheckboxes
+    forms/               # RsvpForm, PartyForm, AllergyCheckboxes, WaitlistForm
     layout/              # Header, Footer, FooterModal, Sidebar
-    shared/              # PhotoFrame, PhotoCropDialog, QRCode, DevBadge
+    shared/              # PhotoFrame, PhotoCropDialog, QRCode, FeedbackWidget
   lib/
     supabase/            # Client, server, admin, middleware
     ai/                  # Replicate + OpenAI + promptbyggare
@@ -81,6 +84,9 @@ docs/
   CHANGELOG.md           # Alla andringar
   API.md                 # API-dokumentation
   DATABASE.md            # Schema, RLS, migrations
+  KALASKOLL_BETA_MASTERPLAN.md  # Beta-system design (DEMO)
+  KALASKOLL_CODE_REVIEW_MASTERPLAN.md
+  KALASKOLL_UI_REFACTOR_MASTERPLAN.md
 ```
 
 ---
@@ -150,6 +156,45 @@ pnpm lint && pnpm test && pnpm build
 ```
 
 Uppdatera `docs/CHANGELOG.md` for feat/fix. Pusha till GitHub efter commit.
+
+---
+
+## Demo/Beta-testning (PAGAR)
+
+Demo-testning pagar med riktiga anvandare. Appen kors i "beta-lage" dar testare far gratis AI-bilder och SMS.
+
+**VIKTIGT:** Nar agaren ger order om att "ta bort demo-grejer" ska foljande tas bort — men INTE forbattringar (UI, funktioner, bugfixar) som gjorts under demo-perioden:
+
+### Ta bort vid demo-avslut
+
+**Komponenter:**
+- `src/components/beta/BetaBanner.tsx` — registreringsbanner
+- `src/components/beta/BetaLimitsDisplay.tsx` — dashboard-status
+- `src/components/beta/BetaProgressBar.tsx` — platser-kvar bar
+
+**Sidor/formulär:**
+- `src/app/(auth)/register/BetaRegisterForm.tsx` — beta-registrering
+- `src/app/(auth)/beta-ended/page.tsx` — "betan har avslutats"-sida
+- `src/components/forms/WaitlistForm.tsx` — vantelista
+
+**API-routes:**
+- `src/app/api/beta/register/route.ts`
+- `src/app/api/beta/stats/route.ts`
+- `src/app/api/waitlist/route.ts`
+- `src/app/api/cron/cleanup-testers/route.ts`
+
+**Konfiguration:**
+- `src/lib/beta-config.ts` — all beta-logik (datum, limits, statuscheck)
+- `src/hooks/useBetaStatus.ts` — klient-hook for beta-status
+
+**I befintliga filer (rensa, ta inte bort filen):**
+- `src/app/(auth)/register/page.tsx` — ta bort beta-villkor, gör till vanlig registrering
+- `src/app/(dashboard)/dashboard/page.tsx` — ta bort `<BetaLimitsDisplay />`
+- Databasschema: `profiles.role` behåll men ta bort `beta_*`-fält
+
+### Beháll
+
+Alla UI-forbattringar: glass-morphism, 3D-ballonger, gradient mesh, font-display, hover-animationer, feedback-widget, etc. Dessa ar permanenta forbattringar, inte demo-specifika.
 
 ---
 

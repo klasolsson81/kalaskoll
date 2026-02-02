@@ -69,7 +69,8 @@ Projektet är byggt av **Klas Olsson** som förberedelse för sin son Alexanders
 |--------|-----------|
 | **Framework** | Next.js 16 (App Router) |
 | **Språk** | TypeScript 5 |
-| **Styling** | Tailwind CSS 4 + shadcn/ui |
+| **Styling** | Tailwind CSS 4 + shadcn/ui (glass-morphism) |
+| **3D** | Three.js + React Three Fiber |
 | **Databas** | Supabase (PostgreSQL, Auth, Storage, Realtime) |
 | **Rate Limiting** | Upstash Redis |
 | **AI-bilder** | Replicate Flux Schnell / OpenAI DALL-E 3 |
