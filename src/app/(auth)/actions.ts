@@ -3,10 +3,11 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { loginSchema, registerSchema } from '@/lib/utils/validation';
+import { loginSchema, registerSchema, forgotPasswordSchema } from '@/lib/utils/validation';
 
 export interface AuthResult {
   error?: string;
+  success?: boolean;
 }
 
 export async function login(formData: FormData): Promise<AuthResult> {
@@ -66,5 +67,29 @@ export async function register(formData: FormData): Promise<AuthResult> {
   }
 
   redirect('/check-email');
+}
+
+export async function forgotPassword(formData: FormData): Promise<AuthResult> {
+  const email = formData.get('email') as string;
+
+  const parsed = forgotPasswordSchema.safeParse({ email });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const headersList = await headers();
+  const origin = (headersList.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, '');
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+  });
+
+  if (error) {
+    console.error('[forgotPassword] error:', error.message);
+  }
+
+  // Always return success to prevent email enumeration
+  return { success: true };
 }
 

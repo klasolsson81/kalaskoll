@@ -223,6 +223,11 @@ export const profileSchema = z.object({
     .or(z.literal('')),
 });
 
+// Forgot password schema
+export const forgotPasswordSchema = z.object({
+  email: z.string().email('Ogiltig e-postadress'),
+});
+
 // Password change schema
 export const passwordSchema = z
   .object({
@@ -284,6 +289,7 @@ export type AdminUpdateFeedbackFormData = z.infer<typeof adminUpdateFeedbackSche
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type PasswordFormData = z.infer<typeof passwordSchema>;
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type BetaRegisterFormData = z.infer<typeof betaRegisterSchema>;
 export type WaitlistFormData = z.infer<typeof waitlistSchema>;
 export type FeedbackFormData = z.infer<typeof feedbackSchema>;
