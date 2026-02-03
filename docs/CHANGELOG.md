@@ -7,8 +7,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 #### Landing Page Messaging Balance
-- **Multi-channel focus** — hero subtitle, step descriptions, feature card, and FAQ rewritten to present e-post, SMS, delningslänk and QR-kod as equal delivery channels instead of leading with paper/QR-only flow
-- **JSON-LD updated** — `featureList` and FAQ #2 in structured data match the new multi-channel messaging
+- **Multi-channel focus** — hero subtitle, step descriptions, feature card, and FAQ rewritten to present e-post, delningslänk and QR-kod as the free delivery channels instead of leading with paper/QR-only flow
+- **SMS correctly positioned** — SMS mentioned only in FAQ with "Med Guldkalas" qualifier (premium feature, 49 kr)
+- **JSON-LD updated** — `featureList` and FAQ #2 in structured data match the new messaging
 
 ### Fixed
 

@@ -1,6 +1,6 @@
 # CLAUDE.md – KalasKoll
 
-> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-02
+> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-03
 
 ---
 
@@ -15,8 +15,8 @@
 ```
 Foralder skapar konto → Verifierar e-post → Dashboard
 → Skapar kalas med AI-inbjudan eller gratis mall
-→ Skriver ut inbjudan med QR-kod
-→ Gaster skannar QR → Mobil OSA-sida
+→ Delar inbjudan via e-post, lank eller QR-utskrift (SMS med Guldkalas)
+→ Gaster oppnar lanken → Mobil OSA-sida
 → Svarar ja/nej + allergiinfo (krypterad)
 → Foralder ser svar i realtid
 ```
