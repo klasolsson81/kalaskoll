@@ -25,7 +25,7 @@ export default function HomePage() {
     },
     featureList: [
       'AI-genererade inbjudningskort',
-      'QR-kod för enkel OSA',
+      'Enkel OSA via e-post, SMS och QR-kod',
       'Allergihantering',
       'Gästlista i realtid',
     ],
@@ -45,10 +45,10 @@ export default function HomePage() {
       },
       {
         '@type': 'Question',
-        name: 'Hur fungerar QR-koden?',
+        name: 'Hur skickar jag inbjudningar?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Varje kalas får en unik QR-kod som du skriver ut på inbjudan. Gästerna scannar koden med sin mobil och kan svara direkt – inget konto krävs.',
+          text: 'Du kan skicka via e-post, SMS eller dela en länk direkt. Vill du ge fysiska inbjudningar? Varje kalas har en unik QR-kod du kan skriva ut. Gästerna svarar direkt via mobilen – inget konto krävs.',
         },
       },
       {
@@ -142,9 +142,8 @@ export default function HomePage() {
                 </ScrollReveal>
                 <ScrollReveal delay={200}>
                   <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-                    Skriv ut inbjudningskort med QR-kod, lägg dem i barnens fack och låt
-                    vårdnadshavarna svara direkt via mobilen. Slipp kaos med papperslappar,
-                    SMS och anteckningar.
+                    Skapa inbjudningar och skicka via e-post, SMS eller delningslänk —
+                    eller skriv ut med QR-kod. Gästerna svarar direkt via mobilen.
                   </p>
                 </ScrollReveal>
                 <ScrollReveal delay={300}>
@@ -196,7 +195,7 @@ export default function HomePage() {
                     icon: '📱',
                     title: 'Dela inbjudan',
                     description:
-                      'Skriv ut inbjudan med QR-kod och ge till barnen. Eller skicka via SMS och e-post.',
+                      'Skicka inbjudan via e-post, SMS eller dela en länk. Vill du ge lappar? Skriv ut med QR-kod.',
                     glow: 'shadow-[0_0_20px_oklch(0.65_0.13_175/0.15)]',
                     color: 'bg-secondary/10 text-secondary',
                   },
@@ -205,7 +204,7 @@ export default function HomePage() {
                     icon: '✅',
                     title: 'Samla svar',
                     description:
-                      'Gästerna scannar QR-koden och svarar direkt på mobilen. Du ser allt i realtid.',
+                      'Gästerna öppnar länken och svarar direkt på mobilen. Du ser svaren i realtid.',
                     glow: 'shadow-[0_0_20px_oklch(0.80_0.14_75/0.15)]',
                     color: 'bg-accent/10 text-accent-foreground',
                   },
@@ -234,7 +233,7 @@ export default function HomePage() {
             <div className="mx-auto max-w-5xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/50">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/70">
                     Funktioner
                   </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
@@ -250,8 +249,8 @@ export default function HomePage() {
                   },
                   {
                     icon: '📱',
-                    title: 'QR-kod för enkel OSA',
-                    description: 'Gästerna behöver bara scanna QR-koden med mobilen. Inget konto krävs. Svaret tar under 30 sekunder.',
+                    title: 'Enkel OSA via mobilen',
+                    description: 'Gästerna klickar på länken i mailet, SMS:et eller scannar QR-koden — och svarar direkt. Inget konto krävs.',
                     gradient: 'bg-gradient-to-br from-secondary/15 to-teal-400/15',
                   },
                   {
@@ -292,7 +291,7 @@ export default function HomePage() {
             <div className="mx-auto max-w-3xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/50">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/70">
                     Vanliga frågor
                   </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight">Vanliga frågor</h2>
@@ -305,8 +304,8 @@ export default function HomePage() {
                     a: 'Grundfunktionerna är helt gratis. Premium-funktioner som AI-genererade inbjudningar kostar 49 kr per kalas.',
                   },
                   {
-                    q: 'Hur fungerar QR-koden?',
-                    a: 'Varje kalas får en unik QR-kod som du skriver ut på inbjudan. Gästerna scannar koden med sin mobil och kan svara direkt – inget konto krävs.',
+                    q: 'Hur skickar jag inbjudningar?',
+                    a: 'Du kan skicka via e-post, SMS eller dela en länk direkt. Vill du ge fysiska inbjudningar? Varje kalas har en unik QR-kod du kan skriva ut. Gästerna svarar direkt via mobilen – inget konto krävs.',
                   },
                   {
                     q: 'Är allergiinformationen säker?',

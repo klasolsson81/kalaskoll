@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Landing Page Messaging Balance
+- **Multi-channel focus** — hero subtitle, step descriptions, feature card, and FAQ rewritten to present e-post, SMS, delningslänk and QR-kod as equal delivery channels instead of leading with paper/QR-only flow
+- **JSON-LD updated** — `featureList` and FAQ #2 in structured data match the new multi-channel messaging
+
+### Fixed
+
+#### WCAG AA Contrast Improvements
+- **`--muted-foreground` darkened** — `oklch(0.5 …)` → `oklch(0.45 …)` in globals.css, improving all muted text from ~4:1 to ~4.8:1 on white
+- **Section labels** ("Funktioner", "Vanliga frågor") bumped from `text-foreground/50` to `text-foreground/70`
+- **Footer text** — description `text-foreground/70` → `/80`, creator line `/60` → `/70`, nav/legal links `/65` → `/80`, copyright `/50` → `/60`
+- **Priser modal** — removed cascading opacity (`text-muted-foreground/70` → `text-muted-foreground`)
+
 ### Added
 
 #### Increased Beta Limits (5 → 15)
