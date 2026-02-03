@@ -1,6 +1,7 @@
 'use client';
 
 import { useBetaStatus } from '@/hooks/useBetaStatus';
+import { BETA_CONFIG } from '@/lib/beta-config';
 import { Sparkles, MessageSquare, Clock, Heart } from 'lucide-react';
 
 function getFeedbackMood(count: number): { emoji: string; label: string } {
@@ -32,7 +33,7 @@ export function BetaLimitsDisplay() {
             <span>AI-bilder</span>
           </div>
           <span className="font-medium">
-            {status.aiImagesRemaining} kvar av 5
+            {status.aiImagesRemaining} kvar av {BETA_CONFIG.freeAiImages}
           </span>
         </div>
 
@@ -42,7 +43,7 @@ export function BetaLimitsDisplay() {
             <span>SMS-utskick</span>
           </div>
           <span className="font-medium">
-            {status.smsRemaining} kvar av 5
+            {status.smsRemaining} kvar av {BETA_CONFIG.freeSmsInvites}
           </span>
         </div>
 

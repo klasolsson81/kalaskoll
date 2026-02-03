@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Increased Beta Limits (5 → 15)
+- **AI images and SMS raised to 15** — `BETA_CONFIG.freeAiImages` and `freeSmsInvites` changed from 5 to 15, applies to all existing and new testers automatically (system tracks usage count against config limit)
+- **BetaLimitsDisplay** now reads limit from config instead of hardcoded "5"
+- **BetaBanner** shows strikethrough "~~5~~" with bold green "15" for both AI images and SMS
+
 #### Feedback Resolved Email Notification
 - **Auto-email on resolve** — when admin marks feedback as "Löst", user receives email via Resend: "Tack för din feedback! Vi har tittat på det du rapporterade och det ska vara åtgärdat nu." Includes truncated original message. Fire-and-forget (doesn't block admin UI).
 

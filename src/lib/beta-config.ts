@@ -3,8 +3,8 @@ export const BETA_END_DATE = '2026-02-28';
 
 export const BETA_CONFIG = {
   maxTesters: 100,
-  freeAiImages: 5,
-  freeSmsInvites: 5,
+  freeAiImages: 15,
+  freeSmsInvites: 15,
   registrationOpen: true,
   waitlistEnabled: true,
   maxRegistrationsPerIpPerHour: 3,

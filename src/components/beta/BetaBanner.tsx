@@ -60,11 +60,11 @@ export function BetaBanner({ stats }: BetaBannerProps) {
           <ul className="mt-3 space-y-1 text-sm">
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
-              {BETA_CONFIG.freeAiImages} AI-genererade inbjudningskort
+              <span><s className="text-muted-foreground">5</s> <span className="font-semibold text-green-700">{BETA_CONFIG.freeAiImages}</span> AI-genererade inbjudningskort</span>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
-              {BETA_CONFIG.freeSmsInvites} SMS-inbjudningar
+              <span><s className="text-muted-foreground">5</s> <span className="font-semibold text-green-700">{BETA_CONFIG.freeSmsInvites}</span> SMS-inbjudningar</span>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-green-600">&#10003;</span>
