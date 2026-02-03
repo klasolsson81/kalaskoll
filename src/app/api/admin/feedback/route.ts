@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/utils/admin-guard';
 import { adminUpdateFeedbackSchema } from '@/lib/utils/validation';
+import { sendFeedbackResolved } from '@/lib/email/resend';
 import { z } from 'zod';
 
 export async function GET() {
@@ -73,6 +74,25 @@ export async function PATCH(request: NextRequest) {
         { error: `DB: ${error.message} (${error.code})` },
         { status: 500 },
       );
+    }
+
+    // Send notification email when feedback is marked as resolved
+    if (status === 'resolved') {
+      const { data: fb } = await adminClient
+        .from('feedback')
+        .select('user_email, message')
+        .eq('id', feedbackId)
+        .single();
+
+      if (fb?.user_email) {
+        // Fire-and-forget — don't block the response
+        sendFeedbackResolved({
+          to: fb.user_email,
+          feedbackMessage: fb.message,
+        }).catch((err) => {
+          console.error('Failed to send feedback resolved email:', err);
+        });
+      }
     }
 
     return NextResponse.json({ success: true });

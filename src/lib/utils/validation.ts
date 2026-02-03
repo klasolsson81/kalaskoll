@@ -260,7 +260,7 @@ export const waitlistSchema = z.object({
 // Feedback schema
 export const feedbackSchema = z.object({
   message: z.string().min(1, 'Meddelande krävs').max(5000),
-  screenshot: z.string().optional(),
+  screenshot: z.string().nullish(),
   pageUrl: z.string().url(),
   userAgent: z.string().optional(),
   screenSize: z.string().optional(),

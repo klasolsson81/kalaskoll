@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Feedback Resolved Email Notification
+- **Auto-email on resolve** — when admin marks feedback as "Löst", user receives email via Resend: "Tack för din feedback! Vi har tittat på det du rapporterade och det ska vara åtgärdat nu." Includes truncated original message. Fire-and-forget (doesn't block admin UI).
+
+### Fixed
+
+#### Feedback Widget Submission Bug
+- **"Invalid input: expected string, received null"** — feedback widget failed to submit when no screenshot was attached. Root cause: Zod schema used `.optional()` (accepts `undefined` but not `null`), while the widget sent `screenshot: null`. Fixed by changing to `.nullish()`.
+
+### Added
+
 #### Admin Feedback Badge
 - **Unread feedback count API** (`GET /api/admin/feedback/count`) — lightweight endpoint returning count of feedback with `status = 'new'`, admin-guarded
 - **AdminFeedbackBadge component** — replaces static "Feedback" link in admin nav. Polls count every 30 seconds, shows accent-colored badge with pulse animation when unread feedback exists

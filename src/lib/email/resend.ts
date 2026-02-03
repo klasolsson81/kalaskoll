@@ -220,6 +220,79 @@ export async function sendTesterInvite({
   }
 }
 
+interface SendFeedbackResolvedParams {
+  to: string;
+  feedbackMessage: string;
+}
+
+export async function sendFeedbackResolved({
+  to,
+  feedbackMessage,
+}: SendFeedbackResolvedParams): Promise<SendResult> {
+  const truncated = feedbackMessage.length > 200
+    ? feedbackMessage.slice(0, 200) + '…'
+    : feedbackMessage;
+
+  const html = `
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;color:#111827;">
+  <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
+    <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">
+        Tack för din feedback!
+      </h1>
+      <p style="font-size:16px;color:#6b7280;margin:0 0 24px;">
+        Vi har tittat på det du rapporterade och det ska vara åtgärdat nu.
+      </p>
+
+      <div style="background:#f3f4f6;border-radius:8px;padding:16px;margin-bottom:24px;">
+        <p style="font-size:12px;color:#6b7280;margin:0 0 4px;font-weight:600;">Din feedback:</p>
+        <p style="font-size:14px;color:#374151;margin:0;white-space:pre-wrap;">${escapeHtml(truncated)}</p>
+      </div>
+
+      <p style="font-size:14px;color:#374151;margin:0;">
+        Om du upplever att problemet kvarstår eller har fler synpunkter — tveka inte att skicka ny feedback direkt i appen.
+      </p>
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:16px;">
+      Skickat via KalasKoll – Smarta inbjudningar för barnkalas
+    </p>
+  </div>
+</body>
+</html>`.trim();
+
+  const resend = getResendClient();
+
+  try {
+    const { error } = await resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to,
+      subject: 'Din feedback har åtgärdats – tack!',
+      html,
+    });
+
+    if (error) {
+      console.error('[Email] Feedback resolved failed:', { to, error: error.message });
+      return { success: false, error: error.message };
+    }
+
+    console.log('[Email] Feedback resolved sent:', { to });
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Email] Feedback resolved error:', { to, error: msg });
+    return { success: false, error: msg };
+  }
+}
+
 interface SendPartyInvitationParams {
   to: string;
   partyChildName: string;
