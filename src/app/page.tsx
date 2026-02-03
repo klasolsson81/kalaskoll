@@ -25,7 +25,7 @@ export default function HomePage() {
     },
     featureList: [
       'AI-genererade inbjudningskort',
-      'Enkel OSA via e-post, SMS och QR-kod',
+      'Enkel OSA via e-post, länk och QR-kod',
       'Allergihantering',
       'Gästlista i realtid',
     ],
@@ -48,7 +48,7 @@ export default function HomePage() {
         name: 'Hur skickar jag inbjudningar?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Du kan skicka via e-post, SMS eller dela en länk direkt. Vill du ge fysiska inbjudningar? Varje kalas har en unik QR-kod du kan skriva ut. Gästerna svarar direkt via mobilen – inget konto krävs.',
+          text: 'Du kan skicka via e-post eller dela en länk direkt. Vill du ge fysiska inbjudningar? Varje kalas har en unik QR-kod du kan skriva ut. Med Guldkalas kan du även skicka via SMS. Gästerna svarar direkt via mobilen – inget konto krävs.',
         },
       },
       {
@@ -142,8 +142,8 @@ export default function HomePage() {
                 </ScrollReveal>
                 <ScrollReveal delay={200}>
                   <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-                    Skapa inbjudningar och skicka via e-post, SMS eller delningslänk —
-                    eller skriv ut med QR-kod. Gästerna svarar direkt via mobilen.
+                    Skapa inbjudningar och dela via e-post, länk eller QR-utskrift.
+                    Gästerna svarar direkt via mobilen.
                   </p>
                 </ScrollReveal>
                 <ScrollReveal delay={300}>
@@ -195,7 +195,7 @@ export default function HomePage() {
                     icon: '📱',
                     title: 'Dela inbjudan',
                     description:
-                      'Skicka inbjudan via e-post, SMS eller dela en länk. Vill du ge lappar? Skriv ut med QR-kod.',
+                      'Skicka inbjudan via e-post eller dela en länk. Vill du ge lappar? Skriv ut med QR-kod.',
                     glow: 'shadow-[0_0_20px_oklch(0.65_0.13_175/0.15)]',
                     color: 'bg-secondary/10 text-secondary',
                   },
@@ -250,7 +250,7 @@ export default function HomePage() {
                   {
                     icon: '📱',
                     title: 'Enkel OSA via mobilen',
-                    description: 'Gästerna klickar på länken i mailet, SMS:et eller scannar QR-koden — och svarar direkt. Inget konto krävs.',
+                    description: 'Gästerna klickar på länken i mailet eller scannar QR-koden — och svarar direkt. Inget konto krävs.',
                     gradient: 'bg-gradient-to-br from-secondary/15 to-teal-400/15',
                   },
                   {
@@ -305,7 +305,7 @@ export default function HomePage() {
                   },
                   {
                     q: 'Hur skickar jag inbjudningar?',
-                    a: 'Du kan skicka via e-post, SMS eller dela en länk direkt. Vill du ge fysiska inbjudningar? Varje kalas har en unik QR-kod du kan skriva ut. Gästerna svarar direkt via mobilen – inget konto krävs.',
+                    a: 'Du kan skicka via e-post eller dela en länk direkt. Vill du ge fysiska inbjudningar? Varje kalas har en unik QR-kod du kan skriva ut. Med Guldkalas kan du även skicka via SMS. Gästerna svarar direkt via mobilen – inget konto krävs.',
                   },
                   {
                     q: 'Är allergiinformationen säker?',
