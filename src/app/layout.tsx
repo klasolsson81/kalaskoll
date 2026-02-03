@@ -31,11 +31,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: 'KalasKoll – Smarta barnkalas-inbjudningar med QR-kod',
+    default: 'KalasKoll – Smarta barnkalas-inbjudningar',
     template: '%s | KalasKoll',
   },
   description:
-    'Skapa digitala barnkalas-inbjudningar med QR-kod. Gäster svarar via mobilen, du ser OSA i realtid. Hantera allergier GDPR-säkert. Gratis att börja!',
+    'Skapa digitala barnkalas-inbjudningar och dela via e-post, länk eller QR-kod. Gästerna svarar via mobilen, du ser OSA i realtid. GDPR-säker allergihantering. Gratis att börja!',
   keywords: [
     'barnkalas',
     'inbjudningar',
@@ -62,12 +62,12 @@ export const metadata: Metadata = {
     url: APP_URL,
     siteName: 'KalasKoll',
     title: 'KalasKoll – Smarta barnkalas-inbjudningar',
-    description: 'Skapa digitala barnkalas-inbjudningar med QR-kod. Gästerna svarar via mobilen!',
+    description: 'Skapa digitala barnkalas-inbjudningar och dela via e-post, länk eller QR-kod. Gästerna svarar via mobilen!',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'KalasKoll – Smarta barnkalas-inbjudningar',
-    description: 'Skapa digitala inbjudningar med QR-kod. Gästerna svarar via mobilen!',
+    description: 'Skapa digitala barnkalas-inbjudningar och dela via e-post, länk eller QR-kod. Gästerna svarar via mobilen!',
   },
   robots: {
     index: true,

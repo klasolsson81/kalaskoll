@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+#### OpenGraph & Social Media Image
+- **Landing page screenshot as OG image** — replaced dynamic green-themed `opengraph-image.tsx` (ImageResponse) with static `opengraph-image.png` showing the actual landing page (purple gradient, 3D balloons, glassmorphism hero)
+- **Twitter card image added** — `twitter-image.png` for consistent previews on Twitter/X
+- **Metadata updated** — title, description, OG and Twitter text rewritten to present all delivery channels (e-post, länk, QR-kod) instead of QR-only focus
+
 #### Landing Page Messaging Balance
 - **Multi-channel focus** — hero subtitle, step descriptions, feature card, and FAQ rewritten to present e-post, delningslänk and QR-kod as the free delivery channels instead of leading with paper/QR-only flow
 - **SMS correctly positioned** — SMS mentioned only in FAQ with "Med Guldkalas" qualifier (premium feature, 49 kr)
