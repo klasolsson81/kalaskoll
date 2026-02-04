@@ -1,6 +1,6 @@
 # CLAUDE.md – KalasKoll
 
-> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-03
+> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-04
 
 ---
 
@@ -62,6 +62,11 @@ src/
     (dashboard)/         # Dashboard, kalas CRUD, gastlista, profil
     api/                 # RSVP, invitation, auth, children
     r/[token]/           # Publik RSVP-sida + redigera svar
+    sitemap.ts           # Sitemap (/, /login, /register, /forgot-password)
+    robots.ts            # Robots (disallow /api, /dashboard, /admin, /r)
+    icon.tsx             # Favicon 32x32 (edge-genererad)
+    apple-icon.tsx       # Apple Touch Icon 180x180
+    opengraph-image.png  # OG-bild for social delning
   components/
     beta/                # BetaBanner, BetaLimitsDisplay, BetaProgressBar (DEMO)
     landing/             # GradientMeshBg, Balloons3D, ConfettiTrigger
@@ -110,6 +115,35 @@ Se `.env.example` for fullstandig lista. Kritiska:
 | `NEXT_PUBLIC_MOCK_AI` | `true` = mock-bilder, `false` = riktiga AI-anrop |
 
 > ALDRIG commita `.env.local` eller secrets.
+
+---
+
+## SEO
+
+### Metadata-monster
+
+- Root layout (`src/app/layout.tsx`) har default-metadata med template `%s | KalasKoll`
+- Varje `page.tsx` exporterar `export const metadata` eller `generateMetadata` med unik `title` + `description`
+- For `'use client'`-sidor: klientkomponenten ar extraherad till en egen fil (t.ex. `LoginForm.tsx`), och `page.tsx` ar en serverkomponent som exporterar metadata och renderar klientkomponenten
+- Dynamiska routes (kalas/[id], r/[token]) anvander `generateMetadata` for dynamiska titlar
+
+### SEO-filer i `src/app/`
+
+| Fil | Beskrivning |
+|-----|-------------|
+| `sitemap.ts` | Genererar `/sitemap.xml` med publika sidor |
+| `robots.ts` | Genererar `/robots.txt` — disallow /api, /dashboard, /admin, /r |
+| `icon.tsx` | Edge-genererad 32x32 favicon (PNG) |
+| `apple-icon.tsx` | Edge-genererad 180x180 Apple Touch Icon |
+| `opengraph-image.png` | Statisk OG-bild for social delning |
+| `favicon.ico` | Legacy favicon |
+
+### Regler vid nya sidor
+
+1. Varje ny `page.tsx` MASTE ha `export const metadata` med unik `title`
+2. Interna sidor (bakom auth) ska ha `robots: { index: false, follow: false }`
+3. Publika sidor ska ha `alternates: { canonical: '/path' }`
+4. Nya publika routes ska laggas till i `sitemap.ts`
 
 ---
 

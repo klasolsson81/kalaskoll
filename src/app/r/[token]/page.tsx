@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,44 @@ function createServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
+}
+
+export async function generateMetadata({ params }: RsvpPageProps): Promise<Metadata> {
+  const { token } = await params;
+  const supabase = createServiceClient();
+
+  const { data: invitation } = await supabase
+    .from('invitations')
+    .select('party_id')
+    .eq('token', token)
+    .single();
+
+  if (!invitation) {
+    return { title: 'Inbjudan', robots: { index: false, follow: false } };
+  }
+
+  const { data: party } = await supabase
+    .from('parties')
+    .select('child_name, child_age')
+    .eq('id', invitation.party_id)
+    .single();
+
+  if (!party) {
+    return { title: 'Inbjudan', robots: { index: false, follow: false } };
+  }
+
+  const title = `Du är bjuden på ${party.child_name}s kalas!`;
+  const description = `${party.child_name} fyller ${party.child_age} år och vill bjuda in dig! Svara på inbjudan direkt via mobilen.`;
+
+  return {
+    title,
+    description,
+    robots: { index: false, follow: false },
+    openGraph: {
+      title,
+      description,
+    },
+  };
 }
 
 export default async function RsvpPage({ params, searchParams }: RsvpPageProps) {

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isAdminEmail } from '@/lib/utils/admin-guard';
@@ -6,6 +7,11 @@ import { AdminInviteForm } from './AdminInviteForm';
 import { AdminUserList } from './AdminUserList';
 import { AuditLogList } from './AuditLogList';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+export const metadata: Metadata = {
+  title: 'Admin',
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminPage() {
   const supabase = await createClient();

@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+
+export const metadata: Metadata = {
+  title: 'Kolla din e-post',
+  description: 'Vi har skickat ett verifieringsmail. Klicka på länken i mailet för att aktivera ditt KalasKoll-konto.',
+  robots: { index: false, follow: false },
+};
 
 export default function CheckEmailPage() {
   return (

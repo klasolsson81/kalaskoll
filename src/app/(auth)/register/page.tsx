@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BetaBanner } from '@/components/beta/BetaBanner';
@@ -7,6 +8,12 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { BETA_CONFIG, isBetaEnded } from '@/lib/beta-config';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Skapa konto',
+  description: 'Skapa ett gratis KalasKoll-konto och börja planera barnkalas med digitala inbjudningar, QR-koder och OSA i realtid.',
+  alternates: { canonical: '/register' },
+};
 
 export default async function RegisterPage() {
   if (isBetaEnded()) {

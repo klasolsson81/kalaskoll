@@ -1,9 +1,15 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { decryptAllergyData } from '@/lib/utils/crypto';
 import { GuestListRealtime } from './GuestListRealtime';
+
+export const metadata: Metadata = {
+  title: 'Gästlista',
+  robots: { index: false, follow: false },
+};
 
 interface GuestsPageProps {
   params: Promise<{ id: string }>;

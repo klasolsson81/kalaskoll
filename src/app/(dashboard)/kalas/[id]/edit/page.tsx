@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { PartyForm } from '@/components/forms/PartyForm';
 import { updateParty } from '@/app/(dashboard)/kalas/actions';
+
+export const metadata: Metadata = {
+  title: 'Redigera kalas',
+  robots: { index: false, follow: false },
+};
 
 interface EditPartyPageProps {
   params: Promise<{ id: string }>;

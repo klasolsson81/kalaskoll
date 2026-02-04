@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { PartyForm } from '@/components/forms/PartyForm';
 import { createParty } from '@/app/(dashboard)/kalas/actions';
+
+export const metadata: Metadata = {
+  title: 'Nytt kalas',
+  robots: { index: false, follow: false },
+};
 
 export default async function NewPartyPage() {
   const supabase = await createClient();

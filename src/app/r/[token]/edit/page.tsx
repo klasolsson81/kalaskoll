@@ -1,8 +1,15 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { PartyHeader } from '@/components/cards/PartyHeader';
 import { RsvpForm } from '@/components/forms/RsvpForm';
 import type { Database } from '@/types/database';
+
+export const metadata: Metadata = {
+  title: 'Ändra ditt svar',
+  description: 'Ändra ditt OSA-svar på barnkalasinbjudan.',
+  robots: { index: false, follow: false },
+};
 
 interface EditPageProps {
   params: Promise<{ token: string }>;

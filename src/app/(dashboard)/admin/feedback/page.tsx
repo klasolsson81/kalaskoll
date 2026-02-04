@@ -1,9 +1,15 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isAdminEmail } from '@/lib/utils/admin-guard';
 import { FeedbackList } from './FeedbackList';
 import { FeedbackAiSummary } from './FeedbackAiSummary';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+export const metadata: Metadata = {
+  title: 'Feedback',
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminFeedbackPage() {
   const supabase = await createClient();

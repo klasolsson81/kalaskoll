@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+
+export const metadata: Metadata = {
+  title: 'Betan avslutad',
+  description: 'KalasKoll-betan har avslutats. Vi jobbar på att lansera den riktiga versionen.',
+  robots: { index: false, follow: false },
+};
 
 export default function BetaEndedPage() {
   return (

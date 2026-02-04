@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### SEO-grundstenar — komplett revision
+- **Sitemap utökad** — `/login`, `/register`, `/forgot-password` tillagda i `sitemap.ts` med rätt prioritet och changeFrequency
+- **Robots uppdaterad** — `/admin/` tillagd i disallow-listan (låg utanför `/dashboard/`-pathen)
+- **Unik metadata på alla 20 sidor** — varje `page.tsx` exporterar nu `title` och `description` via root layoutens template (`%s | KalasKoll`)
+- **Client-component-refaktor** — 7 `'use client'`-sidor (login, forgot-password, reset-password, confirmed, set-password, profile, profile/password) extraherade till egna klientkomponenter med server-component-wrapper i `page.tsx` för att möjliggöra metadata-export
+- **Dynamisk metadata för kalas-sidor** — `kalas/[id]` visar t.ex. "Alexanders kalas | KalasKoll" via `generateMetadata`
+- **Dynamisk OG-taggar för RSVP** — `r/[token]` sätter `og:title`/`og:description` per kalas för social delning (t.ex. "Du är bjuden på Alexanders kalas!")
+- **Canonical URLs** — publika sidor (login, register, forgot-password) har per-sida canonical via `alternates`
+- **`noindex` på interna sidor** — alla dashboard-, auth-flödes- och RSVP-sidor har `robots: { index: false }`
+- **`icon.tsx`** — ny edge-genererad 32×32 favicon (PNG) för moderna webbläsare, kompletterar befintlig `favicon.ico` och `apple-icon.tsx`
+
 #### Kontaktformulär i footern
 - **"Kontakta oss" i footern** — nytt kontaktformulär tillgängligt via footer-modal (samma mönster som Om oss, Priser etc.)
 - **Fält:** namn, e-post, meddelande (max 2000 tecken) med teckenräknare

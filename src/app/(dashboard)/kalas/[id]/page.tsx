@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
@@ -13,6 +14,21 @@ import { BETA_CONFIG } from '@/lib/beta-config';
 
 interface PartyPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PartyPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: party } = await supabase
+    .from('parties')
+    .select('child_name')
+    .eq('id', id)
+    .single();
+
+  return {
+    title: party ? `${party.child_name}s kalas` : 'Kalas',
+    robots: { index: false, follow: false },
+  };
 }
 
 function getCurrentMonth(): string {

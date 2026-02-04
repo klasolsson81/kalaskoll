@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { ChildrenSection } from './ChildrenSection';
 import { BetaLimitsDisplay } from '@/components/beta/BetaLimitsDisplay';
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
