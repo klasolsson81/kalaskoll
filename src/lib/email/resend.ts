@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { RESEND_FROM_EMAIL } from '@/lib/constants';
+import { RESEND_FROM_EMAIL, CONTACT_EMAIL } from '@/lib/constants';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 
 function escapeHtml(str: string): string {
@@ -432,6 +432,87 @@ export async function sendPartyInvitation({
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
     console.error('[Email] Invitation error:', { to, error: msg });
+    return { success: false, error: msg };
+  }
+}
+
+interface SendContactEmailParams {
+  name: string;
+  email: string;
+  message: string;
+}
+
+export async function sendContactEmail({
+  name,
+  email,
+  message,
+}: SendContactEmailParams): Promise<SendResult> {
+  const html = `
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;color:#111827;">
+  <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
+    <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">
+        Nytt kontaktmeddelande
+      </h1>
+      <p style="font-size:16px;color:#6b7280;margin:0 0 24px;">
+        Från kontaktformuläret på kalaskoll.se
+      </p>
+
+      <div style="background:#f3f4f6;border-radius:8px;padding:16px;margin-bottom:24px;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:4px 0;color:#6b7280;font-size:14px;">Namn:</td>
+            <td style="padding:4px 0;font-weight:600;font-size:14px;">${escapeHtml(name)}</td>
+          </tr>
+          <tr>
+            <td style="padding:4px 0;color:#6b7280;font-size:14px;">E-post:</td>
+            <td style="padding:4px 0;font-size:14px;">${escapeHtml(email)}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="background:#f3f4f6;border-radius:8px;padding:16px;">
+        <p style="font-size:12px;color:#6b7280;margin:0 0 4px;font-weight:600;">Meddelande:</p>
+        <p style="font-size:14px;color:#374151;margin:0;white-space:pre-wrap;">${escapeHtml(message)}</p>
+      </div>
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:16px;">
+      Skickat via KalasKoll – Kontaktformulär
+    </p>
+  </div>
+</body>
+</html>`.trim();
+
+  const resend = getResendClient();
+
+  try {
+    const { error } = await resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to: CONTACT_EMAIL,
+      replyTo: email,
+      subject: `Kontaktformulär: ${name}`,
+      html,
+    });
+
+    if (error) {
+      console.error('[Email] Contact form failed:', { email, error: error.message });
+      return { success: false, error: error.message };
+    }
+
+    console.log('[Email] Contact form sent:', { from: email });
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Email] Contact form error:', { email, error: msg });
     return { success: false, error: msg };
   }
 }

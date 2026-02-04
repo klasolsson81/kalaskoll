@@ -46,6 +46,26 @@ export async function isRateLimited(ip: string): Promise<boolean> {
 }
 
 /**
+ * Check if an IP is rate limited for contact form submissions.
+ * 3 requests per 15 minutes per IP.
+ * Returns true if the request should be blocked.
+ */
+export async function isContactRateLimited(ip: string): Promise<boolean> {
+  const limiter = createRateLimiter('contact', 3, '900 s');
+
+  if (!limiter) {
+    return false;
+  }
+
+  try {
+    const { success } = await limiter.limit(ip);
+    return !success;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Check if a user is rate limited for AI image generation.
  * 10 generations per hour per user.
  * Returns true if the request should be blocked.

@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FooterModal } from './FooterModal';
+import { ContactForm } from '@/components/forms/ContactForm';
 
-type ModalId = 'om-oss' | 'priser' | 'integritetspolicy' | 'anvandarvillkor' | 'cookiepolicy';
+type ModalId = 'om-oss' | 'priser' | 'kontakta-oss' | 'integritetspolicy' | 'anvandarvillkor' | 'cookiepolicy';
 
 const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
   'om-oss': {
@@ -74,6 +75,10 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
         </p>
       </div>
     ),
+  },
+  'kontakta-oss': {
+    title: 'Kontakta oss',
+    content: <ContactForm />,
   },
   integritetspolicy: {
     title: 'Integritetspolicy',
@@ -258,6 +263,14 @@ export function Footer() {
                     className="text-sm text-foreground/80 hover:text-foreground transition-colors"
                   >
                     Priser
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveModal('kontakta-oss')}
+                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                  >
+                    Kontakta oss
                   </button>
                 </li>
               </ul>

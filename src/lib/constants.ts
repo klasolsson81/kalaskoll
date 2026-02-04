@@ -11,6 +11,7 @@ export const TEST_RSVP_URL = `${APP_URL}/r/${TEST_INVITATION_TOKEN}`;
 
 // Email
 export const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'KalasKoll <noreply@kalaskoll.se>';
+export const CONTACT_EMAIL = 'hej@kalasfix.se';
 
 // SMS (46elks)
 export const SMS_SENDER_ID = 'KalasKoll';

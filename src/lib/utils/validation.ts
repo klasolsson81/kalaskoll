@@ -271,6 +271,14 @@ export const feedbackSchema = z.object({
   screenSize: z.string().optional(),
 });
 
+// Contact form schema
+export const contactSchema = z.object({
+  name: z.string().min(1, 'Namn krävs').max(100),
+  email: z.string().email('Ogiltig e-postadress'),
+  message: z.string().min(1, 'Meddelande krävs').max(2000, 'Max 2000 tecken'),
+  honeypot: z.string().max(0).optional(),
+});
+
 // Admin schemas
 export const adminUpdateUserSchema = z.object({
   userId: z.string().uuid(),
@@ -292,4 +300,5 @@ export type PasswordFormData = z.infer<typeof passwordSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type BetaRegisterFormData = z.infer<typeof betaRegisterSchema>;
 export type WaitlistFormData = z.infer<typeof waitlistSchema>;
+export type ContactFormData = z.infer<typeof contactSchema>;
 export type FeedbackFormData = z.infer<typeof feedbackSchema>;
