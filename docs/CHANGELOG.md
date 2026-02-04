@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Kontaktformulär i footern
+- **"Kontakta oss" i footern** — nytt kontaktformulär tillgängligt via footer-modal (samma mönster som Om oss, Priser etc.)
+- **Fält:** namn, e-post, meddelande (max 2000 tecken) med teckenräknare
+- **E-post via Resend** — skickar till `hej@kalasfix.se` med `replyTo` satt till avsändarens e-post
+- **Anti-spam:** honeypot-fält (tyst success för bots) + IP-baserad rate limiting (3 req/15 min via Upstash Redis)
+- **API-route** `POST /api/contact` — publik (ingen auth), Zod-validering med `contactSchema`
+- **`ContactForm`-komponent** — följer `WaitlistForm`-mönstret med idle/submitting/success/error-states
+- **`CONTACT_EMAIL`-konstant** i `constants.ts`
+- **`isContactRateLimited()`** i `rate-limit.ts`
+- **`sendContactEmail()`** i `resend.ts` — HTML-mall i samma stil som övriga mejl
+
 ### Changed
 
 #### OpenGraph & Social Media Image
