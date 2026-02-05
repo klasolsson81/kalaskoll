@@ -85,7 +85,10 @@ export const partySchema = z
     partyTimeEnd: z.string().optional(),
     venueName: z.string().min(1, 'Plats krävs').max(200),
     venueAddress: z.string().max(300).optional(),
-    description: z.string().max(200, 'Max 200 tecken').optional(),
+    description: z.string().max(200, 'Max 200 tecken').refine(
+      (val) => !val || val.split('\n').length <= 5,
+      { message: 'Max 5 rader' },
+    ).optional(),
     theme: z.string().optional(),
     rsvpDeadline: z.string().optional(),
     maxGuests: z.number().int().min(1).max(100).optional(),

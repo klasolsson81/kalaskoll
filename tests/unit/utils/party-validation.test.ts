@@ -152,6 +152,22 @@ describe('partySchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('rejects description with more than 5 lines', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      description: 'rad1\nrad2\nrad3\nrad4\nrad5\nrad6',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts description with exactly 5 lines', () => {
+    const result = partySchema.safeParse({
+      ...validParty,
+      description: 'rad1\nrad2\nrad3\nrad4\nrad5',
+    });
+    expect(result.success).toBe(true);
+  });
+
   it('accepts party without childId', () => {
     const result = partySchema.safeParse(validParty);
     expect(result.success).toBe(true);

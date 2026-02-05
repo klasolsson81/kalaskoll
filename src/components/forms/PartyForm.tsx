@@ -270,12 +270,25 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
               defaultValue={defaultValues?.description}
               className="placeholder:text-muted-foreground border-input w-full min-h-[80px] rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] md:text-sm"
               onInput={(e) => {
-                const counter = (e.target as HTMLTextAreaElement).nextElementSibling;
-                if (counter) counter.textContent = `${(e.target as HTMLTextAreaElement).value.length}/200`;
+                const ta = e.target as HTMLTextAreaElement;
+                const lines = ta.value.split('\n');
+                if (lines.length > 5) {
+                  ta.value = lines.slice(0, 5).join('\n');
+                }
+                const counter = ta.nextElementSibling;
+                if (counter) counter.textContent = `${ta.value.length}/200 · ${lines.length > 5 ? 5 : lines.length}/5 rader`;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const ta = e.target as HTMLTextAreaElement;
+                  if (ta.value.split('\n').length >= 5) {
+                    e.preventDefault();
+                  }
+                }
               }}
             />
             <p className="text-xs text-muted-foreground text-right">
-              {defaultValues?.description?.length ?? 0}/200
+              {defaultValues?.description?.length ?? 0}/200 · {defaultValues?.description?.split('\n').length ?? 0}/5 rader
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
