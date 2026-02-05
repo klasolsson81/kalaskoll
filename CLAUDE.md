@@ -36,7 +36,7 @@ Foralder skapar konto → Verifierar e-post → Dashboard
 | SMS | 46elks API |
 | E-post | Resend |
 | Hosting | Vercel |
-| Tester | Vitest (133 unit) + Playwright (41 E2E) |
+| Tester | Vitest (135 unit) + Playwright (41 E2E) |
 
 ---
 

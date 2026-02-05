@@ -9,13 +9,14 @@ All notable changes to this project will be documented in this file.
 #### Radbegränsning på beskrivningsfältet
 - **Zod-validering** — max 5 rader (`\n`-split) utöver befintliga max 200 tecken
 - **Klient-side** — textarea blockerar Enter vid 5 rader, live-räknare visar "X/200 · Y/5 rader"
+- **Textarea bakgrund** — `bg-transparent` → `bg-white/80` så beskrivningsfältet matchar övriga input-fält på glass-cards
 - **2 nya tester** — avvisar 6 rader, godkänner exakt 5 rader (135 totalt)
 
 #### Utskriftsbugg — inbjudan delade sig på 2 sidor
 - **`globals.css`** — lagt till `overflow: hidden`, `max-height: 100vh` och `break-inside: avoid` på `[data-print-area]` och dess barn så inget innehåll spiller över till sida 2
 - **`AiInvitationCard.tsx`** — print-positionering justerad (`top: 15%`, `bottom: 8%`), minskad spacing och QR-storlek i print-läge
 - **`TemplateCard.tsx`** — samma spacing-fix som AI-kortet, tightare marginaler och skalad QR i print
-- **`InvitationSection.tsx`** — förtydligande subtitle "Välj mall eller skapa med AI. Skriv ut eller dela digitalt." under "Inbjudningskort"
+- **`InvitationSection.tsx`** — subtitle "Välj mall eller skapa med AI — att skriva ut" under "Inbjudningskort"
 
 ### Added
 
