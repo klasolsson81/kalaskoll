@@ -50,7 +50,7 @@ export function BetaLimitsDisplay() {
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-amber-600" />
-            <span>Kontot raderas 1 mars</span>
+            <span>Kontot raderas {status.expiresAt ? status.expiresAt.toLocaleDateString('sv-SE', { day: 'numeric', month: 'long' }) : '1 mars'}</span>
           </div>
           <span className="font-medium">
             {status.daysRemaining} dagar kvar
@@ -69,7 +69,7 @@ export function BetaLimitsDisplay() {
       </div>
 
       <p className="text-xs text-amber-700 mt-3">
-        Testkonton raderas automatiskt 1 mars. Vill du fortsätta? Registrera ett vanligt konto efter betan.
+        Testkonton raderas automatiskt {status.expiresAt ? status.expiresAt.toLocaleDateString('sv-SE', { day: 'numeric', month: 'long' }) : '1 mars'}. Vill du fortsätta? Registrera ett vanligt konto efter betan.
       </p>
     </div>
   );

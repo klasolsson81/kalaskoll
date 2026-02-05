@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Skyddade testare — förlängt beta-konto
+- **`PROTECTED_TESTERS`-lista** i `beta-config.ts` — testare med individuellt förlängt slutdatum (Caroline Friberg Wolk t.o.m. 15 mars)
+- **Per-user beta-funktioner** — `getEndDateForUser()`, `isBetaEndedForUser()`, `betaDaysRemainingForUser()` beräknar rätt datum per användare
+- **Cleanup-skydd** — cron-jobbet hoppar över skyddade testare tills deras förlängda datum passerat
+- **Middleware-skydd** — skyddade testare redirectas inte till beta-ended-sidan förrän deras datum passerat
+- **Dynamiskt datum i UI** — `BetaLimitsDisplay` visar rätt raderingsdatum och dagar kvar per användare (istället för hårdkodat "1 mars")
+
+
 #### SEO-grundstenar — komplett revision
 - **Sitemap utökad** — `/login`, `/register`, `/forgot-password` tillagda i `sitemap.ts` med rätt prioritet och changeFrequency
 - **Robots uppdaterad** — `/admin/` tillagd i disallow-listan (låg utanför `/dashboard/`-pathen)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { isBetaEnded } from '@/lib/beta-config';
+import { isBetaEnded, PROTECTED_TESTERS } from '@/lib/beta-config';
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,11 +31,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'No testers to clean up', deleted: 0 });
     }
 
+    // Filter out protected testers whose extended date hasn't passed yet
+    const now = new Date();
+    const protectedIds = new Set(
+      PROTECTED_TESTERS
+        .filter((p) => now <= new Date(`${p.until}T23:59:59`))
+        .map((p) => p.id)
+    );
+    const testersToDelete = testers.filter((t) => !protectedIds.has(t.id));
+
+    if (protectedIds.size > 0) {
+      console.log(`[cron/cleanup-testers] Skipping ${protectedIds.size} protected tester(s)`);
+    }
+
     // Delete each tester's auth user (cascades to profiles → parties → etc.)
     let deleted = 0;
     const errors: string[] = [];
 
-    for (const tester of testers) {
+    for (const tester of testersToDelete) {
       const { error: deleteError } = await adminClient.auth.admin.deleteUser(tester.id);
       if (deleteError) {
         errors.push(`${tester.id}: ${deleteError.message}`);

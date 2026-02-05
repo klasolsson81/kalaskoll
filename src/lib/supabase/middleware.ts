@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import { isBetaEnded } from '@/lib/beta-config';
+import { isBetaEnded, isBetaEndedForUser } from '@/lib/beta-config';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -59,7 +59,7 @@ export async function updateSession(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (profile?.role === 'tester') {
+    if (profile?.role === 'tester' && isBetaEndedForUser(user.id)) {
       const url = request.nextUrl.clone();
       url.pathname = '/beta-ended';
       return NextResponse.redirect(url);

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { BETA_CONFIG, BETA_END_DATE, betaDaysRemaining, isBetaEnded, type BetaRole, type BetaStatus } from '@/lib/beta-config';
+import { BETA_CONFIG, betaDaysRemainingForUser, getEndDateForUser, isBetaEndedForUser, type BetaRole, type BetaStatus } from '@/lib/beta-config';
 
 export function useBetaStatus(): BetaStatus | null {
   const [status, setStatus] = useState<BetaStatus | null>(null);
@@ -29,9 +29,10 @@ export function useBetaStatus(): BetaStatus | null {
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id);
 
-      const expiresAt = new Date(`${BETA_END_DATE}T23:59:59`);
-      const isExpired = isBetaEnded();
-      const daysRemaining = betaDaysRemaining();
+      const endDate = getEndDateForUser(user.id);
+      const expiresAt = new Date(`${endDate}T23:59:59`);
+      const isExpired = isBetaEndedForUser(user.id);
+      const daysRemaining = betaDaysRemainingForUser(user.id);
 
       const role = profile.role as BetaRole;
       setStatus({
