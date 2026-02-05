@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+#### Utskriftsbugg — inbjudan delade sig på 2 sidor
+- **`globals.css`** — lagt till `overflow: hidden`, `max-height: 100vh` och `break-inside: avoid` på `[data-print-area]` och dess barn så inget innehåll spiller över till sida 2
+- **`AiInvitationCard.tsx`** — print-positionering justerad (`top: 15%`, `bottom: 8%`), minskad spacing och QR-storlek i print-läge
+- **`TemplateCard.tsx`** — samma spacing-fix som AI-kortet, tightare marginaler och skalad QR i print
+- **`InvitationSection.tsx`** — förtydligande subtitle "Välj mall eller skapa med AI. Skriv ut eller dela digitalt." under "Inbjudningskort"
+
 ### Added
 
 #### Skyddade testare — förlängt beta-konto

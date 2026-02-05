@@ -42,7 +42,7 @@ export function AiInvitationCard({
   if (!src) return null;
 
   return (
-    <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0">
+    <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0 print:overflow-hidden">
       {/* Fallback gradient if image fails */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-pink-300 to-amber-200" />
 
@@ -63,7 +63,7 @@ export function AiInvitationCard({
 
       {/* Text content — centered over image */}
       <div
-        className="relative flex flex-col items-center justify-center text-center pt-32 pb-28 px-10 sm:pt-36 sm:pb-32 sm:px-14 print:absolute print:inset-x-[8%] print:top-[22%] print:bottom-[16%] print:p-0"
+        className="relative flex flex-col items-center justify-center text-center pt-32 pb-28 px-10 sm:pt-36 sm:pb-32 sm:px-14 print:absolute print:inset-x-[8%] print:top-[15%] print:bottom-[8%] print:p-0 print:overflow-hidden"
       >
         {/* Headline */}
         <h2
@@ -100,10 +100,10 @@ export function AiInvitationCard({
         )}
 
         {/* Separator */}
-        <div className="my-4 w-3/4 border-t-2 border-white/40 sm:my-5" />
+        <div className="my-4 w-3/4 border-t-2 border-white/40 sm:my-5 print:my-2" />
 
         {/* Party details */}
-        <div className="space-y-1 text-base text-white sm:text-lg" style={{ textShadow }}>
+        <div className="space-y-1 text-base text-white sm:text-lg print:text-base print:space-y-0.5" style={{ textShadow }}>
           <p>{partyDate}</p>
           <p>{partyTime}</p>
           <p>{venueName}</p>
@@ -114,7 +114,7 @@ export function AiInvitationCard({
 
         {rsvpDeadline && (
           <p
-            className="mt-3 text-sm font-medium text-white"
+            className="mt-3 text-sm font-medium text-white print:mt-1"
             style={{ textShadow }}
           >
             OSA senast {rsvpDeadline}
@@ -123,7 +123,7 @@ export function AiInvitationCard({
 
         {description && (
           <p
-            className="mt-3 max-w-xs whitespace-pre-line text-sm italic leading-relaxed text-white"
+            className="mt-3 max-w-xs whitespace-pre-line text-sm italic leading-relaxed text-white print:mt-1 print:text-xs print:leading-snug"
             style={{ textShadow }}
           >
             {description}
@@ -131,7 +131,7 @@ export function AiInvitationCard({
         )}
 
         {/* Separator */}
-        <div className="my-4 w-3/4 border-t-2 border-white/40 sm:my-5" />
+        <div className="my-4 w-3/4 border-t-2 border-white/40 sm:my-5 print:my-2" />
 
         {/* Welcome + QR */}
         <p
@@ -141,7 +141,7 @@ export function AiInvitationCard({
           Kan du komma?
         </p>
 
-        <div className="rounded-xl bg-white p-2">
+        <div className="rounded-xl bg-white p-2 print:p-1 print:scale-75">
           <QRCode token={token} size={80} />
         </div>
         <p

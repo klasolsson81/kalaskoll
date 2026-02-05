@@ -361,17 +361,23 @@
     left: 0;
     width: 100%;
     height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
     display: flex;
     align-items: stretch;
     justify-content: stretch;
     padding: 0;
     margin: 0;
+    break-inside: avoid;
   }
 
   /* Card inside print area fills the page */
   [data-print-area] > * {
     width: 100% !important;
     max-width: none !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
     margin: 0 !important;
     border-radius: 0 !important;
     border: none !important;

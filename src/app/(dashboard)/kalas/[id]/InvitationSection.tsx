@@ -88,7 +88,10 @@ export function InvitationSection({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 print:hidden">
-        <CardTitle>Inbjudningskort</CardTitle>
+        <div>
+          <CardTitle>Inbjudningskort</CardTitle>
+          <p className="text-sm text-muted-foreground mt-0.5">Välj mall eller skapa med AI. Skriv ut eller dela digitalt.</p>
+        </div>
         <div className="flex gap-2">
           {inv.activeMode && (
             <Button

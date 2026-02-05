@@ -112,7 +112,7 @@ export function TemplateCard({
   return (
     <div
       className={cn(
-        'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0',
+        'relative mx-auto w-full max-w-md overflow-hidden print:max-w-none print:mx-0 print:h-[100vh] print:rounded-none print:border-0 print:overflow-hidden',
         hasImage ? 'rounded-2xl' : theme.borderClass,
         !hasImage && theme.bgGradient,
       )}
@@ -144,7 +144,7 @@ export function TemplateCard({
                 // Inline: relative with fixed padding — card grows to fit content
                 'relative pt-32 pb-28 px-10 sm:pt-36 sm:pb-32 sm:px-14',
                 // Print: absolute positioning in the image center zone
-                'print:absolute print:inset-x-[8%] print:top-[22%] print:bottom-[16%] print:p-0',
+                'print:absolute print:inset-x-[8%] print:top-[15%] print:bottom-[8%] print:p-0 print:overflow-hidden',
               ]
             : 'relative flex-1 px-6 py-8 sm:px-8 sm:py-10',
         )}
@@ -183,11 +183,11 @@ export function TemplateCard({
 
         {/* Separator */}
         <div
-          className={cn('my-4 w-3/4 border-t-2 sm:my-5', theme.accentBorder)}
+          className={cn('my-4 w-3/4 border-t-2 sm:my-5 print:my-2', theme.accentBorder)}
         />
 
         {/* Party details */}
-        <div className={cn('space-y-1 text-base sm:text-lg', theme.detailColor)}>
+        <div className={cn('space-y-1 text-base sm:text-lg print:text-base print:space-y-0.5', theme.detailColor)}>
           <p>📅 {partyDate}</p>
           <p>🕐 {partyTime}</p>
           <p>📍 {venueName}</p>
@@ -197,7 +197,7 @@ export function TemplateCard({
         </div>
 
         {rsvpDeadline && (
-          <p className={cn('mt-3 text-sm font-medium', theme.detailColor)}>
+          <p className={cn('mt-3 text-sm font-medium print:mt-1', theme.detailColor)}>
             OSA senast {rsvpDeadline}
           </p>
         )}
@@ -206,7 +206,7 @@ export function TemplateCard({
         {description && (
           <p
             className={cn(
-              'mt-3 max-w-xs whitespace-pre-line text-sm italic leading-relaxed',
+              'mt-3 max-w-xs whitespace-pre-line text-sm italic leading-relaxed print:mt-1 print:text-xs print:leading-snug',
               theme.detailColor,
             )}
           >
@@ -216,7 +216,7 @@ export function TemplateCard({
 
         {/* Separator */}
         <div
-          className={cn('my-4 w-3/4 border-t-2 sm:my-5', theme.accentBorder)}
+          className={cn('my-4 w-3/4 border-t-2 sm:my-5 print:my-2', theme.accentBorder)}
         />
 
         {/* Welcome + QR */}
@@ -229,7 +229,7 @@ export function TemplateCard({
           Kan du komma?
         </p>
 
-        <div className={cn('rounded-xl p-2', theme.qrBgClass)}>
+        <div className={cn('rounded-xl p-2 print:p-1 print:scale-75', theme.qrBgClass)}>
           <QRCode token={token} size={80} />
         </div>
         <p className={cn('mt-1.5 text-xs', theme.detailColor)}>
