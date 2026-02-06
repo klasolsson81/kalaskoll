@@ -324,7 +324,7 @@ export default function HomePage() {
                     <Card className="glass-card border-0">
                       <CardContent className="pt-6">
                         <h3 className="mb-2 font-bold">{faq.q}</h3>
-                        <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+                        <p className="text-sm leading-relaxed text-gray-900">{faq.a}</p>
                       </CardContent>
                     </Card>
                   </ScrollReveal>
