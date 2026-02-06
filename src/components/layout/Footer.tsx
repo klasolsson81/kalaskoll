@@ -252,7 +252,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('om-oss')}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Om oss
                   </button>
@@ -260,7 +260,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('priser')}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Priser
                   </button>
@@ -268,7 +268,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('kontakta-oss')}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Kontakta oss
                   </button>
@@ -283,7 +283,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('integritetspolicy')}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Integritetspolicy
                   </button>
@@ -291,7 +291,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('anvandarvillkor')}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Användarvillkor
                   </button>
@@ -299,7 +299,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('cookiepolicy')}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Cookiepolicy
                   </button>

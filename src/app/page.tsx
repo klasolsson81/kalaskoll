@@ -141,7 +141,7 @@ export default function HomePage() {
                   </h1>
                 </ScrollReveal>
                 <ScrollReveal delay={200}>
-                  <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+                  <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground/80 sm:text-xl">
                     Skapa inbjudningar och dela via e-post, länk eller QR-utskrift.
                     Gästerna svarar direkt via mobilen.
                   </p>
@@ -340,7 +340,7 @@ export default function HomePage() {
                 <ScrollReveal>
                   <div className="glass-card rounded-3xl px-6 py-12 sm:px-12">
                     <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
-                    <p className="mt-4 text-lg text-muted-foreground">
+                    <p className="mt-4 text-lg text-foreground/80">
                       Skapa ditt konto gratis och ha full koll på nästa barnkalas.
                     </p>
                     <div className="mt-8">
