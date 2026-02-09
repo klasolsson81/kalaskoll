@@ -147,9 +147,16 @@ export async function GET(request: Request) {
     }
   }
 
+  const errorParams = new URLSearchParams({
+    error: 'verification_failed',
+    detail: lastError,
+  });
+  if (inviteEmail) {
+    errorParams.set('email', inviteEmail);
+  }
   const redirectUrl = verified
     ? successUrl
-    : `${origin}/login?error=verification_failed&detail=${encodeURIComponent(lastError)}`;
+    : `${origin}/login?${errorParams.toString()}`;
   const response = NextResponse.redirect(redirectUrl);
 
   // Apply session cookies to the redirect response

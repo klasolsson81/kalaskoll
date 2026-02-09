@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +10,9 @@ import { login, type AuthResult } from '@/app/(auth)/actions';
 import Link from 'next/link';
 
 export default function LoginForm() {
+  const searchParams = useSearchParams();
+  const emailFromUrl = searchParams.get('email') ?? '';
+
   const [state, formAction] = useActionState<AuthResult, FormData>(
     async (_prev, formData) => login(formData),
     {},
@@ -43,6 +47,7 @@ export default function LoginForm() {
               name="email"
               type="email"
               placeholder="din@email.se"
+              defaultValue={emailFromUrl}
               className="h-11"
               required
             />

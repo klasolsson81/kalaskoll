@@ -108,6 +108,13 @@ export const partySchema = z
       return data.rsvpDeadline <= data.partyDate;
     },
     { message: 'Sista svarsdag kan inte vara efter kalaset', path: ['rsvpDeadline'] },
+  )
+  .refine(
+    (data) => {
+      if (!data.partyTimeEnd) return true;
+      return data.partyTimeEnd > data.partyTime;
+    },
+    { message: 'Sluttiden måste vara efter starttiden', path: ['partyTimeEnd'] },
   );
 
 // Send invitation email schema

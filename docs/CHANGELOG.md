@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### E-post förifyld vid inloggning
+- **`LoginForm.tsx`** — läser `?email=` från URL:en och fyller i e-postfältet automatiskt
+- **`page.tsx` (login)** — `<Suspense>`-boundary för `useSearchParams`
+- **`callback/route.ts`** — inkluderar `inviteEmail` i error-redirect till login-sidan
+
+#### Tidsvalidering — sluttid före starttid
+- **`validation.ts`** — ny `.refine()` på `partySchema`: sluttid måste vara efter starttid
+- **`PartyForm.tsx`** — live-förhandsvisning av tidsspann ("Kalaset: kl 11:00–13:00") med röd varning om sluttid < starttid
+- Förhindrar att användare med 12h-klocka (AM/PM) av misstag sparar t.ex. "01:00" istället för "13:00"
+
+### Fixed (earlier)
+
 #### Radbegränsning på beskrivningsfältet
 - **Zod-validering** — max 5 rader (`\n`-split) utöver befintliga max 200 tecken
 - **Klient-side** — textarea blockerar Enter vid 5 rader, live-räknare visar "X/200 · Y/5 rader"

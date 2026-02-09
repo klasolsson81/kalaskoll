@@ -43,6 +43,8 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
   const [state, formAction] = useActionState(action, {});
   const [selectedChildId, setSelectedChildId] = useState(defaultValues?.childId ?? '');
   const [partyDate, setPartyDate] = useState(defaultValues?.partyDate ?? '');
+  const [partyTime, setPartyTime] = useState(defaultValues?.partyTime ?? '');
+  const [partyTimeEnd, setPartyTimeEnd] = useState(defaultValues?.partyTimeEnd ?? '');
 
   const defaultTheme = defaultValues?.theme ?? '';
   const defaultIsCustom = defaultTheme !== '' && !isPresetTheme(defaultTheme);
@@ -175,7 +177,8 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 id="partyTime"
                 name="partyTime"
                 type="time"
-                defaultValue={defaultValues?.partyTime}
+                value={partyTime}
+                onChange={(e) => setPartyTime(e.target.value)}
                 className="h-10"
                 required
               />
@@ -186,11 +189,19 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 id="partyTimeEnd"
                 name="partyTimeEnd"
                 type="time"
-                defaultValue={defaultValues?.partyTimeEnd}
+                value={partyTimeEnd}
+                onChange={(e) => setPartyTimeEnd(e.target.value)}
                 className="h-10"
               />
             </div>
           </div>
+          {partyTime && (
+            <p className={`text-sm ${partyTimeEnd && partyTimeEnd <= partyTime ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
+              Kalaset: kl {partyTime.slice(0, 5)}
+              {partyTimeEnd ? `–${partyTimeEnd.slice(0, 5)}` : ''}
+              {partyTimeEnd && partyTimeEnd <= partyTime && ' — Sluttiden är före starttiden!'}
+            </p>
+          )}
           <div className="space-y-2">
             <Label htmlFor="venueName">Plats</Label>
             <Input
