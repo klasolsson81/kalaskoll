@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
-import { Search, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface AdminUser {
   id: string;
@@ -23,6 +24,7 @@ type SortKey = 'fullName' | 'email' | 'role' | 'emailConfirmedAt' | 'createdAt' 
 type SortDir = 'asc' | 'desc';
 
 export function AdminUserList() {
+  const router = useRouter();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -142,6 +144,24 @@ export function AdminUserList() {
     }
   }
 
+  async function handleImpersonate(userId: string) {
+    setActionLoading(userId);
+    try {
+      const res = await fetch('/api/admin/impersonate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+      if (res.ok) {
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      console.error('Failed to impersonate:', err);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   function formatDate(dateStr: string | null) {
     if (!dateStr) return '—';
     return new Date(dateStr).toLocaleString('sv-SE', {
@@ -237,6 +257,14 @@ export function AdminUserList() {
                       <option value="tester">tester</option>
                       <option value="admin">admin</option>
                     </select>
+                    <button
+                      onClick={() => handleImpersonate(user.id)}
+                      disabled={actionLoading === user.id}
+                      className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+                      title="Agera som denna användare"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                    </button>
                     <button
                       onClick={() => handleDelete(user.id, user.email ?? '')}
                       disabled={actionLoading === user.id}

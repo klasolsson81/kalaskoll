@@ -5,6 +5,8 @@ import { isAdminEmail } from '@/lib/utils/admin-guard';
 import { ProfileDropdown } from './ProfileDropdown';
 import { AdminFeedbackBadge } from './AdminFeedbackBadge';
 import { IdleTimeout } from './IdleTimeout';
+import { ImpersonationBanner } from '@/components/layout/ImpersonationBanner';
+import { getImpersonationContext } from '@/lib/utils/impersonation';
 
 export default async function DashboardLayout({
   children,
@@ -24,8 +26,16 @@ export default async function DashboardLayout({
   const email = user.email || '';
   const isAdmin = isAdminEmail(email);
 
+  const impersonation = await getImpersonationContext();
+
   return (
     <div className="min-h-screen">
+      {impersonation?.isImpersonating && (
+        <ImpersonationBanner
+          name={impersonation.impersonatedName}
+          email={impersonation.impersonatedEmail}
+        />
+      )}
       <header className="sticky top-0 z-50 border-b border-white/30 bg-white/30 backdrop-blur-xl print:hidden">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-4">

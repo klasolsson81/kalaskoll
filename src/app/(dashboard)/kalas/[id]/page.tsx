@@ -11,6 +11,7 @@ import { InvitationSection } from './InvitationSection';
 import { SendInvitationsSection } from './SendInvitationsSection';
 import { ADMIN_EMAILS, SMS_MAX_PER_PARTY } from '@/lib/constants';
 import { BETA_CONFIG } from '@/lib/beta-config';
+import { getImpersonationContext } from '@/lib/utils/impersonation';
 
 interface PartyPageProps {
   params: Promise<{ id: string }>;
@@ -38,16 +39,27 @@ function getCurrentMonth(): string {
 
 export default async function PartyPage({ params }: PartyPageProps) {
   const { id } = await params;
-  const supabase = await createClient();
+  const ctx = await getImpersonationContext();
+  if (!ctx) return null;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { effectiveUserId, client: supabase, isImpersonating } = ctx;
+
+  // When impersonating, get the real admin user for admin checks
+  let user: { id: string; email?: string | null } | null = null;
+  if (isImpersonating) {
+    const regularSupabase = await createClient();
+    const { data } = await regularSupabase.auth.getUser();
+    user = data.user;
+  } else {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  }
 
   const { data: party } = await supabase
     .from('parties')
     .select('*')
     .eq('id', id)
+    .eq('owner_id', effectiveUserId)
     .single();
 
   if (!party) {
@@ -124,25 +136,21 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
   // Fetch SMS usage for current month
   const currentMonth = getCurrentMonth();
-  const { data: smsUsageData } = user
-    ? await supabase
-        .from('sms_usage')
-        .select('party_id, sms_count')
-        .eq('user_id', user.id)
-        .eq('month', currentMonth)
-        .single()
-    : { data: null };
+  const { data: smsUsageData } = await supabase
+    .from('sms_usage')
+    .select('party_id, sms_count')
+    .eq('user_id', effectiveUserId)
+    .eq('month', currentMonth)
+    .single();
 
   const isAdmin = ADMIN_EMAILS.includes(user?.email ?? '');
 
   // Fetch profile for beta role
-  const { data: profile } = user
-    ? await supabase
-        .from('profiles')
-        .select('role, beta_sms_used')
-        .eq('id', user.id)
-        .single()
-    : { data: null };
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, beta_sms_used')
+    .eq('id', effectiveUserId)
+    .single();
 
   const isTester = profile?.role === 'tester';
   const smsLimit = isTester ? BETA_CONFIG.freeSmsInvites : SMS_MAX_PER_PARTY;

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { decryptAllergyData } from '@/lib/utils/crypto';
 import { GuestListRealtime } from './GuestListRealtime';
+import { getImpersonationContext } from '@/lib/utils/impersonation';
 
 export const metadata: Metadata = {
   title: 'Gästlista',
@@ -17,12 +17,16 @@ interface GuestsPageProps {
 
 export default async function GuestsPage({ params }: GuestsPageProps) {
   const { id } = await params;
-  const supabase = await createClient();
+  const ctx = await getImpersonationContext();
+  if (!ctx) return null;
+
+  const { effectiveUserId, client: supabase } = ctx;
 
   const { data: party } = await supabase
     .from('parties')
     .select('child_name')
     .eq('id', id)
+    .eq('owner_id', effectiveUserId)
     .single();
 
   if (!party) {

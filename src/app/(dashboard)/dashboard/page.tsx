@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { ChildrenSection } from './ChildrenSection';
 import { BetaLimitsDisplay } from '@/components/beta/BetaLimitsDisplay';
+import { getImpersonationContext } from '@/lib/utils/impersonation';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -14,28 +14,37 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
+  const ctx = await getImpersonationContext();
+  if (!ctx) return null;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { effectiveUserId, client: supabase, isImpersonating } = ctx;
 
-  // Try auth metadata first, then fall back to profiles table
-  let displayName = user?.user_metadata?.full_name?.split(' ')[0] || '';
+  // When impersonating, use the target user's name
+  let displayName = '';
 
-  if (!displayName && user) {
+  if (isImpersonating) {
+    displayName = ctx.impersonatedName?.split(' ')[0] || '';
+  } else {
+    // Try auth metadata first
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    displayName = user?.user_metadata?.full_name?.split(' ')[0] || '';
+  }
+
+  if (!displayName) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('full_name')
-      .eq('id', user.id)
+      .eq('id', effectiveUserId)
       .single();
     displayName = profile?.full_name?.split(' ')[0] || '';
   }
 
   if (!displayName) displayName = 'kompis';
 
-  const partiesQuery = supabase.from('parties').select('*').order('party_date', { ascending: true });
-  const childrenQuery = supabase.from('children').select('*').order('name', { ascending: true });
+  const partiesQuery = supabase.from('parties').select('*').eq('owner_id', effectiveUserId).order('party_date', { ascending: true });
+  const childrenQuery = supabase.from('children').select('*').eq('owner_id', effectiveUserId).order('name', { ascending: true });
 
   let parties: Awaited<typeof partiesQuery>['data'] = null;
   let children: Awaited<typeof childrenQuery>['data'] = null;
