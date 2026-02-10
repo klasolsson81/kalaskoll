@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Admin-impersonering ("Agera som")
+- **`getImpersonationContext()`** — server-helper (`src/lib/utils/impersonation.ts`) som läser `kk_impersonate`-cookien, verifierar att anroparen är admin, och returnerar admin-client + target user ID vid impersonering, annars vanlig supabase-client
+- **API-route** (`POST/DELETE /api/admin/impersonate`) — sätter/tar bort httpOnly cookie med target userId (admin-only, sameSite strict, 1h maxAge)
+- **ImpersonationBanner** — sticky amber banner ovanför headern: "Du agerar som [Namn] (email)" med "Avsluta"-knapp som rensar cookien och redirectar till `/admin`
+- **"Agera som"-knapp** i AdminUserList — ögonikonen (Eye) per användarrad, POSTar till API:et och redirectar till `/dashboard`
+- **Dashboard** — visar impersonerad användares namn i hälsningen, filtrerar kalas och barn med `owner_id`
+- **Kalas-sidor** (`kalas/[id]`, `kalas/[id]/guests`) — använder impersonation context med `owner_id`-filter istället för RLS
+- **Säkerhet** — bara `ADMIN_EMAILS` kan sätta cookien; icke-admins med cookien ignoreras; admin-check sker både i API och i `getImpersonationContext()`
+
 ### Fixed
 
 #### Dubbla inbjudningar försvinner (tvillingar/syskon)
