@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { PartyHeader } from '@/components/cards/PartyHeader';
 import { RsvpForm } from '@/components/forms/RsvpForm';
+import { decryptAllergyData } from '@/lib/utils/crypto';
 import type { Database } from '@/types/database';
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
 
   const supabase = createServiceClient();
 
-  // Look up RSVP by edit_token
+  // Look up primary RSVP by edit_token
   const { data: rsvp } = await supabase
     .from('rsvp_responses')
     .select('id, invitation_id, child_name, attending, parent_name, parent_phone, parent_email, message')
@@ -66,14 +67,38 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
     notFound();
   }
 
-  // Get allergy data for this RSVP
-  const { data: allergyData } = await supabase
-    .from('allergy_data')
-    .select('allergies, other_dietary')
-    .eq('rsvp_id', rsvp.id)
-    .single();
+  // Get all siblings (same invitation + email)
+  const { data: siblings } = await supabase
+    .from('rsvp_responses')
+    .select('id, child_name, attending')
+    .eq('invitation_id', rsvp.invitation_id)
+    .eq('parent_email', rsvp.parent_email)
+    .order('responded_at', { ascending: true });
 
-  const allergies = Array.isArray(allergyData?.allergies) ? (allergyData.allergies as string[]) : [];
+  const allChildren = siblings ?? [{ id: rsvp.id, child_name: rsvp.child_name, attending: rsvp.attending }];
+
+  // Get allergy data for all siblings
+  const childIds = allChildren.map((c) => c.id);
+  const { data: allergyRows } = await supabase
+    .from('allergy_data')
+    .select('rsvp_id, allergies, other_dietary')
+    .in('rsvp_id', childIds);
+
+  const allergyMap = new Map<string, { allergies: string[]; other_dietary: string | null }>();
+  for (const row of allergyRows ?? []) {
+    allergyMap.set(row.rsvp_id, decryptAllergyData(row.allergies, row.other_dietary));
+  }
+
+  const childrenDefaults = allChildren.map((c) => {
+    const allergy = allergyMap.get(c.id);
+    return {
+      id: c.id,
+      childName: c.child_name,
+      attending: c.attending,
+      allergies: allergy?.allergies ?? [],
+      otherDietary: allergy?.other_dietary,
+    };
+  });
 
   return (
     <div className="min-h-screen bg-app-gradient-rsvp px-4 py-8">
@@ -96,14 +121,11 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
           mode="edit"
           editToken={editToken}
           defaultValues={{
-            childName: rsvp.child_name,
-            attending: rsvp.attending,
+            children: childrenDefaults,
             parentName: rsvp.parent_name,
             parentPhone: rsvp.parent_phone,
             parentEmail: rsvp.parent_email,
             message: rsvp.message,
-            allergies,
-            otherDietary: allergyData?.other_dietary,
           }}
         />
 

@@ -23,6 +23,7 @@ function getResendClient() {
 interface SendRsvpConfirmationParams {
   to: string;
   childName: string;
+  childNames?: string[];
   partyChildName: string;
   attending: boolean;
   editUrl: string;
@@ -34,6 +35,7 @@ interface SendRsvpConfirmationParams {
 export async function sendRsvpConfirmation({
   to,
   childName,
+  childNames,
   partyChildName,
   attending,
   editUrl,
@@ -41,10 +43,14 @@ export async function sendRsvpConfirmation({
   partyTime,
   venueName,
 }: SendRsvpConfirmationParams): Promise<SendResult> {
+  const names = childNames && childNames.length > 1 ? childNames : [childName];
+  const displayNames = names.length > 1
+    ? `${names.slice(0, -1).join(', ')} och ${names[names.length - 1]}`
+    : names[0];
   const statusText = attending ? 'JA – ni kommer!' : 'NEJ – ni kan tyvärr inte komma';
   const statusEmoji = attending ? '🎉' : '😢';
   const subject = attending
-    ? `Bekräftelse: ${childName} kommer på ${partyChildName}s kalas!`
+    ? `Bekräftelse: ${displayNames} kommer på ${partyChildName}s kalas!`
     : `Bekräftelse: Svar registrerat för ${partyChildName}s kalas`;
 
   const html = `
@@ -70,7 +76,7 @@ export async function sendRsvpConfirmation({
         <table style="width:100%;border-collapse:collapse;">
           <tr>
             <td style="padding:4px 0;color:#6b7280;font-size:14px;">Barn:</td>
-            <td style="padding:4px 0;font-weight:600;font-size:14px;">${escapeHtml(childName)}</td>
+            <td style="padding:4px 0;font-weight:600;font-size:14px;">${escapeHtml(displayNames)}</td>
           </tr>
           <tr>
             <td style="padding:4px 0;color:#6b7280;font-size:14px;">Svar:</td>

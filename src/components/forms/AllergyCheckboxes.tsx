@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -10,13 +10,22 @@ interface AllergyCheckboxesProps {
   disabled?: boolean;
   initialSelected?: string[];
   initialOtherDietary?: string;
+  onChange?: (data: { allergies: string[]; otherDietary: string; allergyConsent: boolean }) => void;
 }
 
-export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDietary }: AllergyCheckboxesProps) {
+export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDietary, onChange }: AllergyCheckboxesProps) {
   const [selected, setSelected] = useState<string[]>(initialSelected ?? []);
   const [otherText, setOtherText] = useState(initialOtherDietary ?? '');
   const [consentGiven, setConsentGiven] = useState(false);
   const hasAllergyData = selected.length > 0 || otherText.trim().length > 0;
+
+  const notifyParent = useCallback((s: string[], o: string, c: boolean) => {
+    onChange?.({ allergies: s, otherDietary: o, allergyConsent: c });
+  }, [onChange]);
+
+  useEffect(() => {
+    notifyParent(selected, otherText, consentGiven);
+  }, [selected, otherText, consentGiven, notifyParent]);
 
   function toggleAllergy(allergy: string) {
     setSelected((prev) =>
@@ -35,7 +44,6 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
             className="flex items-center gap-2 rounded-xl border p-3 text-sm transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:shadow-sm"
           >
             <Checkbox
-              name="allergies"
               value={allergy}
               checked={selected.includes(allergy)}
               onCheckedChange={() => toggleAllergy(allergy)}
@@ -50,7 +58,6 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
         <Label htmlFor="otherDietary">Annat (fritext)</Label>
         <Input
           id="otherDietary"
-          name="otherDietary"
           placeholder="t.ex. vegetarian, vegan..."
           value={otherText}
           onChange={(e) => setOtherText(e.target.value)}
@@ -63,8 +70,6 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
           <label className="flex items-start gap-3 text-sm">
             <Checkbox
-              name="allergyConsent"
-              value="true"
               checked={consentGiven}
               onCheckedChange={(checked) => setConsentGiven(checked === true)}
               required

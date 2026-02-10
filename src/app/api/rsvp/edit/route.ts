@@ -1,6 +1,7 @@
+import { randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { rsvpEditSchema } from '@/lib/utils/validation';
+import { rsvpMultiChildEditSchema } from '@/lib/utils/validation';
 import { sendRsvpConfirmation } from '@/lib/email/resend';
 import { formatDate, formatTime } from '@/lib/utils/format';
 import { APP_URL } from '@/lib/constants';
@@ -15,7 +16,11 @@ function createServiceClient() {
   );
 }
 
-// GET: Fetch existing RSVP data for edit form pre-fill
+function generateEditToken(): string {
+  return randomBytes(32).toString('hex');
+}
+
+// GET: Fetch existing RSVP data for edit form pre-fill (with siblings)
 export async function GET(request: NextRequest) {
   try {
     return await handleGet(request);
@@ -36,10 +41,10 @@ async function handleGet(request: NextRequest) {
 
   const supabase = createServiceClient();
 
-  // Look up RSVP by edit_token
+  // Look up primary RSVP by edit_token
   const { data: rsvp, error: rsvpError } = await supabase
     .from('rsvp_responses')
-    .select('id, invitation_id, child_name, attending, parent_name, parent_phone, parent_email, message')
+    .select('id, invitation_id, child_name, attending, parent_name, parent_phone, parent_email, message, edit_token')
     .eq('edit_token', editToken)
     .single();
 
@@ -47,12 +52,27 @@ async function handleGet(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltigt edit-token' }, { status: 404 });
   }
 
-  // Get allergy data for this RSVP
-  const { data: allergyData } = await supabase
+  // Get all siblings (same invitation + email)
+  const { data: siblings } = await supabase
+    .from('rsvp_responses')
+    .select('id, child_name, attending, edit_token')
+    .eq('invitation_id', rsvp.invitation_id)
+    .eq('parent_email', rsvp.parent_email)
+    .order('responded_at', { ascending: true });
+
+  const allChildren = siblings ?? [{ id: rsvp.id, child_name: rsvp.child_name, attending: rsvp.attending, edit_token: rsvp.edit_token }];
+
+  // Get allergy data for all children
+  const childIds = allChildren.map((c) => c.id);
+  const { data: allergyRows } = await supabase
     .from('allergy_data')
-    .select('allergies, other_dietary')
-    .eq('rsvp_id', rsvp.id)
-    .single();
+    .select('rsvp_id, allergies, other_dietary')
+    .in('rsvp_id', childIds);
+
+  const allergyMap = new Map<string, { allergies: string[]; other_dietary: string | null }>();
+  for (const row of allergyRows ?? []) {
+    allergyMap.set(row.rsvp_id, decryptAllergyData(row.allergies, row.other_dietary));
+  }
 
   // Get invitation token for URL verification
   const { data: invitation } = await supabase
@@ -61,21 +81,31 @@ async function handleGet(request: NextRequest) {
     .eq('id', rsvp.invitation_id)
     .single();
 
+  const childrenData = allChildren.map((c) => {
+    const allergy = allergyMap.get(c.id);
+    return {
+      id: c.id,
+      childName: c.child_name,
+      attending: c.attending,
+      editToken: c.edit_token,
+      allergies: allergy?.allergies ?? [],
+      otherDietary: allergy?.other_dietary ?? null,
+    };
+  });
+
   return NextResponse.json({
-    rsvp: {
-      childName: rsvp.child_name,
-      attending: rsvp.attending,
+    parentInfo: {
       parentName: rsvp.parent_name,
       parentPhone: rsvp.parent_phone,
       parentEmail: rsvp.parent_email,
       message: rsvp.message,
     },
-    ...decryptAllergyData(allergyData?.allergies ?? [], allergyData?.other_dietary ?? null),
+    children: childrenData,
     invitationToken: invitation?.token ?? null,
   });
 }
 
-// POST: Update existing RSVP via edit_token
+// POST: Update existing RSVP via edit_token (with siblings)
 export async function POST(request: NextRequest) {
   try {
     return await handlePost(request);
@@ -104,7 +134,7 @@ async function handlePost(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltigt format' }, { status: 400 });
   }
 
-  const parsed = rsvpEditSchema.safeParse(body);
+  const parsed = rsvpMultiChildEditSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0].message },
@@ -114,10 +144,10 @@ async function handlePost(request: NextRequest) {
 
   const supabase = createServiceClient();
 
-  // Look up RSVP by edit_token
+  // Look up primary RSVP by edit_token
   const { data: existing, error: lookupError } = await supabase
     .from('rsvp_responses')
-    .select('id, invitation_id')
+    .select('id, invitation_id, parent_email')
     .eq('edit_token', parsed.data.editToken)
     .single();
 
@@ -125,56 +155,119 @@ async function handlePost(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltigt edit-token' }, { status: 404 });
   }
 
-  // Update the RSVP response
-  const { error: updateError } = await supabase
+  // Get all existing siblings
+  const { data: existingSiblings } = await supabase
     .from('rsvp_responses')
-    .update({
-      child_name: parsed.data.childName,
-      attending: parsed.data.attending,
-      parent_name: parsed.data.parentName || null,
-      parent_phone: parsed.data.parentPhone || null,
-      message: parsed.data.message || null,
-    })
-    .eq('id', existing.id);
+    .select('id')
+    .eq('invitation_id', existing.invitation_id)
+    .eq('parent_email', existing.parent_email);
 
-  if (updateError) {
-    return NextResponse.json({ error: 'Kunde inte uppdatera svar' }, { status: 500 });
+  const existingIds = new Set((existingSiblings ?? []).map((s) => s.id));
+
+  // Get party date for allergy auto-delete
+  const { data: invForParty } = await supabase
+    .from('invitations')
+    .select('party_id')
+    .eq('id', existing.invitation_id)
+    .single();
+
+  let autoDeleteAt = new Date();
+  if (invForParty) {
+    const { data: partyForDate } = await supabase
+      .from('parties')
+      .select('party_date')
+      .eq('id', invForParty.party_id)
+      .single();
+    const partyDate = partyForDate?.party_date ? new Date(partyForDate.party_date) : new Date();
+    autoDeleteAt = new Date(partyDate);
+    autoDeleteAt.setDate(autoDeleteAt.getDate() + 7);
   }
 
-  // Delete old allergy data and insert new if applicable
-  await supabase.from('allergy_data').delete().eq('rsvp_id', existing.id);
+  const children = parsed.data.children;
+  const updatedIds = new Set<string>();
+  let primaryEditToken = parsed.data.editToken;
 
-  const allergies = parsed.data.allergies ?? [];
-  const otherDietary = parsed.data.otherDietary;
-  const hasAllergyData = allergies.length > 0 || (otherDietary && otherDietary.length > 0);
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
 
-  if (parsed.data.attending && hasAllergyData && parsed.data.allergyConsent) {
-    // Get party date for auto-delete calculation
-    const { data: invitation } = await supabase
-      .from('invitations')
-      .select('party_id')
-      .eq('id', existing.invitation_id)
-      .single();
+    if (child.id && existingIds.has(child.id)) {
+      // UPDATE existing child
+      updatedIds.add(child.id);
 
-    if (invitation) {
-      const { data: party } = await supabase
-        .from('parties')
-        .select('party_date')
-        .eq('id', invitation.party_id)
+      await supabase
+        .from('rsvp_responses')
+        .update({
+          child_name: child.childName,
+          attending: child.attending,
+          parent_name: parsed.data.parentName || null,
+          parent_phone: parsed.data.parentPhone || null,
+          message: parsed.data.message || null,
+        })
+        .eq('id', child.id);
+
+      // Replace allergy data
+      await supabase.from('allergy_data').delete().eq('rsvp_id', child.id);
+
+      const allergies = child.allergies ?? [];
+      const otherDietary = child.otherDietary;
+      const hasAllergyData = allergies.length > 0 || (otherDietary && otherDietary.length > 0);
+
+      if (child.attending && hasAllergyData && child.allergyConsent) {
+        const encrypted = encryptAllergyData(allergies, otherDietary || null);
+        await supabase.from('allergy_data').insert({
+          rsvp_id: child.id,
+          allergies: encrypted.allergies_enc,
+          other_dietary: encrypted.other_dietary_enc,
+          consent_given_at: new Date().toISOString(),
+          auto_delete_at: autoDeleteAt.toISOString(),
+        });
+      }
+    } else {
+      // INSERT new sibling
+      const newToken = generateEditToken();
+      if (i === 0 && !child.id) primaryEditToken = newToken;
+
+      const { data: newRsvp } = await supabase
+        .from('rsvp_responses')
+        .insert({
+          invitation_id: existing.invitation_id,
+          child_name: child.childName,
+          attending: child.attending,
+          parent_name: parsed.data.parentName || null,
+          parent_phone: parsed.data.parentPhone || null,
+          parent_email: parsed.data.parentEmail,
+          message: parsed.data.message || null,
+          edit_token: newToken,
+        })
+        .select('id')
         .single();
 
-      const partyDate = party?.party_date ? new Date(party.party_date) : new Date();
-      const autoDeleteAt = new Date(partyDate);
-      autoDeleteAt.setDate(autoDeleteAt.getDate() + 7);
+      if (newRsvp) {
+        updatedIds.add(newRsvp.id);
 
-      const encrypted = encryptAllergyData(allergies, otherDietary || null);
-      await supabase.from('allergy_data').insert({
-        rsvp_id: existing.id,
-        allergies: encrypted.allergies_enc,
-        other_dietary: encrypted.other_dietary_enc,
-        consent_given_at: new Date().toISOString(),
-        auto_delete_at: autoDeleteAt.toISOString(),
-      });
+        const allergies = child.allergies ?? [];
+        const otherDietary = child.otherDietary;
+        const hasAllergyData = allergies.length > 0 || (otherDietary && otherDietary.length > 0);
+
+        if (child.attending && hasAllergyData && child.allergyConsent) {
+          const encrypted = encryptAllergyData(allergies, otherDietary || null);
+          await supabase.from('allergy_data').insert({
+            rsvp_id: newRsvp.id,
+            allergies: encrypted.allergies_enc,
+            other_dietary: encrypted.other_dietary_enc,
+            consent_given_at: new Date().toISOString(),
+            auto_delete_at: autoDeleteAt.toISOString(),
+          });
+        }
+      }
+    }
+  }
+
+  // DELETE siblings that were removed (not in payload)
+  for (const existingId of existingIds) {
+    if (!updatedIds.has(existingId)) {
+      await supabase.from('allergy_data').delete().eq('rsvp_id', existingId);
+      await supabase.from('rsvp_responses').delete().eq('id', existingId);
     }
   }
 
@@ -193,12 +286,15 @@ async function handlePost(request: NextRequest) {
       .single();
 
     if (party) {
-      const editUrl = `${APP_URL}/r/${invitationForEmail.token}/edit?token=${parsed.data.editToken}`;
+      const childNames = children.map((c) => c.childName);
+      const anyAttending = children.some((c) => c.attending);
+      const editUrl = `${APP_URL}/r/${invitationForEmail.token}/edit?token=${primaryEditToken}`;
       sendRsvpConfirmation({
         to: parsed.data.parentEmail,
-        childName: parsed.data.childName,
+        childName: childNames[0],
+        childNames,
         partyChildName: party.child_name,
-        attending: parsed.data.attending,
+        attending: anyAttending,
         editUrl,
         partyDate: formatDate(party.party_date),
         partyTime: formatTime(party.party_time),

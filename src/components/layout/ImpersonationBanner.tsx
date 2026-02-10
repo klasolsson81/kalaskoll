@@ -26,7 +26,7 @@ export function ImpersonationBanner({ name, email }: ImpersonationBannerProps) {
   const displayLabel = name ? `${name} (${email})` : email;
 
   return (
-    <div className="sticky top-0 z-[60] flex items-center justify-center gap-3 bg-amber-500 px-4 py-2 text-sm font-medium text-amber-950">
+    <div className="sticky top-0 z-[60] flex h-10 items-center justify-center gap-3 bg-amber-500 px-4 text-sm font-medium text-amber-950 print:hidden">
       <span>
         Du agerar som <strong>{displayLabel}</strong>
       </span>

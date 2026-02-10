@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { rsvpSchema } from '@/lib/utils/validation';
+import { rsvpMultiChildSchema } from '@/lib/utils/validation';
 import { sendRsvpConfirmation } from '@/lib/email/resend';
 import { formatDate, formatTime } from '@/lib/utils/format';
 import { APP_URL } from '@/lib/constants';
@@ -49,7 +49,7 @@ async function handlePost(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltigt format' }, { status: 400 });
   }
 
-  const parsed = rsvpSchema.safeParse(body);
+  const parsed = rsvpMultiChildSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0].message },
@@ -94,87 +94,92 @@ async function handlePost(request: NextRequest) {
   }
 
   const email = parsed.data.parentEmail;
+  const children = parsed.data.children;
 
   // Check for duplicate email on this invitation → 409
-  const { data: existing } = await supabase
+  const { data: existingResponses } = await supabase
     .from('rsvp_responses')
-    .select('id')
+    .select('id, child_name')
     .eq('invitation_id', invitation.id)
-    .eq('parent_email', email)
-    .single();
+    .eq('parent_email', email);
 
-  if (existing) {
+  if (existingResponses && existingResponses.length > 0) {
+    const names = existingResponses.map((r) => r.child_name).join(', ');
     return NextResponse.json(
-      { error: 'Du har redan svarat på denna inbjudan. Kolla din e-post för en länk att ändra ditt svar.' },
+      { error: `Du har redan svarat för ${names}. Kolla din e-post för en länk att ändra ditt svar.` },
       { status: 409 },
     );
   }
 
-  // Generate edit token
-  const editToken = generateEditToken();
-
-  // Insert new response
-  const { data: rsvp, error: rsvpError } = await supabase
-    .from('rsvp_responses')
-    .insert({
-      invitation_id: invitation.id,
-      child_name: parsed.data.childName,
-      attending: parsed.data.attending,
-      parent_name: parsed.data.parentName || null,
-      parent_phone: parsed.data.parentPhone || null,
-      parent_email: email,
-      message: parsed.data.message || null,
-      edit_token: editToken,
-    })
-    .select('id')
-    .single();
-
-  if (rsvpError || !rsvp) {
-    return NextResponse.json({ error: 'Kunde inte spara svar' }, { status: 500 });
-  }
-
-  const rsvpId = rsvp.id;
-
-  // Store allergy data if attending and has allergies with consent
-  const allergies = parsed.data.allergies ?? [];
-  const otherDietary = parsed.data.otherDietary;
-  const hasAllergyData = allergies.length > 0 || (otherDietary && otherDietary.length > 0);
-
-  if (parsed.data.attending && hasAllergyData && parsed.data.allergyConsent) {
-    const { data: party } = await supabase
-      .from('parties')
-      .select('party_date')
-      .eq('id', invitation.party_id)
-      .single();
-
-    const partyDate = party?.party_date ? new Date(party.party_date) : new Date();
-    const autoDeleteAt = new Date(partyDate);
-    autoDeleteAt.setDate(autoDeleteAt.getDate() + 7);
-
-    const encrypted = encryptAllergyData(allergies, otherDietary || null);
-    await supabase.from('allergy_data').insert({
-      rsvp_id: rsvpId,
-      allergies: encrypted.allergies_enc,
-      other_dietary: encrypted.other_dietary_enc,
-      consent_given_at: new Date().toISOString(),
-      auto_delete_at: autoDeleteAt.toISOString(),
-    });
-  }
-
-  // Send confirmation email (fire-and-forget)
+  // Get party date for allergy auto-delete
   const { data: party } = await supabase
     .from('parties')
     .select('child_name, party_date, party_time, venue_name')
     .eq('id', invitation.party_id)
     .single();
 
+  const partyDate = party?.party_date ? new Date(party.party_date) : new Date();
+  const autoDeleteAt = new Date(partyDate);
+  autoDeleteAt.setDate(autoDeleteAt.getDate() + 7);
+
+  // Insert one row per child
+  let primaryEditToken = '';
+  const rsvpIds: string[] = [];
+
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    const editToken = generateEditToken();
+    if (i === 0) primaryEditToken = editToken;
+
+    const { data: rsvp, error: rsvpError } = await supabase
+      .from('rsvp_responses')
+      .insert({
+        invitation_id: invitation.id,
+        child_name: child.childName,
+        attending: child.attending,
+        parent_name: parsed.data.parentName || null,
+        parent_phone: parsed.data.parentPhone || null,
+        parent_email: email,
+        message: parsed.data.message || null,
+        edit_token: editToken,
+      })
+      .select('id')
+      .single();
+
+    if (rsvpError || !rsvp) {
+      return NextResponse.json({ error: 'Kunde inte spara svar' }, { status: 500 });
+    }
+
+    rsvpIds.push(rsvp.id);
+
+    // Store allergy data if attending and has allergies with consent
+    const allergies = child.allergies ?? [];
+    const otherDietary = child.otherDietary;
+    const hasAllergyData = allergies.length > 0 || (otherDietary && otherDietary.length > 0);
+
+    if (child.attending && hasAllergyData && child.allergyConsent) {
+      const encrypted = encryptAllergyData(allergies, otherDietary || null);
+      await supabase.from('allergy_data').insert({
+        rsvp_id: rsvp.id,
+        allergies: encrypted.allergies_enc,
+        other_dietary: encrypted.other_dietary_enc,
+        consent_given_at: new Date().toISOString(),
+        auto_delete_at: autoDeleteAt.toISOString(),
+      });
+    }
+  }
+
+  // Send ONE confirmation email listing all children (fire-and-forget)
   if (party) {
-    const editUrl = `${APP_URL}/r/${invitation.token}/edit?token=${editToken}`;
+    const childNames = children.map((c) => c.childName);
+    const anyAttending = children.some((c) => c.attending);
+    const editUrl = `${APP_URL}/r/${invitation.token}/edit?token=${primaryEditToken}`;
     sendRsvpConfirmation({
       to: email,
-      childName: parsed.data.childName,
+      childName: childNames[0],
+      childNames,
       partyChildName: party.child_name,
-      attending: parsed.data.attending,
+      attending: anyAttending,
       editUrl,
       partyDate: formatDate(party.party_date),
       partyTime: formatTime(party.party_time),
@@ -188,9 +193,12 @@ async function handlePost(request: NextRequest) {
   logAudit(supabase, {
     action: 'rsvp.submit',
     resourceType: 'rsvp_response',
-    resourceId: rsvpId,
-    metadata: { attending: parsed.data.attending, invitationId: invitation.id },
+    resourceId: rsvpIds[0],
+    metadata: {
+      childCount: children.length,
+      invitationId: invitation.id,
+    },
   });
 
-  return NextResponse.json({ success: true, rsvpId });
+  return NextResponse.json({ success: true, rsvpIds });
 }

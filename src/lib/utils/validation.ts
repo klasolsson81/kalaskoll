@@ -48,6 +48,50 @@ export const rsvpEditSchema = z.object({
   allergyConsent: z.boolean().optional(),
 });
 
+// RSVP multi-child schema (siblings support)
+const rsvpChildSchema = z.object({
+  childName: z.string().min(1, 'Barnets namn krävs').max(100),
+  attending: z.boolean(),
+  allergies: z.array(z.string()).optional(),
+  otherDietary: z.string().max(200).optional(),
+  allergyConsent: z.boolean().optional(),
+});
+
+export const rsvpMultiChildSchema = z.object({
+  children: z.array(rsvpChildSchema).min(1, 'Minst ett barn krävs').max(5, 'Max 5 barn'),
+  parentName: z.string().max(100).optional(),
+  parentPhone: z
+    .string()
+    .regex(/^(\+46|0)[0-9]{6,12}$/, 'Ogiltigt telefonnummer')
+    .optional()
+    .or(z.literal('')),
+  parentEmail: z.string().email('Ogiltig e-postadress').transform((v) => v.toLowerCase()),
+  message: z.string().max(500).optional(),
+});
+
+export const rsvpMultiChildEditSchema = z.object({
+  editToken: z.string().min(1, 'Edit-token krävs').max(64),
+  children: z.array(z.object({
+    id: z.string().uuid().optional(),
+    childName: z.string().min(1, 'Barnets namn krävs').max(100),
+    attending: z.boolean(),
+    allergies: z.array(z.string()).optional(),
+    otherDietary: z.string().max(200).optional(),
+    allergyConsent: z.boolean().optional(),
+  })).min(1, 'Minst ett barn krävs').max(5, 'Max 5 barn'),
+  parentName: z.string().max(100).optional(),
+  parentPhone: z
+    .string()
+    .regex(/^(\+46|0)[0-9]{6,12}$/, 'Ogiltigt telefonnummer')
+    .optional()
+    .or(z.literal('')),
+  parentEmail: z.string().email('Ogiltig e-postadress').transform((v) => v.toLowerCase()),
+  message: z.string().max(500).optional(),
+});
+
+export type RsvpMultiChildFormData = z.infer<typeof rsvpMultiChildSchema>;
+export type RsvpMultiChildEditFormData = z.infer<typeof rsvpMultiChildEditSchema>;
+
 // Child schema
 export const childSchema = z.object({
   name: z.string().min(1, 'Barnets namn krävs').max(100),

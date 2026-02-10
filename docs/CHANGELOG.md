@@ -6,6 +6,25 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### RSVP multi-child / syskon-stöd
+- **"+ Lägg till syskon"** — föräldrar kan nu lägga till 1–5 barn i en RSVP-inlämning
+- Varje barn får en egen rad i `rsvp_responses` med individuellt namn, ja/nej-status och allergidata
+- Headcount = antal rader med `attending=true` (automatiskt korrekt för syskon)
+- **Migration `00023`** — byt UNIQUE-constraint från `(invitation_id, parent_email)` till `(invitation_id, parent_email, child_name)`
+- **Zod-schemas** — `rsvpMultiChildSchema` och `rsvpMultiChildEditSchema` med per-barn validering
+- **API** — `/api/rsvp` och `/api/rsvp/edit` hanterar `children[]`-array med individuella allergier
+- **RsvpForm** — omskriven med kontrollerad state, per-barn AllergyCheckboxes, "Lägg till syskon"-knapp
+- **AllergyCheckboxes** — ny `onChange`-callback för state-hantering i parent
+- **Edit-sida** — laddar alla syskon (samma email + invitation) vid redigering
+- **Bekräftelsemail** — visar alla barnnamn ("Mila och Wera") istället för ett namn
+- **46 tester** i `rsvp-validation.test.ts` (inkl. multi-child schemas)
+
+### Fixed
+
+#### Impersonation-banner döljs av header vid scroll
+- **ImpersonationBanner** — byter `py-2` mot `h-10` (fast höjd), lägger till `print:hidden`
+- **Dashboard layout** — header får `top-10` vid impersonering (under bannern), `top-0` annars
+
 #### Admin-impersonering ("Agera som")
 - **`getImpersonationContext()`** — server-helper (`src/lib/utils/impersonation.ts`) som läser `kk_impersonate`-cookien, verifierar att anroparen är admin, och returnerar admin-client + target user ID vid impersonering, annars vanlig supabase-client
 - **API-route** (`POST/DELETE /api/admin/impersonate`) — sätter/tar bort httpOnly cookie med target userId (admin-only, sameSite strict, 1h maxAge)

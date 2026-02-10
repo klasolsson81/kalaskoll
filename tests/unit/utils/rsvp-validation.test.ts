@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rsvpSchema, rsvpEditSchema } from '@/lib/utils/validation';
+import { rsvpSchema, rsvpEditSchema, rsvpMultiChildSchema, rsvpMultiChildEditSchema } from '@/lib/utils/validation';
 
 describe('rsvpSchema', () => {
   const validRsvp = {
@@ -251,5 +251,189 @@ describe('rsvpEditSchema', () => {
     const { parentEmail: _email, ...noEmail } = validEdit;
     const result = rsvpEditSchema.safeParse(noEmail);
     expect(result.success).toBe(false);
+  });
+});
+
+describe('rsvpMultiChildSchema', () => {
+  const validMulti = {
+    children: [
+      { childName: 'Mila', attending: true },
+    ],
+    parentEmail: 'anna@example.com',
+  };
+
+  it('accepts 1 child', () => {
+    const result = rsvpMultiChildSchema.safeParse(validMulti);
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts 5 children', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      ...validMulti,
+      children: Array.from({ length: 5 }, (_, i) => ({
+        childName: `Barn ${i + 1}`,
+        attending: true,
+      })),
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects 0 children', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      ...validMulti,
+      children: [],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects 6 children', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      ...validMulti,
+      children: Array.from({ length: 6 }, (_, i) => ({
+        childName: `Barn ${i + 1}`,
+        attending: true,
+      })),
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects child without name', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      ...validMulti,
+      children: [{ childName: '', attending: true }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('normalizes email to lowercase', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      ...validMulti,
+      parentEmail: 'Anna@Example.COM',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parentEmail).toBe('anna@example.com');
+    }
+  });
+
+  it('accepts children with allergies and consent', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      children: [
+        { childName: 'Mila', attending: true, allergies: ['Laktos'], otherDietary: 'Vegan', allergyConsent: true },
+        { childName: 'Wera', attending: true, allergies: ['Gluten'] },
+      ],
+      parentEmail: 'anna@example.com',
+      parentName: 'Anna',
+      parentPhone: '+46701234567',
+      message: 'Vi ser fram emot det!',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts mixed attending statuses', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      children: [
+        { childName: 'Mila', attending: true },
+        { childName: 'Wera', attending: false },
+      ],
+      parentEmail: 'anna@example.com',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects missing email', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      children: [{ childName: 'Mila', attending: true }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid phone format', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      ...validMulti,
+      parentPhone: '123',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts empty phone string', () => {
+    const result = rsvpMultiChildSchema.safeParse({
+      ...validMulti,
+      parentPhone: '',
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe('rsvpMultiChildEditSchema', () => {
+  const validMultiEdit = {
+    editToken: 'a'.repeat(64),
+    children: [
+      { childName: 'Mila', attending: true },
+    ],
+    parentEmail: 'anna@example.com',
+  };
+
+  it('accepts valid edit with 1 child', () => {
+    const result = rsvpMultiChildEditSchema.safeParse(validMultiEdit);
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts edit with existing child id', () => {
+    const result = rsvpMultiChildEditSchema.safeParse({
+      ...validMultiEdit,
+      children: [
+        { id: '550e8400-e29b-41d4-a716-446655440000', childName: 'Mila', attending: true },
+      ],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts mix of existing and new children', () => {
+    const result = rsvpMultiChildEditSchema.safeParse({
+      ...validMultiEdit,
+      children: [
+        { id: '550e8400-e29b-41d4-a716-446655440000', childName: 'Mila', attending: true },
+        { childName: 'Wera', attending: false },
+      ],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects missing editToken', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { editToken: _editToken, ...noToken } = validMultiEdit;
+    const result = rsvpMultiChildEditSchema.safeParse(noToken);
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects 0 children', () => {
+    const result = rsvpMultiChildEditSchema.safeParse({
+      ...validMultiEdit,
+      children: [],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects 6 children', () => {
+    const result = rsvpMultiChildEditSchema.safeParse({
+      ...validMultiEdit,
+      children: Array.from({ length: 6 }, (_, i) => ({
+        childName: `Barn ${i + 1}`,
+        attending: true,
+      })),
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('normalizes email to lowercase', () => {
+    const result = rsvpMultiChildEditSchema.safeParse({
+      ...validMultiEdit,
+      parentEmail: 'Anna@Example.COM',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parentEmail).toBe('anna@example.com');
+    }
   });
 });
