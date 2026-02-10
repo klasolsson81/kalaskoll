@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Search, Trash2 } from 'lucide-react';
+import { Search, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface AdminUser {
   id: string;
@@ -19,11 +19,16 @@ interface AdminUser {
   feedbackCount: number;
 }
 
+type SortKey = 'fullName' | 'email' | 'role' | 'emailConfirmedAt' | 'createdAt' | 'lastSignInAt' | 'partyCount';
+type SortDir = 'asc' | 'desc';
+
 export function AdminUserList() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey>('createdAt');
+  const [sortDir, setSortDir] = useState<SortDir>('desc');
 
   useEffect(() => {
     fetchUsers();
@@ -52,6 +57,51 @@ export function AdminUserList() {
         u.fullName?.toLowerCase().includes(q),
     );
   }, [users, search]);
+
+  const sorted = useMemo(() => {
+    const list = [...filtered];
+    list.sort((a, b) => {
+      let cmp = 0;
+      switch (sortKey) {
+        case 'fullName':
+        case 'email':
+        case 'role':
+          cmp = (a[sortKey] ?? '').localeCompare(b[sortKey] ?? '', 'sv');
+          break;
+        case 'emailConfirmedAt':
+        case 'createdAt':
+        case 'lastSignInAt': {
+          const aVal = a[sortKey] ?? '';
+          const bVal = b[sortKey] ?? '';
+          cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+          break;
+        }
+        case 'partyCount':
+          cmp = a.partyCount - b.partyCount;
+          break;
+      }
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+    return list;
+  }, [filtered, sortKey, sortDir]);
+
+  const toggleSort = useCallback((key: SortKey) => {
+    setSortKey((prev) => {
+      if (prev === key) {
+        setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+        return key;
+      }
+      setSortDir(key === 'createdAt' || key === 'lastSignInAt' ? 'desc' : 'asc');
+      return key;
+    });
+  }, []);
+
+  function SortIcon({ column }: { column: SortKey }) {
+    if (sortKey !== column) return <ArrowUpDown className="ml-1 inline h-3 w-3 opacity-40" />;
+    return sortDir === 'asc'
+      ? <ArrowUp className="ml-1 inline h-3 w-3" />
+      : <ArrowDown className="ml-1 inline h-3 w-3" />;
+  }
 
   async function handleRoleChange(userId: string, newRole: string) {
     setActionLoading(userId);
@@ -147,18 +197,18 @@ export function AdminUserList() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/50 text-left">
-              <th className="px-3 py-2 font-medium">Namn</th>
-              <th className="px-3 py-2 font-medium">E-post</th>
-              <th className="px-3 py-2 font-medium">Roll</th>
-              <th className="hidden px-3 py-2 font-medium sm:table-cell">Verifierad</th>
-              <th className="hidden px-3 py-2 font-medium md:table-cell">Registrerad</th>
-              <th className="hidden px-3 py-2 font-medium md:table-cell">Senast inloggad</th>
-              <th className="hidden px-3 py-2 font-medium lg:table-cell">Kalas</th>
+              <th className="px-3 py-2 font-medium cursor-pointer select-none hover:bg-muted/80" onClick={() => toggleSort('fullName')}>Namn<SortIcon column="fullName" /></th>
+              <th className="px-3 py-2 font-medium cursor-pointer select-none hover:bg-muted/80" onClick={() => toggleSort('email')}>E-post<SortIcon column="email" /></th>
+              <th className="px-3 py-2 font-medium cursor-pointer select-none hover:bg-muted/80" onClick={() => toggleSort('role')}>Roll<SortIcon column="role" /></th>
+              <th className="hidden px-3 py-2 font-medium sm:table-cell cursor-pointer select-none hover:bg-muted/80" onClick={() => toggleSort('emailConfirmedAt')}>Verifierad<SortIcon column="emailConfirmedAt" /></th>
+              <th className="hidden px-3 py-2 font-medium md:table-cell cursor-pointer select-none hover:bg-muted/80" onClick={() => toggleSort('createdAt')}>Registrerad<SortIcon column="createdAt" /></th>
+              <th className="hidden px-3 py-2 font-medium md:table-cell cursor-pointer select-none hover:bg-muted/80" onClick={() => toggleSort('lastSignInAt')}>Senast inloggad<SortIcon column="lastSignInAt" /></th>
+              <th className="hidden px-3 py-2 font-medium lg:table-cell cursor-pointer select-none hover:bg-muted/80" onClick={() => toggleSort('partyCount')}>Kalas<SortIcon column="partyCount" /></th>
               <th className="px-3 py-2 font-medium">Åtgärder</th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((user) => (
+            {sorted.map((user) => (
               <tr key={user.id} className="border-b last:border-0 hover:bg-muted/30">
                 <td className="px-3 py-2">{user.fullName ?? '—'}</td>
                 <td className="px-3 py-2 font-mono text-xs">{user.email}</td>
