@@ -16,10 +16,13 @@ export interface AllergyInfo {
 }
 
 export interface InvitedGuest {
+  id: string;
   email: string | null;
   phone: string | null;
   invite_method: string;
   name: string | null;
   invited_at: string;
   hasResponded: boolean;
+  send_status: string;
+  error_message: string | null;
 }

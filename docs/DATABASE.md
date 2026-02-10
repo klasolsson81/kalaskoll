@@ -203,15 +203,16 @@ Spårar skickade inbjudningar (e-post och SMS).
 | `invite_method` | TEXT | Nej | `'email'` eller `'sms'` (default: `'email'`) |
 | `name` | TEXT | Ja | Gästens namn |
 | `invited_at` | TIMESTAMPTZ | Nej | Auto |
+| `send_status` | TEXT | Nej | `'sent'` eller `'failed'` (default: `'sent'`) |
+| `error_message` | TEXT | Ja | Felmeddelande vid misslyckad sändning |
 
 **RLS:** Ägare kan hantera (ALL via JOIN parties).
 
 **Constraints:**
 - `CHECK (email IS NOT NULL OR phone IS NOT NULL)` — minst en kontaktmetod
 - `UNIQUE(party_id, email)` — en per e-post per kalas
-- `UNIQUE(party_id, phone) WHERE phone IS NOT NULL` — en per telefon per kalas (partial index)
 
-**Index:** `idx_invited_guests_party`, `idx_invited_guests_party_phone`.
+**Index:** `idx_invited_guests_party`, `idx_invited_guests_party_phone` (ej unik — tillåter dubbletter för syskon/tvillingar).
 
 ---
 
@@ -263,6 +264,11 @@ Spårar SMS-förbrukning per användare och månad. Överlever kalas-radering (`
 | 15 | `00015_tighten_rsvp_update_rls.sql` | Striktare UPDATE RLS-policy på rsvp_responses |
 | 16 | `00016_audit_log.sql` | audit_log-tabell, RLS, pg_cron cleanup (90 dagar) |
 | 17 | `00017_child_photo_storage.sql` | child-photos Storage bucket med RLS-policies |
+| 18 | `00018_add_parties_owner_date_index.sql` | Index på parties(owner_id, party_date) |
+| 19 | `00019_fix_security_warnings.sql` | Säkerhetsfix |
+| 20 | `00020_beta_system.sql` | Beta-system stöd |
+| 21 | `00021_zeback_to_tester.sql` | Tester-roll fix |
+| 22 | `00022_allow_duplicate_phone_invitations.sql` | Tillåt dubbla SMS-inbjudningar + spåra misslyckade |
 
 ---
 

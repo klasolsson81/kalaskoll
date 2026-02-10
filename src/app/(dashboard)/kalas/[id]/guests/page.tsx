@@ -56,7 +56,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
   // Fetch invited guests (email/SMS) with response matching
   const { data: invitedGuests } = await supabase
     .from('invited_guests')
-    .select('email, phone, invite_method, name, invited_at')
+    .select('id, email, phone, invite_method, name, invited_at, send_status, error_message')
     .eq('party_id', id)
     .order('invited_at', { ascending: true });
 

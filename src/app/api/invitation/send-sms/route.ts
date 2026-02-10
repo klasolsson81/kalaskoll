@@ -130,20 +130,7 @@ export async function POST(request: Request) {
 
   const baseRsvpUrl = `${APP_URL}/r/${invitation.token}`;
 
-  // Save invited guests with phone + invite_method='sms'
-  // Individual inserts because the partial unique index (party_id, phone WHERE phone IS NOT NULL)
-  // is not supported by Supabase upsert's onConflict parameter
-  await Promise.allSettled(
-    phones.map((phone) =>
-      supabase.from('invited_guests').insert({
-        party_id: partyId,
-        phone,
-        invite_method: 'sms',
-      }),
-    ),
-  );
-
-  // Send SMS in parallel
+  // Send SMS in parallel, then track results per phone
   const results = await Promise.allSettled(
     phones.map((phone) =>
       sendPartySms({
@@ -160,8 +147,46 @@ export async function POST(request: Request) {
     ),
   );
 
-  const sent = results.filter((r) => r.status === 'fulfilled').length;
-  const failed = results.filter((r) => r.status === 'rejected').length;
+  // Build per-phone results with status and error details
+  const phoneResults = phones.map((phone, i) => {
+    const result = results[i];
+    if (result.status === 'fulfilled') {
+      return { phone, sendStatus: 'sent' as const, error: null };
+    }
+    const reason = result.reason;
+    let error = 'Okänt fel';
+    if (reason instanceof Error) {
+      const statusMatch = reason.message.match(/46elks API error: (\d+)/);
+      if (statusMatch) {
+        const code = statusMatch[1];
+        error = code === '400' ? 'Ogiltigt telefonnummer' : `SMS-fel (${code})`;
+      } else if (reason.message.includes('abort') || reason.message.includes('timeout')) {
+        error = 'Timeout';
+      } else {
+        error = 'Kunde inte skicka';
+      }
+    }
+    return { phone, sendStatus: 'failed' as const, error };
+  });
+
+  const sent = phoneResults.filter((r) => r.sendStatus === 'sent').length;
+  const failed = phoneResults.filter((r) => r.sendStatus === 'failed').length;
+  const failedPhones = phoneResults
+    .filter((r) => r.sendStatus === 'failed')
+    .map((r) => ({ phone: r.phone, error: r.error! }));
+
+  // Save invited guests with send status (duplicates allowed for siblings/twins)
+  await Promise.allSettled(
+    phoneResults.map((r) =>
+      supabase.from('invited_guests').insert({
+        party_id: partyId,
+        phone: r.phone,
+        invite_method: 'sms',
+        send_status: r.sendStatus,
+        error_message: r.error,
+      }),
+    ),
+  );
 
   // Increment beta SMS counter for testers
   if (sent > 0 && !isAdmin) {
@@ -219,6 +244,6 @@ export async function POST(request: Request) {
     ? SMS_MAX_PER_PARTY
     : SMS_MAX_PER_PARTY - (updatedUsage?.sms_count ?? 0);
 
-  const response: SendSmsInvitationResponse = { sent, failed, remainingSmsThisParty };
+  const response: SendSmsInvitationResponse = { sent, failed, remainingSmsThisParty, failedPhones };
   return NextResponse.json(response);
 }

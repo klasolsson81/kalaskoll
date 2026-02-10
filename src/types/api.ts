@@ -72,4 +72,5 @@ export interface SendSmsInvitationResponse {
   sent: number;
   failed: number;
   remainingSmsThisParty: number;
+  failedPhones: Array<{ phone: string; error: string }>;
 }

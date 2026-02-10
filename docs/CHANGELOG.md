@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### Dubbla inbjudningar försvinner (tvillingar/syskon)
+- **Migration `00022`** — droppat `UNIQUE INDEX` på `invited_guests(party_id, phone)` som förhindrade att samma telefonnummer fick flera inbjudningar (t.ex. tvillingar i samma familj)
+- **`send-sms/route.ts`** — sparar varje SMS individuellt med `send_status` och `error_message`, stödjer nu dubbletter
+- **`GuestListRealtime.tsx`** — visar alla skickade inbjudningar (inklusive dubbletter), separerar misslyckade i egen sektion
+- **`SendInvitationsSection.tsx`** — visar exakt vilka nummer som misslyckades med felkod efter SMS-utskick
+- **`page.tsx` (kalas + gästlista)** — hämtar och visar `send_status` och `error_message` från `invited_guests`
+- **`types.ts` / `api.ts`** — utökade `InvitedGuest` med `id`, `send_status`, `error_message`; `SendSmsInvitationResponse` med `failedPhones`
+
 #### E-post förifyld vid inloggning
 - **`LoginForm.tsx`** — läser `?email=` från URL:en och fyller i e-postfältet automatiskt
 - **`page.tsx` (login)** — `<Suspense>`-boundary för `useSearchParams`

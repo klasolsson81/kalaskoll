@@ -12,12 +12,15 @@ import { sendSmsInvitationSchema } from '@/lib/utils/validation';
 type InviteMethod = 'email' | 'sms';
 
 interface InvitedGuest {
+  id: string;
   email: string | null;
   phone: string | null;
   invite_method: string;
   name: string | null;
   invited_at: string;
   hasResponded: boolean;
+  send_status: string;
+  error_message: string | null;
 }
 
 interface SmsUsage {
@@ -49,7 +52,7 @@ export function SendInvitationsSection({
   const [emailsText, setEmailsText] = useState('');
   const [phonesText, setPhonesText] = useState('');
   const [sending, setSending] = useState(false);
-  const [result, setResult] = useState<{ sent: number; failed: number; remainingSms?: number } | null>(null);
+  const [result, setResult] = useState<{ sent: number; failed: number; remainingSms?: number; failedPhones?: Array<{ phone: string; error: string }> } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
@@ -160,7 +163,7 @@ export function SendInvitationsSection({
         return;
       }
 
-      setResult({ sent: data.sent, failed: data.failed, remainingSms: data.remainingSmsThisParty });
+      setResult({ sent: data.sent, failed: data.failed, remainingSms: data.remainingSmsThisParty, failedPhones: data.failedPhones });
       setPhonesText('');
       router.refresh();
     } catch {
@@ -310,44 +313,89 @@ export function SendInvitationsSection({
         )}
 
         {result && (
-          <div className="rounded-md bg-green-50 p-3 text-sm text-green-700">
-            {result.failed === 0
-              ? `${result.sent} ${result.sent === 1 ? 'inbjudan skickad' : 'inbjudningar skickade'}`
-              : `${result.sent} av ${result.sent + result.failed} skickade (${result.failed} misslyckades)`}
-          </div>
+          <>
+            <div className={`rounded-md p-3 text-sm ${result.failed === 0 ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-800'}`}>
+              {result.failed === 0
+                ? `${result.sent} ${result.sent === 1 ? 'inbjudan skickad' : 'inbjudningar skickade'}`
+                : `${result.sent} av ${result.sent + result.failed} skickade (${result.failed} misslyckades)`}
+            </div>
+            {result.failedPhones && result.failedPhones.length > 0 && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm">
+                <p className="font-medium text-destructive mb-1">Misslyckade SMS:</p>
+                <ul className="space-y-1">
+                  {result.failedPhones.map((f) => (
+                    <li key={f.phone} className="flex items-center gap-2 text-destructive">
+                      <span>{f.phone}</span>
+                      <span className="text-xs opacity-75">— {f.error}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
         )}
 
-        {invitedGuests.length > 0 && (
-          <div className="space-y-2 pt-2">
-            <p className="text-sm font-medium">Inbjudna ({invitedGuests.length})</p>
-            <ul className="space-y-1.5">
-              {invitedGuests.map((g) => {
-                const key = g.email ?? g.phone ?? g.invited_at;
-                const isSms = g.invite_method === 'sms';
-                const display = isSms ? g.phone : (g.name || g.email);
-                return (
-                  <li key={key} className="flex items-center gap-2 text-sm">
-                    <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
-                      {isSms ? '📱' : '✉️'}
-                    </span>
-                    <span
-                      className={`inline-block h-2 w-2 rounded-full ${
-                        g.hasResponded ? 'bg-green-500' : 'bg-gray-300'
-                      }`}
-                    />
-                    <span>{display}</span>
-                    {!isSms && g.name && g.email && (
-                      <span className="text-muted-foreground">{g.email}</span>
-                    )}
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      {g.hasResponded ? 'Svarat' : 'Ej svarat'}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
+        {invitedGuests.length > 0 && (() => {
+          const sentGuests = invitedGuests.filter((g) => g.send_status !== 'failed');
+          const failedGuests = invitedGuests.filter((g) => g.send_status === 'failed');
+          return (
+            <div className="space-y-2 pt-2">
+              {sentGuests.length > 0 && (
+                <>
+                  <p className="text-sm font-medium">Inbjudna ({sentGuests.length})</p>
+                  <ul className="space-y-1.5">
+                    {sentGuests.map((g) => {
+                      const isSms = g.invite_method === 'sms';
+                      const display = isSms ? g.phone : (g.name || g.email);
+                      return (
+                        <li key={g.id} className="flex items-center gap-2 text-sm">
+                          <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
+                            {isSms ? '📱' : '✉️'}
+                          </span>
+                          <span
+                            className={`inline-block h-2 w-2 rounded-full ${
+                              g.hasResponded ? 'bg-green-500' : 'bg-gray-300'
+                            }`}
+                          />
+                          <span>{display}</span>
+                          {!isSms && g.name && g.email && (
+                            <span className="text-muted-foreground">{g.email}</span>
+                          )}
+                          <span className="ml-auto text-xs text-muted-foreground">
+                            {g.hasResponded ? 'Svarat' : 'Ej svarat'}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
+              {failedGuests.length > 0 && (
+                <>
+                  <p className="text-sm font-medium text-destructive">Misslyckade ({failedGuests.length})</p>
+                  <ul className="space-y-1.5">
+                    {failedGuests.map((g) => {
+                      const isSms = g.invite_method === 'sms';
+                      const display = isSms ? g.phone : (g.name || g.email);
+                      return (
+                        <li key={g.id} className="flex items-center gap-2 text-sm">
+                          <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
+                            {isSms ? '📱' : '✉️'}
+                          </span>
+                          <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+                          <span>{display}</span>
+                          <span className="ml-auto text-xs text-destructive">
+                            {g.error_message || 'Misslyckades'}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
+            </div>
+          );
+        })()}
       </CardContent>
     </Card>
   );

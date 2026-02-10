@@ -133,41 +133,79 @@ export function GuestListRealtime({
         </Card>
       )}
 
-      {invitedGuests.length > 0 && (
-        <Card className="border-0 glass-card">
-          <CardHeader>
-            <CardTitle className="font-display">Skickade inbjudningar ({invitedGuests.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {invitedGuests.map((g) => {
-                const key = g.email ?? g.phone ?? g.invited_at;
-                const isSms = g.invite_method === 'sms';
-                const display = isSms ? g.phone : (g.name || g.email);
-                return (
-                  <li key={key} className="flex items-center gap-2 text-sm border-b pb-2 last:border-0 last:pb-0">
-                    <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
-                      {isSms ? '📱' : '✉️'}
-                    </span>
-                    <span
-                      className={`inline-block h-2 w-2 rounded-full shrink-0 ${
-                        g.hasResponded ? 'bg-green-500' : 'bg-gray-300'
-                      }`}
-                    />
-                    <span className="truncate">{display}</span>
-                    {!isSms && g.name && g.email && (
-                      <span className="text-muted-foreground truncate">{g.email}</span>
-                    )}
-                    <span className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
-                      {g.hasResponded ? 'Svarat' : 'Ej svarat'}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
+      {invitedGuests.length > 0 && (() => {
+        const sentInvitations = invitedGuests.filter((g) => g.send_status !== 'failed');
+        const failedInvitations = invitedGuests.filter((g) => g.send_status === 'failed');
+
+        return (
+          <>
+            {sentInvitations.length > 0 && (
+              <Card className="border-0 glass-card">
+                <CardHeader>
+                  <CardTitle className="font-display">Skickade inbjudningar ({sentInvitations.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {sentInvitations.map((g) => {
+                      const isSms = g.invite_method === 'sms';
+                      const display = isSms ? g.phone : (g.name || g.email);
+                      return (
+                        <li key={g.id} className="flex items-center gap-2 text-sm border-b pb-2 last:border-0 last:pb-0">
+                          <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
+                            {isSms ? '📱' : '✉️'}
+                          </span>
+                          <span
+                            className={`inline-block h-2 w-2 rounded-full shrink-0 ${
+                              g.hasResponded ? 'bg-green-500' : 'bg-gray-300'
+                            }`}
+                          />
+                          <span className="truncate">{display}</span>
+                          {!isSms && g.name && g.email && (
+                            <span className="text-muted-foreground truncate">{g.email}</span>
+                          )}
+                          <span className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
+                            {g.hasResponded ? 'Svarat' : 'Ej svarat'}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {failedInvitations.length > 0 && (
+              <Card className="border-0 glass-card border-destructive/20">
+                <CardHeader>
+                  <CardTitle className="text-destructive font-display">
+                    Misslyckade ({failedInvitations.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {failedInvitations.map((g) => {
+                      const isSms = g.invite_method === 'sms';
+                      const display = isSms ? g.phone : (g.name || g.email);
+                      return (
+                        <li key={g.id} className="flex items-center gap-2 text-sm border-b pb-2 last:border-0 last:pb-0">
+                          <span className="text-base" title={isSms ? 'SMS' : 'E-post'}>
+                            {isSms ? '📱' : '✉️'}
+                          </span>
+                          <span className="inline-block h-2 w-2 rounded-full shrink-0 bg-red-500" />
+                          <span className="truncate">{display}</span>
+                          <span className="ml-auto text-xs text-destructive whitespace-nowrap">
+                            {g.error_message || 'Misslyckades'}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+          </>
+        );
+      })()}
 
       {guests.length === 0 && invitedGuests.length === 0 && !showAddForm && (
         <Card className="border-0 glass-card">

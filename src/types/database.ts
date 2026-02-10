@@ -267,6 +267,8 @@ export type Database = {
           invite_method: string;
           name: string | null;
           invited_at: string;
+          send_status: string;
+          error_message: string | null;
         };
         Insert: {
           id?: string;
@@ -276,6 +278,8 @@ export type Database = {
           invite_method?: string;
           name?: string | null;
           invited_at?: string;
+          send_status?: string;
+          error_message?: string | null;
         };
         Update: {
           id?: string;
@@ -284,6 +288,8 @@ export type Database = {
           phone?: string | null;
           invite_method?: string;
           name?: string | null;
+          send_status?: string;
+          error_message?: string | null;
         };
         Relationships: [
           {

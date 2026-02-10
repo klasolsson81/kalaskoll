@@ -78,10 +78,10 @@ export default async function PartyPage({ params }: PartyPageProps) {
     .eq('party_id', id)
     .order('created_at', { ascending: true });
 
-  // Fetch invited guests with phone and invite_method
+  // Fetch invited guests with phone, invite_method, and send status
   const { data: invitedGuests } = await supabase
     .from('invited_guests')
-    .select('email, phone, invite_method, name, invited_at')
+    .select('id, email, phone, invite_method, name, invited_at, send_status, error_message')
     .eq('party_id', id)
     .order('invited_at', { ascending: true });
 
@@ -323,11 +323,22 @@ export default async function PartyPage({ params }: PartyPageProps) {
                 <p className="text-sm text-muted-foreground">Svar totalt</p>
               </div>
             </div>
-            {(invitedGuests ?? []).length > 0 && (
-              <p className="text-sm text-muted-foreground">
-                {(invitedGuests ?? []).length} inbjudningar skickade
-              </p>
-            )}
+            {(invitedGuests ?? []).length > 0 && (() => {
+              const sentCount = (invitedGuests ?? []).filter((g) => g.send_status !== 'failed').length;
+              const failedCount = (invitedGuests ?? []).filter((g) => g.send_status === 'failed').length;
+              return (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    {sentCount} {sentCount === 1 ? 'inbjudan skickad' : 'inbjudningar skickade'}
+                  </p>
+                  {failedCount > 0 && (
+                    <p className="text-sm text-destructive">
+                      {failedCount} misslyckade
+                    </p>
+                  )}
+                </>
+              );
+            })()}
             {party.max_guests && (
               <p className="text-sm text-muted-foreground">
                 Max {party.max_guests} gäster
