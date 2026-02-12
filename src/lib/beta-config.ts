@@ -5,6 +5,7 @@ export const BETA_END_DATE = '2026-02-28';
 export const PROTECTED_TESTERS: { id: string; until: string; name: string }[] = [
   { id: '93fcbe34-e2aa-4fa9-b986-101f58f27ad0', until: '2026-03-15', name: 'Caroline Friberg Wolk' },
   { id: '0aeb9d75-4d44-48ba-9c7f-15197e1b7a93', until: '2026-03-15', name: 'Klas Olsson (test)' },
+  { id: '638bb0b0-3499-4cf8-b9d6-dd02621abdb2', until: '2026-03-31', name: 'Petter Sjöstrand' },
 ];
 
 /** Returns the effective end date for a specific user (extended if protected) */
