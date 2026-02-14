@@ -230,7 +230,8 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
               type="button"
               onClick={() => setGlobalAttending(true)}
               aria-pressed={globalAttending === true}
-              className={`rounded-xl border-2 p-5 text-center transition-all ${
+              aria-label="Ja, vi kommer på kalaset"
+              className={`rounded-xl border-2 p-5 text-center transition-all focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
                 globalAttending === true
                   ? 'border-success bg-success/5 text-success shadow-sm'
                   : 'border-border hover:border-success/50 hover:bg-success/5'
@@ -243,7 +244,8 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
               type="button"
               onClick={() => setGlobalAttending(false)}
               aria-pressed={globalAttending === false}
-              className={`rounded-xl border-2 p-5 text-center transition-all ${
+              aria-label="Nej, vi kan tyvärr inte komma"
+              className={`rounded-xl border-2 p-5 text-center transition-all focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
                 globalAttending === false
                   ? 'border-destructive bg-destructive/5 text-destructive shadow-sm'
                   : 'border-border hover:border-destructive/50 hover:bg-destructive/5'
@@ -330,7 +332,8 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                       <button
                         type="button"
                         onClick={() => updateChild(index, { attending: true })}
-                        className={`rounded-lg border p-2 text-center text-sm transition-all ${
+                        aria-pressed={child.attending}
+                        className={`rounded-lg border p-3 text-center text-sm transition-all focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
                           child.attending
                             ? 'border-success bg-success/5 text-success font-semibold'
                             : 'border-border hover:border-success/50'
@@ -341,7 +344,8 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                       <button
                         type="button"
                         onClick={() => updateChild(index, { attending: false })}
-                        className={`rounded-lg border p-2 text-center text-sm transition-all ${
+                        aria-pressed={!child.attending}
+                        className={`rounded-lg border p-3 text-center text-sm transition-all focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
                           !child.attending
                             ? 'border-destructive bg-destructive/5 text-destructive font-semibold'
                             : 'border-border hover:border-destructive/50'

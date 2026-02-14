@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### Quick Wins: UX/Accessibility
+- **RSVP toggle** — aria-labels ("Ja, vi kommer på kalaset" / "Nej, vi kan tyvärr inte komma") + focus-visible ring
+- **Multi-child knappar** — touch targets ökade från p-2 till p-3 (44x44px minimum) + aria-pressed + focus-visible
+- **SubmitButton** — aria-busy under pending-state
+- **Allergi-consent** — visuell kravmarkering (*) före samtyckestext
+- **LoginForm** — autoFocus på e-postfältet
+
 #### Code Review: CRITICAL + HIGH issues
 - **C2** — Allergidata-insert i RSVP loggar nu fel istället för tyst failure
 - **C3** — Kontoradering visar felmeddelande vid misslyckande istället för tyst redirect

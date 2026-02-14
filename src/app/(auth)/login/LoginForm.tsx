@@ -50,6 +50,7 @@ export default function LoginForm() {
               defaultValue={emailFromUrl}
               className="h-11"
               required
+              autoFocus
             />
           </div>
           <div className="space-y-2">

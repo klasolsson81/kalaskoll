@@ -76,6 +76,7 @@ export function AllergyCheckboxes({ disabled, initialSelected, initialOtherDieta
               disabled={disabled}
             />
             <span className="text-amber-900">
+              <span className="text-destructive font-semibold">*</span>{' '}
               Jag samtycker till att allergiinformation lagras i syfte att säkerställa mitt barns
               säkerhet vid kalaset. Informationen raderas automatiskt 7 dagar efter kalaset.
             </span>

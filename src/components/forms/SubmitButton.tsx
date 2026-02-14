@@ -13,7 +13,7 @@ export function SubmitButton({ children, className, size }: SubmitButtonProps) {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" className={className} size={size} disabled={pending}>
+    <Button type="submit" className={className} size={size} disabled={pending} aria-busy={pending}>
       {pending ? 'Vänta...' : children}
     </Button>
   );
