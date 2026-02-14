@@ -13,6 +13,15 @@ All notable changes to this project will be documented in this file.
 - Utan custom prompt — oförändrat beteende (tema + full kalaskontext)
 - **Prompt-översättning** — svenska custom prompts översätts och berikas till engelska via GPT-4o-mini innan bildgenerering (t.ex. "Göteborg" → "Gothenburg, Sweden, with the Göta älv river and Poseidon statue")
 
+### Added
+
+#### Bildbibliotek: förhandsgranskning med galleri-modal
+- **ImagePreviewModal** — klick på AI-bild öppnar stor förhandsgranskning istället för direkt-apply
+- **Carousel** — swipe vänster/höger (mobil) och pilknappar (desktop) för att bläddra mellan bilder
+- **Dot-indikatorer** — visar position i galleriet
+- **Tangentbord** — piltangenter + Escape för navigering
+- "Använd bilden" bekräftar valet, "Avbryt" stänger utan ändring
+
 ### Changed
 
 #### Admin-impersonering: dölj admin-UI

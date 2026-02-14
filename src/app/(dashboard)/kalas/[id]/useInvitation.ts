@@ -51,6 +51,7 @@ export function useInvitation({
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [expanded, setExpanded] = useState(true);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   const activeMode: 'template' | 'ai' | null = activeTemplate
     ? 'template'
@@ -162,6 +163,15 @@ export function useInvitation({
     setGeneratedPreview(null);
   }, []);
 
+  const openImagePreview = useCallback((imageId: string) => {
+    const index = images.findIndex((img) => img.id === imageId);
+    if (index !== -1) setPreviewIndex(index);
+  }, [images]);
+
+  const closeImagePreview = useCallback(() => {
+    setPreviewIndex(null);
+  }, []);
+
   const selectImage = useCallback(async (imageId: string) => {
     const image = images.find((img) => img.id === imageId);
     if (!image) return;
@@ -185,6 +195,7 @@ export function useInvitation({
         prev.map((img) => ({ ...img, isSelected: img.id === imageId })),
       );
       setExpanded(true);
+      setPreviewIndex(null);
     } catch {
       setError('Något gick fel');
     } finally {
@@ -265,6 +276,7 @@ export function useInvitation({
     maxImages,
     canGenerate,
     generatedPreview,
+    previewIndex,
     // Actions
     setError,
     setExpanded,
@@ -273,6 +285,8 @@ export function useInvitation({
     selectTemplate,
     generateImage,
     selectImage,
+    openImagePreview,
+    closeImagePreview,
     acceptGeneratedImage,
     dismissGeneratedImage,
     handleCropSave,

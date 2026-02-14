@@ -10,6 +10,7 @@ import { TemplateColumn } from './TemplateColumn';
 import { AiColumn } from './AiColumn';
 import { AiGenerateDialog } from './AiGenerateDialog';
 import { AiGeneratingModal } from './AiGeneratingModal';
+import { ImagePreviewModal } from './ImagePreviewModal';
 import { useInvitation } from './useInvitation';
 
 interface PartyImage {
@@ -159,7 +160,7 @@ export function InvitationSection({
             canGenerate={inv.canGenerate}
             isAdmin={isAdmin}
             maxImages={inv.maxImages}
-            onSelectImage={inv.selectImage}
+            onPreviewImage={inv.openImagePreview}
             onGenerate={() => inv.setShowGenerateDialog(true)}
           />
         </div>
@@ -208,6 +209,17 @@ export function InvitationSection({
         onAccept={inv.acceptGeneratedImage}
         onDismiss={inv.dismissGeneratedImage}
       />
+
+      {/* Image gallery preview modal */}
+      {inv.previewIndex !== null && inv.images.length > 0 && (
+        <ImagePreviewModal
+          images={inv.images}
+          initialIndex={inv.previewIndex}
+          onSelect={inv.selectImage}
+          onClose={inv.closeImagePreview}
+          selecting={inv.selecting !== null}
+        />
+      )}
     </Card>
   );
 }

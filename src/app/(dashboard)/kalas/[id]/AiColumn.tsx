@@ -17,7 +17,7 @@ interface AiColumnProps {
   canGenerate: boolean;
   isAdmin: boolean;
   maxImages: number;
-  onSelectImage: (imageId: string) => void;
+  onPreviewImage: (imageId: string) => void;
   onGenerate: () => void;
 }
 
@@ -29,7 +29,7 @@ export function AiColumn({
   canGenerate,
   isAdmin,
   maxImages,
-  onSelectImage,
+  onPreviewImage,
   onGenerate,
 }: AiColumnProps) {
   const remainingCount = maxImages - images.length;
@@ -56,7 +56,7 @@ export function AiColumn({
           return (
             <button
               key={img.id}
-              onClick={() => onSelectImage(img.id)}
+              onClick={() => onPreviewImage(img.id)}
               disabled={selecting !== null}
               className={cn(
                 'relative aspect-[3/4] overflow-hidden rounded-lg border-2 transition-all',
