@@ -7,7 +7,7 @@ interface TemplateColumnProps {
   activeTemplate: string | null;
   activeMode: 'template' | 'ai' | null;
   savingTemplate: boolean;
-  onSelectTemplate: (templateId: string) => void;
+  onPreviewTemplate: (index: number) => void;
   partyData: {
     childName: string;
     childAge: number;
@@ -25,7 +25,7 @@ export function TemplateColumn({
   activeTemplate,
   activeMode,
   savingTemplate,
-  onSelectTemplate,
+  onPreviewTemplate,
   partyData,
 }: TemplateColumnProps) {
   return (
@@ -37,12 +37,12 @@ export function TemplateColumn({
         Gratis-mallar
       </h3>
       <div className="grid grid-cols-3 gap-2">
-        {TEMPLATE_IDS.map((id) => {
+        {TEMPLATE_IDS.map((id, index) => {
           const isSelected = activeMode === 'template' && activeTemplate === id;
           return (
             <button
               key={id}
-              onClick={() => onSelectTemplate(id)}
+              onClick={() => onPreviewTemplate(index)}
               disabled={savingTemplate}
               className={cn(
                 'relative overflow-hidden rounded-lg border-2 transition-all',

@@ -16,10 +16,12 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 #### Bildbibliotek: förhandsgranskning med galleri-modal
-- **ImagePreviewModal** — klick på AI-bild öppnar stor förhandsgranskning istället för direkt-apply
+- **ImagePreviewModal** — klick på AI-bild eller mall öppnar stor förhandsgranskning istället för direkt-apply
 - **Carousel** — swipe vänster/höger (mobil) och pilknappar (desktop) för att bläddra mellan bilder
 - **Dot-indikatorer** — visar position i galleriet
 - **Tangentbord** — piltangenter + Escape för navigering
+- Stöder både AI-bilder och gratis-mallar med render-baserad arkitektur
+- Kompaktare modal (max-w-sm, 280px bildyta) — täcker inte hela skärmhöjden
 - "Använd bilden" bekräftar valet, "Avbryt" stänger utan ändring
 
 ### Changed

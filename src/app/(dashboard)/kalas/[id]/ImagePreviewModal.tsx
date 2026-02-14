@@ -1,44 +1,42 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import Image from 'next/image';
+import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
-interface PreviewImage {
-  id: string;
-  imageUrl: string;
-  isSelected: boolean;
-}
-
-interface ImagePreviewModalProps {
-  images: PreviewImage[];
+interface PreviewModalProps {
+  itemCount: number;
   initialIndex: number;
-  onSelect: (imageId: string) => void;
+  isSelected: (index: number) => boolean;
+  renderItem: (index: number) => ReactNode;
+  onSelect: (index: number) => void;
   onClose: () => void;
   selecting: boolean;
+  title?: string;
 }
 
 export function ImagePreviewModal({
-  images,
+  itemCount,
   initialIndex,
+  isSelected,
+  renderItem,
   onSelect,
   onClose,
   selecting,
-}: ImagePreviewModalProps) {
+  title = 'Välj bild',
+}: PreviewModalProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const touchStartX = useRef<number | null>(null);
   const touchDeltaX = useRef(0);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  const safeIndex = Math.max(0, Math.min(images.length - 1, currentIndex));
-  const current = images[safeIndex];
+  const safeIndex = Math.max(0, Math.min(itemCount - 1, currentIndex));
   const hasPrev = safeIndex > 0;
-  const hasNext = safeIndex < images.length - 1;
+  const hasNext = safeIndex < itemCount - 1;
+  const selected = isSelected(safeIndex);
 
   const goTo = useCallback((index: number) => {
-    setCurrentIndex(Math.max(0, Math.min(images.length - 1, index)));
-  }, [images.length]);
+    setCurrentIndex(Math.max(0, Math.min(itemCount - 1, index)));
+  }, [itemCount]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -51,7 +49,7 @@ export function ImagePreviewModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [safeIndex, goTo, onClose]);
 
-  if (!current) return null;
+  if (itemCount === 0) return null;
 
   // Touch swipe handlers
   function handleTouchStart(e: React.TouchEvent) {
@@ -68,9 +66,9 @@ export function ImagePreviewModal({
     if (touchStartX.current === null) return;
     const threshold = 50;
     if (touchDeltaX.current < -threshold && hasNext) {
-      goTo(currentIndex + 1);
+      goTo(safeIndex + 1);
     } else if (touchDeltaX.current > threshold && hasPrev) {
-      goTo(currentIndex - 1);
+      goTo(safeIndex - 1);
     }
     touchStartX.current = null;
     touchDeltaX.current = 0;
@@ -81,15 +79,15 @@ export function ImagePreviewModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div ref={containerRef} className="mx-4 w-full max-w-md">
-        <div className="rounded-2xl border border-amber-200 bg-gradient-to-b from-amber-50 to-white p-6 shadow-xl">
-          <div className="flex flex-col items-center gap-4">
+      <div className="mx-4 w-full max-w-sm">
+        <div className="rounded-2xl border border-amber-200 bg-gradient-to-b from-amber-50 to-white p-5 shadow-xl">
+          <div className="flex flex-col items-center gap-3">
             {/* Header with close button */}
             <div className="flex w-full items-center justify-between">
-              <h2 className="text-lg font-bold text-amber-900 font-display">
-                Välj bild
+              <h2 className="text-base font-bold text-amber-900 font-display">
+                {title}
                 <span className="ml-2 text-sm font-normal text-amber-600">
-                  {currentIndex + 1} / {images.length}
+                  {safeIndex + 1} / {itemCount}
                 </span>
               </h2>
               <button
@@ -100,25 +98,18 @@ export function ImagePreviewModal({
               </button>
             </div>
 
-            {/* Image carousel area */}
+            {/* Carousel area */}
             <div
-              className="relative w-full"
+              className="relative w-full max-w-[280px]"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* Main image */}
+              {/* Content */}
               <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl border-2 border-amber-200 shadow-md">
-                <Image
-                  src={current.imageUrl}
-                  alt={`Bild ${currentIndex + 1} av ${images.length}`}
-                  fill
-                  className="object-cover"
-                  sizes="400px"
-                  priority
-                />
-                {current.isSelected && (
-                  <div className="absolute top-3 right-3 rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-white shadow-md">
+                {renderItem(safeIndex)}
+                {selected && (
+                  <div className="absolute top-2 right-2 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white shadow-md">
                     Aktiv
                   </div>
                 )}
@@ -127,32 +118,32 @@ export function ImagePreviewModal({
               {/* Arrow buttons (desktop) */}
               {hasPrev && (
                 <button
-                  onClick={() => goTo(currentIndex - 1)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-amber-700 shadow-md transition-colors hover:bg-white"
+                  onClick={() => goTo(safeIndex - 1)}
+                  className="absolute left-1.5 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-amber-700 shadow-md transition-colors hover:bg-white"
                 >
-                  <ChevronLeft className="h-6 w-6" />
+                  <ChevronLeft className="h-5 w-5" />
                 </button>
               )}
               {hasNext && (
                 <button
-                  onClick={() => goTo(currentIndex + 1)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-amber-700 shadow-md transition-colors hover:bg-white"
+                  onClick={() => goTo(safeIndex + 1)}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-amber-700 shadow-md transition-colors hover:bg-white"
                 >
-                  <ChevronRight className="h-6 w-6" />
+                  <ChevronRight className="h-5 w-5" />
                 </button>
               )}
             </div>
 
             {/* Dot indicators */}
-            {images.length > 1 && (
+            {itemCount > 1 && (
               <div className="flex gap-1.5">
-                {images.map((_, i) => (
+                {Array.from({ length: itemCount }, (_, i) => (
                   <button
                     key={i}
                     onClick={() => goTo(i)}
                     className={`h-2 rounded-full transition-all ${
-                      i === currentIndex
-                        ? 'w-6 bg-amber-500'
+                      i === safeIndex
+                        ? 'w-5 bg-amber-500'
                         : 'w-2 bg-amber-300 hover:bg-amber-400'
                     }`}
                   />
@@ -162,19 +153,19 @@ export function ImagePreviewModal({
 
             {/* Action buttons */}
             <div className="flex w-full flex-col gap-2">
-              {current.isSelected ? (
+              {selected ? (
                 <Button
                   disabled
-                  className="w-full h-12 text-base font-semibold"
+                  className="w-full h-11 text-sm font-semibold"
                   size="lg"
                 >
                   Redan vald
                 </Button>
               ) : (
                 <Button
-                  onClick={() => onSelect(current.id)}
+                  onClick={() => onSelect(safeIndex)}
                   disabled={selecting}
-                  className="w-full h-12 text-base font-semibold gradient-celebration text-white shadow-warm"
+                  className="w-full h-11 text-sm font-semibold gradient-celebration text-white shadow-warm"
                   size="lg"
                 >
                   {selecting ? 'Väljer...' : 'Använd bilden'}
@@ -183,7 +174,7 @@ export function ImagePreviewModal({
               <Button
                 onClick={onClose}
                 variant="outline"
-                className="w-full h-10 border-amber-200 text-amber-800 hover:bg-amber-50"
+                className="w-full h-9 text-sm border-amber-200 text-amber-800 hover:bg-amber-50"
               >
                 Avbryt
               </Button>

@@ -52,6 +52,7 @@ export function useInvitation({
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const [templatePreviewIndex, setTemplatePreviewIndex] = useState<number | null>(null);
 
   const activeMode: 'template' | 'ai' | null = activeTemplate
     ? 'template'
@@ -61,6 +62,14 @@ export function useInvitation({
 
   const maxImages = AI_MAX_IMAGES_PER_PARTY;
   const canGenerate = isAdmin || images.length < maxImages;
+
+  const openTemplatePreview = useCallback((index: number) => {
+    setTemplatePreviewIndex(index);
+  }, []);
+
+  const closeTemplatePreview = useCallback(() => {
+    setTemplatePreviewIndex(null);
+  }, []);
 
   const selectTemplate = useCallback(async (templateId: string) => {
     setSavingTemplate(true);
@@ -80,6 +89,7 @@ export function useInvitation({
       setCurrentImageUrl(null);
       setImages((prev) => prev.map((img) => ({ ...img, isSelected: false })));
       setExpanded(true);
+      setTemplatePreviewIndex(null);
     } catch {
       setError('Något gick fel');
     } finally {
@@ -277,12 +287,15 @@ export function useInvitation({
     canGenerate,
     generatedPreview,
     previewIndex,
+    templatePreviewIndex,
     // Actions
     setError,
     setExpanded,
     setShowGenerateDialog,
     setCropFile,
     selectTemplate,
+    openTemplatePreview,
+    closeTemplatePreview,
     generateImage,
     selectImage,
     openImagePreview,

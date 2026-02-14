@@ -1,8 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PhotoCropDialog } from '@/components/shared/PhotoCropDialog';
+import { TemplateCard, TEMPLATE_IDS } from '@/components/templates';
 
 import { InvitationPreview } from './InvitationPreview';
 import { PhotoUploadSection } from './PhotoUploadSection';
@@ -147,7 +149,7 @@ export function InvitationSection({
             activeTemplate={inv.activeTemplate}
             activeMode={inv.activeMode}
             savingTemplate={inv.savingTemplate}
-            onSelectTemplate={inv.selectTemplate}
+            onPreviewTemplate={inv.openTemplatePreview}
             partyData={partyData}
           />
           {/* Vertical divider (desktop) / horizontal divider (mobile) */}
@@ -210,14 +212,42 @@ export function InvitationSection({
         onDismiss={inv.dismissGeneratedImage}
       />
 
-      {/* Image gallery preview modal */}
+      {/* AI image gallery preview */}
       {inv.previewIndex !== null && inv.images.length > 0 && (
         <ImagePreviewModal
-          images={inv.images}
+          itemCount={inv.images.length}
           initialIndex={inv.previewIndex}
-          onSelect={inv.selectImage}
+          isSelected={(i) => inv.activeMode === 'ai' && inv.images[i].isSelected}
+          renderItem={(i) => (
+            <Image
+              src={inv.images[i].imageUrl}
+              alt={`AI-bild ${i + 1}`}
+              fill
+              className="object-cover"
+              sizes="280px"
+              priority
+            />
+          )}
+          onSelect={(i) => inv.selectImage(inv.images[i].id)}
           onClose={inv.closeImagePreview}
           selecting={inv.selecting !== null}
+          title="AI-bilder"
+        />
+      )}
+
+      {/* Template gallery preview */}
+      {inv.templatePreviewIndex !== null && (
+        <ImagePreviewModal
+          itemCount={TEMPLATE_IDS.length}
+          initialIndex={inv.templatePreviewIndex}
+          isSelected={(i) => inv.activeMode === 'template' && inv.activeTemplate === TEMPLATE_IDS[i]}
+          renderItem={(i) => (
+            <TemplateCard templateId={TEMPLATE_IDS[i]} {...partyData} preview />
+          )}
+          onSelect={(i) => inv.selectTemplate(TEMPLATE_IDS[i])}
+          onClose={inv.closeTemplatePreview}
+          selecting={inv.savingTemplate}
+          title="Gratis-mallar"
         />
       )}
     </Card>
