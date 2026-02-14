@@ -4,6 +4,7 @@ import { DevBadge } from '@/components/shared/DevBadge';
 import { FeedbackWidget } from '@/components/shared/FeedbackWidget';
 import { Footer } from '@/components/layout/Footer';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { APP_URL } from '@/lib/constants';
 import './globals.css';
 
@@ -99,6 +100,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-app-gradient font-sans antialiased">
         {children}
         <Analytics />
+        <SpeedInsights />
         <FeedbackWidget />
         <Footer />
         <DevBadge />
