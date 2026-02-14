@@ -57,7 +57,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
   const { data: party } = await supabase
     .from('parties')
-    .select('*')
+    .select('id, owner_id, child_name, child_age, party_date, party_time, party_time_end, venue_name, venue_address, description, theme, invitation_image_url, invitation_template, child_photo_url, child_photo_frame, rsvp_deadline, max_guests')
     .eq('id', id)
     .eq('owner_id', effectiveUserId)
     .single();
@@ -74,12 +74,12 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
   const { count: guestCount } = await supabase
     .from('rsvp_responses')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('invitation_id', invitation?.id ?? '');
 
   const { count: attendingCount } = await supabase
     .from('rsvp_responses')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('invitation_id', invitation?.id ?? '')
     .eq('attending', true);
 

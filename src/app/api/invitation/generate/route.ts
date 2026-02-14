@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
   // Fetch party details
   const { data: party, error: partyError } = await supabase
     .from('parties')
-    .select('*')
+    .select('id, owner_id, theme')
     .eq('id', partyId)
     .single();
 
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
   // Check image limit (skip for admins)
   const { count: imageCount, error: countError } = await supabase
     .from('party_images')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('party_id', partyId);
 
   const tableExists = !countError;

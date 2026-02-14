@@ -128,6 +128,15 @@ export async function POST(request: Request) {
     }
   }
 
+  // Early check: SMS credentials must be configured
+  if (!process.env.ELKS_API_USERNAME || !process.env.ELKS_API_PASSWORD) {
+    console.error('[SMS] 46elks credentials not configured');
+    return NextResponse.json(
+      { error: 'SMS-tjänsten är inte konfigurerad. Kontakta support.' },
+      { status: 503 },
+    );
+  }
+
   const baseRsvpUrl = `${APP_URL}/r/${invitation.token}`;
 
   // Send SMS in parallel, then track results per phone

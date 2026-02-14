@@ -10,7 +10,7 @@ export async function POST() {
 
     const { data: feedback, error } = await adminClient
       .from('feedback')
-      .select('*')
+      .select('id, user_id, user_email, message, page_url, user_agent, screen_size, status, created_at')
       .in('status', ['new', 'read'])
       .order('created_at', { ascending: false });
 

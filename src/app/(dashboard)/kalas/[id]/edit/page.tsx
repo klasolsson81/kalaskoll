@@ -18,7 +18,7 @@ export default async function EditPartyPage({ params }: EditPartyPageProps) {
   const supabase = await createClient();
 
   const [{ data: party }, { data: children }] = await Promise.all([
-    supabase.from('parties').select('*').eq('id', id).single(),
+    supabase.from('parties').select('id, owner_id, child_name, child_age, child_id, party_date, party_time, party_time_end, venue_name, venue_address, description, theme, rsvp_deadline, max_guests').eq('id', id).single(),
     supabase
       .from('children')
       .select('id, name, birth_date')

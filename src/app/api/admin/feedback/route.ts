@@ -13,7 +13,7 @@ export async function GET() {
     // Fetch feedback + profiles separately (service role can't do FK joins to auth)
     const { data: feedbackData, error } = await adminClient
       .from('feedback')
-      .select('*')
+      .select('id, user_id, user_email, message, page_url, user_agent, screen_size, status, admin_notes, created_at')
       .order('created_at', { ascending: false });
 
     if (error) throw error;

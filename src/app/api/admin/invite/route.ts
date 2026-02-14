@@ -15,8 +15,9 @@ const inviteSchema = z.object({
 /** HMAC-sign the invite parameters so the callback can trust them. */
 function signInvite(email: string, uid: string, expires: number): string {
   const data = `${email}:${uid}:${expires}`;
+  const secret = process.env.INVITE_SIGNING_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY!;
   return crypto
-    .createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    .createHmac('sha256', secret)
     .update(data)
     .digest('hex');
 }

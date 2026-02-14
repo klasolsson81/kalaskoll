@@ -13,8 +13,9 @@ function verifyInviteSignature(
   sig: string,
 ): boolean {
   const data = `${email}:${uid}:${expires}`;
+  const secret = process.env.INVITE_SIGNING_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY!;
   const expected = crypto
-    .createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    .createHmac('sha256', secret)
     .update(data)
     .digest('hex');
   return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));

@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     httpOnly: true,
     sameSite: 'strict',
     path: '/',
-    maxAge: 60 * 60, // 1 hour
+    maxAge: 30 * 60, // 30 minutes
   });
 
   return NextResponse.json({ ok: true });

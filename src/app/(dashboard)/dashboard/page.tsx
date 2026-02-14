@@ -43,8 +43,8 @@ export default async function DashboardPage() {
 
   if (!displayName) displayName = 'kompis';
 
-  const partiesQuery = supabase.from('parties').select('*').eq('owner_id', effectiveUserId).order('party_date', { ascending: true });
-  const childrenQuery = supabase.from('children').select('*').eq('owner_id', effectiveUserId).order('name', { ascending: true });
+  const partiesQuery = supabase.from('parties').select('id, child_name, child_age, party_date, party_time, party_time_end, venue_name, theme, max_guests').eq('owner_id', effectiveUserId).order('party_date', { ascending: true });
+  const childrenQuery = supabase.from('children').select('id, name, birth_date, photo_url, photo_frame').eq('owner_id', effectiveUserId).order('name', { ascending: true });
 
   let parties: Awaited<typeof partiesQuery>['data'] = null;
   let children: Awaited<typeof childrenQuery>['data'] = null;
@@ -57,44 +57,31 @@ export default async function DashboardPage() {
     console.error('Failed to load dashboard data:', err);
   }
 
-  // Fetch guest counts for all parties
+  // Fetch guest counts for all parties (single query with join)
   const guestCounts: Record<string, { attending: number; declined: number; total: number }> = {};
 
   if (parties && parties.length > 0) {
     const partyIds = parties.map((p) => p.id);
 
-    const { data: invitations } = await supabase
+    const { data: invitationsWithRsvps } = await supabase
       .from('invitations')
-      .select('id, party_id')
+      .select('party_id, rsvp_responses(attending)')
       .in('party_id', partyIds);
 
-    if (invitations) {
-      const invIds = invitations.map((i) => i.id);
+    if (invitationsWithRsvps) {
+      for (const partyId of partyIds) {
+        guestCounts[partyId] = { attending: 0, declined: 0, total: 0 };
+      }
 
-      const { data: responses } = await supabase
-        .from('rsvp_responses')
-        .select('invitation_id, attending')
-        .in('invitation_id', invIds);
-
-      if (responses) {
-        // Map invitation_id -> party_id
-        const invToParty: Record<string, string> = {};
-        for (const inv of invitations) {
-          invToParty[inv.id] = inv.party_id;
-        }
-
-        for (const partyId of partyIds) {
-          guestCounts[partyId] = { attending: 0, declined: 0, total: 0 };
-        }
-
+      for (const inv of invitationsWithRsvps) {
+        const responses = (inv.rsvp_responses ?? []) as { attending: boolean }[];
         for (const r of responses) {
-          const partyId = invToParty[r.invitation_id];
-          if (partyId && guestCounts[partyId]) {
-            guestCounts[partyId].total++;
+          if (guestCounts[inv.party_id]) {
+            guestCounts[inv.party_id].total++;
             if (r.attending) {
-              guestCounts[partyId].attending++;
+              guestCounts[inv.party_id].attending++;
             } else {
-              guestCounts[partyId].declined++;
+              guestCounts[inv.party_id].declined++;
             }
           }
         }

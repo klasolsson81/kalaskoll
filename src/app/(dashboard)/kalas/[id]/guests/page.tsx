@@ -43,7 +43,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
 
   const { data: guests } = await supabase
     .from('rsvp_responses')
-    .select('*')
+    .select('id, invitation_id, child_name, attending, parent_name, parent_phone, parent_email, message, responded_at')
     .eq('invitation_id', invitationId)
     .order('responded_at', { ascending: false });
 

@@ -15,9 +15,18 @@ All notable changes to this project will be documented in this file.
 
 #### Code Review: MEDIUM issues
 - **M3** — RSVP-formuläret kopplar felmeddelande med `aria-describedby` + `aria-live="assertive"` för skärmläsare
+- **M5** — Dashboard-queries kombinerade: invitations + rsvp_responses i en query med Supabase join (3→2 queries)
+- **M6** — Impersonation-cookie sänkt från 1 timme till 30 minuter
 - **M7** — Krypteringsfel vid allergi-dekryptering loggas nu med `console.error` istället för tyst fallback
 - **M8** — Edit-token i bekräftelsemail URL-encodas med `encodeURIComponent()` (specialtecken-säkert)
 - **M9** — RSVP-bekräftelsemail awaitas och returnerar `emailSent`-status i API-svaret
+- **M11** — Favicon och Apple Touch Icon uppdaterade från grön (emerald) till primärblå (#3b82f6)
+- **M12** — Text-shadow tillagd på 5 mallar som saknade det (default, dinosaurier, prinsessor, enhörningar, pirater)
+- **M14** — `select('*')` ersatt med explicita kolumner i 10 filer för bättre prestanda
+
+#### Code Review: HIGH issues (remaining)
+- **H3** — HMAC invite-signering använder nu separat `INVITE_SIGNING_SECRET` med fallback till service role key
+- **H5** — SMS-route kontrollerar credentials tidigt och returnerar 503 om ej konfigurerat
 
 #### Code Review: CRITICAL + HIGH issues
 - **C2** — Allergidata-insert i RSVP loggar nu fel istället för tyst failure

@@ -31,7 +31,7 @@ export function GuestListRealtime({
     const supabase = createClient();
     const { data } = await supabase
       .from('rsvp_responses')
-      .select('*')
+      .select('id, invitation_id, child_name, attending, parent_name, parent_phone, parent_email, message, responded_at')
       .eq('invitation_id', invitationId)
       .order('responded_at', { ascending: false });
 
