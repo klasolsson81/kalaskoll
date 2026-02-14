@@ -71,7 +71,7 @@ export default function LoginForm() {
               required
             />
           </div>
-          <SubmitButton className="w-full h-11 font-semibold gradient-celebration text-white">
+          <SubmitButton className="w-full h-12 font-semibold gradient-celebration text-white">
             Logga in
           </SubmitButton>
         </form>

@@ -2,6 +2,18 @@ import { z } from 'zod';
 import { SMS_SENDER_ID } from '@/lib/constants';
 import { formatDateShort, formatTime } from '@/lib/utils/format';
 
+export class SmsApiError extends Error {
+  public readonly statusCode: number;
+  public readonly responseBody: string;
+
+  constructor(statusCode: number, responseBody: string) {
+    super(`46elks API error: ${statusCode}`);
+    this.name = 'SmsApiError';
+    this.statusCode = statusCode;
+    this.responseBody = responseBody;
+  }
+}
+
 const elksResponseSchema = z.object({
   status: z.string(),
   id: z.string(),
@@ -103,7 +115,8 @@ export async function sendPartySms(params: SendPartySmsParams): Promise<ElksResp
   if (!response.ok) {
     const text = await response.text();
     console.error('[SMS] API error:', { to: params.to, status: response.status, body: text });
-    throw new Error(`46elks API error: ${response.status} ${text}`);
+    const err = new SmsApiError(response.status, text);
+    throw err;
   }
 
   const data = await response.json();

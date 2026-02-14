@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { decryptAllergyData } from '@/lib/utils/crypto';
+import { normalizeSwedishPhone } from '@/lib/utils/validation';
 import { GuestListRealtime } from './GuestListRealtime';
 import { getImpersonationContext } from '@/lib/utils/impersonation';
 
@@ -64,12 +65,6 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
     .eq('party_id', id)
     .order('invited_at', { ascending: true });
 
-  function normalizePhone(phone: string): string {
-    const cleaned = phone.replace(/[\s\-()]/g, '');
-    if (cleaned.startsWith('07')) return '+46' + cleaned.slice(1);
-    return cleaned;
-  }
-
   const respondedEmails = new Set(
     (guests ?? [])
       .map((r) => r.parent_email?.toLowerCase())
@@ -77,7 +72,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
   );
   const respondedPhones = new Set(
     (guests ?? [])
-      .map((r) => r.parent_phone ? normalizePhone(r.parent_phone) : null)
+      .map((r) => r.parent_phone ? normalizeSwedishPhone(r.parent_phone) : null)
       .filter(Boolean),
   );
 
@@ -85,7 +80,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
     const isSms = g.invite_method === 'sms';
     let hasResponded = false;
     if (isSms && g.phone) {
-      hasResponded = respondedPhones.has(normalizePhone(g.phone));
+      hasResponded = respondedPhones.has(normalizeSwedishPhone(g.phone));
     } else if (g.email) {
       hasResponded = respondedEmails.has(g.email.toLowerCase());
     }

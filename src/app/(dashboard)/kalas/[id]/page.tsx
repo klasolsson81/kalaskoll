@@ -3,13 +3,15 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { DeletePartyButton } from './DeletePartyButton';
 import { InvitationSection } from './InvitationSection';
 import { SendInvitationsSection } from './SendInvitationsSection';
+import { PartyDetailsCard } from './PartyDetailsCard';
+import { PartyGuestSummary } from './PartyGuestSummary';
 import { ADMIN_EMAILS, SMS_MAX_PER_PARTY } from '@/lib/constants';
+import { normalizeSwedishPhone } from '@/lib/utils/validation';
 import { BETA_CONFIG } from '@/lib/beta-config';
 import { getImpersonationContext } from '@/lib/utils/impersonation';
 
@@ -105,13 +107,6 @@ export default async function PartyPage({ params }: PartyPageProps) {
         .eq('invitation_id', invitation.id)
     : { data: null };
 
-  // Normalize phone to E.164 for matching: "070..." -> "+4670..."
-  function normalizePhone(phone: string): string {
-    const cleaned = phone.replace(/[\s\-()]/g, '');
-    if (cleaned.startsWith('07')) return '+46' + cleaned.slice(1);
-    return cleaned;
-  }
-
   const respondedEmails = new Set(
     (rsvpResponses ?? [])
       .map((r) => r.parent_email?.toLowerCase())
@@ -119,7 +114,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
   );
   const respondedPhones = new Set(
     (rsvpResponses ?? [])
-      .map((r) => r.parent_phone ? normalizePhone(r.parent_phone) : null)
+      .map((r) => r.parent_phone ? normalizeSwedishPhone(r.parent_phone) : null)
       .filter(Boolean),
   );
 
@@ -127,7 +122,7 @@ export default async function PartyPage({ params }: PartyPageProps) {
     const isSms = g.invite_method === 'sms';
     let hasResponded = false;
     if (isSms && g.phone) {
-      hasResponded = respondedPhones.has(normalizePhone(g.phone));
+      hasResponded = respondedPhones.has(normalizeSwedishPhone(g.phone));
     } else if (g.email) {
       hasResponded = respondedEmails.has(g.email.toLowerCase());
     }
@@ -241,132 +236,26 @@ export default async function PartyPage({ params }: PartyPageProps) {
 
       {/* Details & Guests grid */}
       <div className="grid gap-6 sm:grid-cols-2 print:hidden">
-        <Card className="border-0 glass-card">
-          <CardHeader>
-            <CardTitle className="font-display">Detaljer</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-lg">
-                👶
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Barn</p>
-                <p className="font-medium">
-                  {party.child_name}, fyller {party.child_age} år
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-lg">
-                📅
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Datum & tid</p>
-                <p className="font-medium">
-                  {formatDate(party.party_date)} kl {formatTimeRange(party.party_time, party.party_time_end)}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-lg">
-                📍
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Plats</p>
-                <p className="font-medium">{party.venue_name}</p>
-                {party.venue_address && (
-                  <p className="text-sm text-muted-foreground">{party.venue_address}</p>
-                )}
-              </div>
-            </div>
-            {party.theme && (
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-lg">
-                  🎨
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Tema</p>
-                  <p className="font-medium capitalize">{party.theme}</p>
-                </div>
-              </div>
-            )}
-            {party.description && (
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-lg">
-                  📝
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Beskrivning</p>
-                  <p className="font-medium">{party.description}</p>
-                </div>
-              </div>
-            )}
-            {party.rsvp_deadline && (
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-lg">
-                  ⏰
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Sista OSA</p>
-                  <p className="font-medium">{formatDate(party.rsvp_deadline)}</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 glass-card">
-          <CardHeader>
-            <CardTitle className="font-display">Gäster</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-xl bg-success/5 p-4 text-center">
-                <p className="text-3xl font-bold text-success">{attendingCount ?? 0}</p>
-                <p className="text-sm text-muted-foreground">Kommer</p>
-              </div>
-              <div className="rounded-xl bg-muted p-4 text-center">
-                <p className="text-3xl font-bold">{guestCount ?? 0}</p>
-                <p className="text-sm text-muted-foreground">Svar totalt</p>
-              </div>
-            </div>
-            {(invitedGuests ?? []).length > 0 && (() => {
-              const sentCount = (invitedGuests ?? []).filter((g) => g.send_status !== 'failed').length;
-              const failedCount = (invitedGuests ?? []).filter((g) => g.send_status === 'failed').length;
-              return (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    {sentCount} {sentCount === 1 ? 'inbjudan skickad' : 'inbjudningar skickade'}
-                  </p>
-                  {failedCount > 0 && (
-                    <p className="text-sm text-destructive">
-                      {failedCount} misslyckade
-                    </p>
-                  )}
-                </>
-              );
-            })()}
-            {party.max_guests && (
-              <p className="text-sm text-muted-foreground">
-                Max {party.max_guests} gäster
-              </p>
-            )}
-            {invitation?.token && (
-              <div>
-                <p className="text-sm text-muted-foreground">QR-kod token</p>
-                <code className="rounded-lg bg-muted px-2 py-1 text-sm font-mono">
-                  {invitation.token}
-                </code>
-              </div>
-            )}
-            <Link href={`/kalas/${id}/guests`}>
-              <Button variant="outline" className="w-full">
-                Se gästlista
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <PartyDetailsCard
+          childName={party.child_name}
+          childAge={party.child_age}
+          partyDate={party.party_date}
+          partyTime={party.party_time}
+          partyTimeEnd={party.party_time_end}
+          venueName={party.venue_name}
+          venueAddress={party.venue_address}
+          theme={party.theme}
+          description={party.description}
+          rsvpDeadline={party.rsvp_deadline}
+        />
+        <PartyGuestSummary
+          partyId={id}
+          attendingCount={attendingCount ?? 0}
+          guestCount={guestCount ?? 0}
+          maxGuests={party.max_guests}
+          invitationToken={invitation?.token ?? null}
+          invitedGuests={invitedGuests ?? []}
+        />
       </div>
     </div>
   );

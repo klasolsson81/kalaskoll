@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -176,6 +176,15 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
     }
   }
 
+  const successRef = useRef<HTMLDivElement>(null);
+
+  // Focus the success message for screen readers
+  useEffect(() => {
+    if (submitted && successRef.current) {
+      successRef.current.focus();
+    }
+  }, [submitted]);
+
   if (submitted) {
     const childNamesList = children.map((c) => c.childName).filter(Boolean);
     const displayNames = childNamesList.length > 1
@@ -184,7 +193,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
 
     return (
       <Card className="border-0 glass-card">
-        <CardContent className="py-12 text-center">
+        <CardContent className="py-12 text-center" ref={successRef} tabIndex={-1} role="status" aria-live="polite">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-3xl">
             {globalAttending ? '🎉' : '👋'}
           </div>
@@ -421,7 +430,7 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
                   placeholder="Vi ser fram emot det!"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="placeholder:text-muted-foreground border-input w-full min-h-[60px] rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] md:text-sm"
+                  className="placeholder:text-muted-foreground border-input w-full min-h-[60px] rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
                 />
               </div>
             </CardContent>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendSmsInvitationSchema } from '@/lib/utils/validation';
-import { sendPartySms } from '@/lib/sms/elks';
+import { sendPartySms, SmsApiError } from '@/lib/sms/elks';
 import { APP_URL, SMS_MAX_PER_PARTY, ADMIN_EMAILS } from '@/lib/constants';
 import { BETA_CONFIG } from '@/lib/beta-config';
 import type { SendSmsInvitationResponse } from '@/types/api';
@@ -164,12 +164,10 @@ export async function POST(request: Request) {
     }
     const reason = result.reason;
     let error = 'Okänt fel';
-    if (reason instanceof Error) {
-      const statusMatch = reason.message.match(/46elks API error: (\d+)/);
-      if (statusMatch) {
-        const code = statusMatch[1];
-        error = code === '400' ? 'Ogiltigt telefonnummer' : `SMS-fel (${code})`;
-      } else if (reason.message.includes('abort') || reason.message.includes('timeout')) {
+    if (reason instanceof SmsApiError) {
+      error = reason.statusCode === 400 ? 'Ogiltigt telefonnummer' : `SMS-fel (${reason.statusCode})`;
+    } else if (reason instanceof Error) {
+      if (reason.name === 'AbortError' || reason.message.includes('timeout')) {
         error = 'Timeout';
       } else {
         error = 'Kunde inte skicka';

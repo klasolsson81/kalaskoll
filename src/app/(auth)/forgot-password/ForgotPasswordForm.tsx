@@ -79,7 +79,7 @@ export default function ForgotPasswordForm() {
               autoFocus
             />
           </div>
-          <SubmitButton className="w-full h-11 font-semibold gradient-celebration text-white">
+          <SubmitButton className="w-full h-12 font-semibold gradient-celebration text-white">
             Skicka återställningslänk
           </SubmitButton>
         </form>

@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### Code Review: LOW issues
+- **L3** — Telefon-normalisering (`07x→+467x`) extraherad till delad `normalizeSwedishPhone()` i validation.ts (borttagen duplicering x3)
+- **L4** — Textarea i RSVP-formuläret har konsekvent `text-base` (borttagen `md:text-sm`)
+- **L5** — RSVP success-meddelande får fokus efter inskickning + `role="status"` + `aria-live="polite"` för skärmläsare
+- **L6** — Partysidan uppdelad: `PartyDetailsCard` och `PartyGuestSummary` extraherade (~130 rader mindre i page.tsx)
+- **L7** — Submit-knappar standardiserade till `h-12` (auth, profil, kalas-formulär) — konsekvent med landing page CTA
+- **L8** — SMS-felhantering använder strukturerad `SmsApiError`-klass istället för regex-parsning av felmeddelanden
+
 #### Quick Wins: UX/Accessibility
 - **RSVP toggle** — aria-labels ("Ja, vi kommer på kalaset" / "Nej, vi kan tyvärr inte komma") + focus-visible ring
 - **Multi-child knappar** — touch targets ökade från p-2 till p-3 (44x44px minimum) + aria-pressed + focus-visible

@@ -115,7 +115,7 @@ export function BetaRegisterForm({ spotsRemaining }: BetaRegisterFormProps) {
         <p>Efter betan kan du registrera ett vanligt konto.</p>
       </div>
 
-      <Button type="submit" className="w-full h-11 font-semibold gradient-celebration text-white" disabled={isLoading}>
+      <Button type="submit" className="w-full h-12 font-semibold gradient-celebration text-white" disabled={isLoading}>
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (

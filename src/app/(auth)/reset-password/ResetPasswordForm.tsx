@@ -141,7 +141,7 @@ export default function ResetPasswordForm() {
 
           <Button
             type="submit"
-            className="w-full h-11 font-semibold gradient-celebration text-white"
+            className="w-full h-12 font-semibold gradient-celebration text-white"
             disabled={loading}
           >
             {loading ? 'Sparar...' : 'Spara nytt lösenord'}

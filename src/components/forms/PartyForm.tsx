@@ -338,7 +338,7 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
         </CardContent>
       </Card>
 
-      <SubmitButton className="w-full h-11 font-semibold gradient-celebration text-white shadow-warm">
+      <SubmitButton className="w-full h-12 font-semibold gradient-celebration text-white shadow-warm">
         {submitLabel}
       </SubmitButton>
     </form>

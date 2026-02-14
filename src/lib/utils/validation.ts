@@ -176,7 +176,7 @@ export const sendInvitationSchema = z.object({
 });
 
 // Normalize Swedish phone: 07x → +467x
-function normalizeSwedishPhone(phone: string): string {
+export function normalizeSwedishPhone(phone: string): string {
   const cleaned = phone.replace(/[\s\-()]/g, '');
   if (cleaned.startsWith('07')) {
     return '+46' + cleaned.slice(1);
