@@ -214,9 +214,9 @@ export function RsvpForm({ token, childName, mode = 'create', editToken, default
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4" aria-describedby={error ? 'rsvp-error' : undefined}>
       {error && (
-        <div role="alert" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+        <div id="rsvp-error" role="alert" aria-live="assertive" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
       )}
 
       {/* Attending toggle */}

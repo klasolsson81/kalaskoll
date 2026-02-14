@@ -13,6 +13,12 @@ All notable changes to this project will be documented in this file.
 - **Allergi-consent** — visuell kravmarkering (*) före samtyckestext
 - **LoginForm** — autoFocus på e-postfältet
 
+#### Code Review: MEDIUM issues
+- **M3** — RSVP-formuläret kopplar felmeddelande med `aria-describedby` + `aria-live="assertive"` för skärmläsare
+- **M7** — Krypteringsfel vid allergi-dekryptering loggas nu med `console.error` istället för tyst fallback
+- **M8** — Edit-token i bekräftelsemail URL-encodas med `encodeURIComponent()` (specialtecken-säkert)
+- **M9** — RSVP-bekräftelsemail awaitas och returnerar `emailSent`-status i API-svaret
+
 #### Code Review: CRITICAL + HIGH issues
 - **C2** — Allergidata-insert i RSVP loggar nu fel istället för tyst failure
 - **C3** — Kontoradering visar felmeddelande vid misslyckande istället för tyst redirect

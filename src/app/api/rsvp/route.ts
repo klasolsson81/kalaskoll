@@ -172,24 +172,28 @@ async function handlePost(request: NextRequest) {
     }
   }
 
-  // Send ONE confirmation email listing all children (fire-and-forget)
+  // Send ONE confirmation email listing all children
+  let emailSent = false;
   if (party) {
     const childNames = children.map((c) => c.childName);
     const anyAttending = children.some((c) => c.attending);
-    const editUrl = `${APP_URL}/r/${invitation.token}/edit?token=${primaryEditToken}`;
-    sendRsvpConfirmation({
-      to: email,
-      childName: childNames[0],
-      childNames,
-      partyChildName: party.child_name,
-      attending: anyAttending,
-      editUrl,
-      partyDate: formatDate(party.party_date),
-      partyTime: formatTime(party.party_time),
-      venueName: party.venue_name,
-    }).catch((err) => {
-      console.error('Failed to send RSVP confirmation email:', err);
-    });
+    const editUrl = `${APP_URL}/r/${encodeURIComponent(invitation.token)}/edit?token=${encodeURIComponent(primaryEditToken)}`;
+    try {
+      await sendRsvpConfirmation({
+        to: email,
+        childName: childNames[0],
+        childNames,
+        partyChildName: party.child_name,
+        attending: anyAttending,
+        editUrl,
+        partyDate: formatDate(party.party_date),
+        partyTime: formatTime(party.party_time),
+        venueName: party.venue_name,
+      });
+      emailSent = true;
+    } catch (err) {
+      console.error('[RSVP] Failed to send confirmation email:', err);
+    }
   }
 
   // Audit log (fire-and-forget)
@@ -203,5 +207,5 @@ async function handlePost(request: NextRequest) {
     },
   });
 
-  return NextResponse.json({ success: true, rsvpIds });
+  return NextResponse.json({ success: true, rsvpIds, emailSent });
 }

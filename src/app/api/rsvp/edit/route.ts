@@ -298,7 +298,7 @@ async function handlePost(request: NextRequest) {
     if (party) {
       const childNames = children.map((c) => c.childName);
       const anyAttending = children.some((c) => c.attending);
-      const editUrl = `${APP_URL}/r/${invitationForEmail.token}/edit?token=${primaryEditToken}`;
+      const editUrl = `${APP_URL}/r/${encodeURIComponent(invitationForEmail.token)}/edit?token=${encodeURIComponent(primaryEditToken)}`;
       sendRsvpConfirmation({
         to: parsed.data.parentEmail,
         childName: childNames[0],

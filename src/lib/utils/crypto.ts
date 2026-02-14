@@ -93,7 +93,8 @@ export function decryptAllergyData(
       allergies: JSON.parse(decryptedAllergies) as string[],
       other_dietary: otherDietaryEnc ? decrypt(otherDietaryEnc) : null,
     };
-  } catch {
+  } catch (decryptErr) {
+    console.error('[Crypto] Decryption failed, trying plaintext fallback:', decryptErr);
     // Fallback: try parsing as plain JSON (legacy data)
     try {
       const parsed = typeof allergiesEnc === 'string' ? JSON.parse(allergiesEnc) : allergiesEnc;
@@ -102,6 +103,7 @@ export function decryptAllergyData(
         other_dietary: otherDietaryEnc,
       };
     } catch {
+      console.error('[Crypto] Plaintext fallback also failed — returning empty');
       return { allergies: [], other_dietary: otherDietaryEnc };
     }
   }
