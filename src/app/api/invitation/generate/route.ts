@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { generateWithReplicate } from '@/lib/ai/replicate';
 import { generateInvitationImageFallback } from '@/lib/ai/openai';
+import { enhanceCustomPrompt } from '@/lib/ai/prompts';
 import { ADMIN_EMAILS, AI_MAX_IMAGES_PER_PARTY } from '@/lib/constants';
 import type { AiStyle } from '@/lib/constants';
 import { generateImageSchema } from '@/lib/utils/validation';
@@ -148,6 +149,11 @@ export async function POST(request: NextRequest) {
   const resolvedStyle: AiStyle = style;
   const forceLive = isAdmin;
 
+  // Translate/enrich custom prompt to English for better AI results
+  const enhancedPrompt = customPrompt
+    ? await enhanceCustomPrompt(customPrompt)
+    : undefined;
+
   // Generate: Replicate Flux (primary) -> OpenAI DALL-E 3 (fallback) -> error
   let tempImageUrl: string | null = null;
 
@@ -155,7 +161,7 @@ export async function POST(request: NextRequest) {
     tempImageUrl = await generateWithReplicate({
       theme: resolvedTheme,
       style: resolvedStyle,
-      customPrompt,
+      customPrompt: enhancedPrompt,
       forceLive,
     });
   } catch (replicateError) {
@@ -164,7 +170,7 @@ export async function POST(request: NextRequest) {
       tempImageUrl = await generateInvitationImageFallback(
         resolvedTheme,
         resolvedStyle,
-        { customPrompt, forceLive },
+        { customPrompt: enhancedPrompt, forceLive },
       );
     } catch (openaiError) {
       console.error('[AI] OpenAI fallback failed:', openaiError);

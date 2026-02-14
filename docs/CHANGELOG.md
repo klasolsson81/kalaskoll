@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Tema-element (ballonger, konfetti etc.) injiceras inte längre i custom prompts — stilprefixet (cartoon/3D/watercolor) bär kalaskänslan
 - "Joyful, festive" tvingar inte längre stämning på custom prompts
 - Utan custom prompt — oförändrat beteende (tema + full kalaskontext)
+- **Prompt-översättning** — svenska custom prompts översätts och berikas till engelska via GPT-4o-mini innan bildgenerering (t.ex. "Göteborg" → "Gothenburg, Sweden, with the Göta älv river and Poseidon statue")
 
 ### Changed
 

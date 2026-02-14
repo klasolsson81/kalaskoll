@@ -1,4 +1,5 @@
 import type { AiStyle } from '@/lib/constants';
+import { chatCompletion } from './openai-chat';
 
 const STYLE_PREFIX: Record<AiStyle, string> = {
   cartoon:
@@ -51,6 +52,28 @@ interface BuildPromptOptions {
   style: AiStyle;
   theme: string;
   customPrompt?: string;
+}
+
+/**
+ * Translate and enrich a custom prompt to English for better AI image results.
+ * Uses GPT-4o-mini for fast, cheap translation. Falls back to original on failure.
+ */
+export async function enhanceCustomPrompt(prompt: string): Promise<string> {
+  try {
+    const result = await chatCompletion({
+      systemPrompt:
+        'You are an image prompt translator. Translate the user\'s image description from Swedish to English. ' +
+        'Add specific visual details that help an image generation AI create an accurate result ' +
+        '(e.g. for cities: mention famous landmarks, architecture, scenery). ' +
+        'Keep it concise (max 2 sentences). Return ONLY the translated prompt, nothing else.',
+      userMessage: prompt,
+      maxTokens: 150,
+    });
+    return result.trim();
+  } catch (err) {
+    console.error('[AI] Prompt enhancement failed, using original:', err);
+    return prompt;
+  }
 }
 
 export function buildPrompt({ style, theme, customPrompt }: BuildPromptOptions): string {
