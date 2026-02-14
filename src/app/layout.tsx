@@ -3,6 +3,7 @@ import { Inter, Fredoka } from 'next/font/google';
 import { DevBadge } from '@/components/shared/DevBadge';
 import { FeedbackWidget } from '@/components/shared/FeedbackWidget';
 import { Footer } from '@/components/layout/Footer';
+import { Analytics } from '@vercel/analytics/next';
 import { APP_URL } from '@/lib/constants';
 import './globals.css';
 
@@ -97,6 +98,7 @@ export default function RootLayout({
     <html lang="sv" className={`${inter.variable} ${fredoka.variable}`}>
       <body className="min-h-screen bg-app-gradient font-sans antialiased">
         {children}
+        <Analytics />
         <FeedbackWidget />
         <Footer />
         <DevBadge />
