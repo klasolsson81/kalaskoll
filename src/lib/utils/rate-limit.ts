@@ -11,6 +11,7 @@ function createRateLimiter(prefix: string, requests: number, window: string): Ra
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
+    console.warn(`[RateLimit] Upstash not configured — ${prefix} rate limiting disabled`);
     return null;
   }
 
@@ -40,7 +41,8 @@ export async function isRateLimited(ip: string): Promise<boolean> {
   try {
     const { success } = await limiter.limit(ip);
     return !success;
-  } catch {
+  } catch (err) {
+    console.error('[RateLimit] Redis error:', err);
     return false;
   }
 }
@@ -60,7 +62,8 @@ export async function isContactRateLimited(ip: string): Promise<boolean> {
   try {
     const { success } = await limiter.limit(ip);
     return !success;
-  } catch {
+  } catch (err) {
+    console.error('[RateLimit] Redis error:', err);
     return false;
   }
 }
@@ -80,7 +83,8 @@ export async function isAiRateLimited(userId: string): Promise<boolean> {
   try {
     const { success } = await limiter.limit(userId);
     return !success;
-  } catch {
+  } catch (err) {
+    console.error('[RateLimit] Redis error:', err);
     return false;
   }
 }

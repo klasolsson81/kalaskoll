@@ -61,6 +61,9 @@ export function encryptAllergyData(
       other_dietary_enc: otherDietary ? encrypt(otherDietary) : null,
     };
   } catch {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('ALLERGY_ENCRYPTION_KEY is required in production');
+    }
     // Fallback: store unencrypted if key not configured (dev/test)
     console.warn('[Crypto] Encryption key not configured, storing allergy data unencrypted');
     return {

@@ -194,7 +194,7 @@ async function handlePost(request: NextRequest) {
       // UPDATE existing child
       updatedIds.add(child.id);
 
-      await supabase
+      const { error: updateError } = await supabase
         .from('rsvp_responses')
         .update({
           child_name: child.childName,
@@ -205,8 +205,15 @@ async function handlePost(request: NextRequest) {
         })
         .eq('id', child.id);
 
+      if (updateError) {
+        console.error('[RSVP Edit] Failed to update rsvp_id:', child.id, updateError);
+      }
+
       // Replace allergy data
-      await supabase.from('allergy_data').delete().eq('rsvp_id', child.id);
+      const { error: deleteAllergyError } = await supabase.from('allergy_data').delete().eq('rsvp_id', child.id);
+      if (deleteAllergyError) {
+        console.error('[RSVP Edit] Failed to delete allergy data for rsvp_id:', child.id, deleteAllergyError);
+      }
 
       const allergies = child.allergies ?? [];
       const otherDietary = child.otherDietary;
@@ -214,13 +221,16 @@ async function handlePost(request: NextRequest) {
 
       if (child.attending && hasAllergyData && child.allergyConsent) {
         const encrypted = encryptAllergyData(allergies, otherDietary || null);
-        await supabase.from('allergy_data').insert({
+        const { error: allergyInsertError } = await supabase.from('allergy_data').insert({
           rsvp_id: child.id,
           allergies: encrypted.allergies_enc,
           other_dietary: encrypted.other_dietary_enc,
           consent_given_at: new Date().toISOString(),
           auto_delete_at: autoDeleteAt.toISOString(),
         });
+        if (allergyInsertError) {
+          console.error('[RSVP Edit] Failed to insert allergy data for rsvp_id:', child.id, allergyInsertError);
+        }
       }
     } else {
       // INSERT new sibling

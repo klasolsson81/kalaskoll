@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     // Verify CRON_SECRET (Vercel sends this automatically for cron jobs)
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Ej behörig' }, { status: 401 });
     }
 
     if (!isBetaEnded()) {

@@ -10,7 +10,7 @@ export async function POST() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    return NextResponse.json({ error: 'Ej inloggad' }, { status: 401 });
   }
 
   try {

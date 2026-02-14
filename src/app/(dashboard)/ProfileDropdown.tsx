@@ -24,6 +24,7 @@ export function ProfileDropdown({ displayName, email, isImpersonating = false }:
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -37,17 +38,29 @@ export function ProfileDropdown({ displayName, email, isImpersonating = false }:
 
   async function handleDeleteAccount() {
     setDeleting(true);
+    setDeleteError(null);
     try {
-      await fetch('/api/auth/delete-account', { method: 'POST' });
+      const res = await fetch('/api/auth/delete-account', { method: 'POST' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setDeleteError(data?.error || 'Kunde inte radera kontot. Försök igen.');
+        setDeleting(false);
+        return;
+      }
+      window.location.href = '/login';
     } catch {
-      // Ignore network errors — redirect anyway
+      setDeleteError('Nätverksfel. Kontrollera din anslutning och försök igen.');
+      setDeleting(false);
     }
-    window.location.href = '/login';
   }
 
   if (showDeleteConfirm) {
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-1.5">
+      <div className="flex flex-col gap-1">
+        {deleteError && (
+          <p className="rounded-lg bg-destructive/10 px-3 py-1.5 text-xs text-destructive">{deleteError}</p>
+        )}
+        <div className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-1.5">
         <span className="text-sm font-medium text-destructive">Radera kontot?</span>
         <button
           onClick={handleDeleteAccount}
@@ -63,6 +76,7 @@ export function ProfileDropdown({ displayName, email, isImpersonating = false }:
         >
           Avbryt
         </button>
+      </div>
       </div>
     );
   }

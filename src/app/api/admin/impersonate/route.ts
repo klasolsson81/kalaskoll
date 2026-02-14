@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user || !ADMIN_EMAILS.includes(user.email ?? '')) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    return NextResponse.json({ error: 'Åtkomst nekad' }, { status: 403 });
   }
 
   const { userId } = await request.json();
@@ -37,7 +37,7 @@ export async function DELETE() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Ej inloggad' }, { status: 401 });
   }
 
   const cookieStore = await cookies();

@@ -159,13 +159,16 @@ async function handlePost(request: NextRequest) {
 
     if (child.attending && hasAllergyData && child.allergyConsent) {
       const encrypted = encryptAllergyData(allergies, otherDietary || null);
-      await supabase.from('allergy_data').insert({
+      const { error: allergyError } = await supabase.from('allergy_data').insert({
         rsvp_id: rsvp.id,
         allergies: encrypted.allergies_enc,
         other_dietary: encrypted.other_dietary_enc,
         consent_given_at: new Date().toISOString(),
         auto_delete_at: autoDeleteAt.toISOString(),
       });
+      if (allergyError) {
+        console.error('[RSVP] Failed to store allergy data for rsvp_id:', rsvp.id, allergyError);
+      }
     }
   }
 

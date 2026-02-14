@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+#### Code Review: CRITICAL + HIGH issues
+- **C2** — Allergidata-insert i RSVP loggar nu fel istället för tyst failure
+- **C3** — Kontoradering visar felmeddelande vid misslyckande istället för tyst redirect
+- **C4** — Kryptering kastar fel i produktion om ALLERGY_ENCRYPTION_KEY saknas (GDPR)
+- **C6** — Ny cron-route `/api/cron/cleanup-allergy` raderar utgången allergidata dagligen (GDPR)
+- **H1** — Brandade `error.tsx` och `not-found.tsx` ersätter Next.js standardsidor
+- **H2** — RSVP loading.tsx med skeleton-loader och aria-label
+- **H3** — Rate limiting loggar varning vid disabled och fel vid Redis-problem
+- **H4** — RSVP edit-endpoint loggar fel efter varje DB-operation
+- **H5** — Alla API-felmeddelanden standardiserade till svenska
+- **H6** — API timeouts redan implementerade (bekräftat)
+
 #### AI-bildgenerering: custom prompt respekteras
 - **Prompt-byggare** — användarens custom prompt är nu bildens primära subjekt istället för att vara underordnat "birthday party invitation background"
 - Tema-element (ballonger, konfetti etc.) injiceras inte längre i custom prompts — stilprefixet (cartoon/3D/watercolor) bär kalaskänslan
