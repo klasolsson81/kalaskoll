@@ -1,164 +1,114 @@
 # Quick Wins — KalasKoll
 
-**Datum:** 2026-01-31
-**Kontext:** Enkla fixar som förbättrar mycket. Sorterade efter impact/effort-ratio.
+**Datum:** 2026-02-14
+
+> Enkla fixar (<30 min) som forbattrar mycket.
 
 ---
 
-## 5-minutersfixar
+## Sakerhet (3 st)
 
-### QW-01: Ändra SMS-default till `false`
+### 1. SMS default till false (5 min)
 **Fil:** `src/app/(dashboard)/kalas/[id]/SendInvitationsSection.tsx`
-**Rad:** ~171-173
-**Ändring:** `smsAllowed = smsUsage?.allowed ?? true` → `?? false`
-**Varför:** Fail-closed istället för fail-open. Förhindrar oavsiktliga SMS-kostnader.
+**Andra:** `smsAllowed ?? true` -> `smsAllowed ?? false`
+**Effekt:** Forhindrar obegransade SMS vid DB-fel.
 
-### QW-02: Server-only guard på admin-client
-**Fil:** `src/lib/supabase/admin.ts`
-**Lägg till i toppen:**
-```typescript
-if (typeof window !== 'undefined') {
-  throw new Error('Admin client can only be used server-side');
-}
-```
-**Varför:** Förhindrar att service role key läcker till klienten.
+### 2. Kryptering: kasta fel i produktion (10 min)
+**Fil:** `src/lib/utils/crypto.ts:54-71`
+**Andra:** Lagg till `if (process.env.NODE_ENV === 'production') throw new Error(...)` i catch-blocket.
+**Effekt:** Garanterar att allergidata aldrig lagras okrypterat i prod.
 
-### QW-03: Flytta admin-e-post till miljövariabel
-**Fil:** `src/lib/constants.ts`
-**Ändring:**
-```typescript
-// Före:
-export const ADMIN_EMAILS = ['klasolsson81@gmail.com', 'zeback_@hotmail.com'];
-// Efter:
-export const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').filter(Boolean);
-```
-**Varför:** Exponerar inte privilegierade konton i öppen källkod.
+### 3. Rate limit logging (10 min)
+**Fil:** `src/lib/utils/rate-limit.ts`
+**Andra:** Lagg till `console.warn('[RateLimit] Upstash not configured')` och `console.error('[RateLimit] Redis error:', err)`.
+**Effekt:** Synlighet nar rate limiting ar inaktiverat.
 
 ---
 
-## 15-minutersfixar
+## Felhantering (4 st)
 
-### QW-04: Error handling på delete account
-**Fil:** `src/app/api/auth/delete-account/route.ts`
-**Ändring:** Wrappa raderingen i try/catch, returnera `{ error: 'Kunde inte radera kontot' }` vid fel.
-**Varför:** Förhindrar delvis raderade konton.
+### 4. Dashboard try/catch (15 min)
+**Fil:** `src/app/(dashboard)/dashboard/page.tsx:53`
+**Andra:** Wrappa `Promise.all()` i try/catch, visa "Nagot gick fel"-fallback.
+**Effekt:** Dashboard kraschar inte vid DB-fel.
 
-### QW-05: Zod-scheman på select-image och select-template
-**Fil:** `src/app/api/invitation/select-image/route.ts`, `select-template/route.ts`
-**Ändring:** Ersätt manuell strängvalidering med `.safeParse()`.
-**Varför:** Konsekvent med resten av kodbasen, bättre felmeddelanden.
+### 5. Allergy insert felkontroll (10 min)
+**Fil:** `src/app/api/rsvp/route.ts:162-169`
+**Andra:** `const { error } = await supabase.from('allergy_data').insert(...)` + kontrollera.
+**Effekt:** Allergidata-forlust upptacks och loggas.
 
-### QW-06: Validera OpenAI API-response
-**Fil:** `src/lib/ai/openai.ts`
-**Ändring:** Lägg till Zod-schema:
-```typescript
-const schema = z.object({ data: z.array(z.object({ url: z.string().url() })) });
-const parsed = schema.safeParse(data);
-```
-**Varför:** Förhindrar runtime-krasch om API-svaret ändras.
+### 6. RSVP edit felkontroll (15 min)
+**Fil:** `src/app/api/rsvp/edit/route.ts:197-223`
+**Andra:** Lagg till `{ error }` check efter varje DB-operation.
+**Effekt:** Edit-failures upptacks.
 
-### QW-07: Validera 46elks API-response
-**Fil:** `src/lib/sms/elks.ts`
-**Ändring:** Ersätt `as ElksResponse` med Zod-parse.
-**Varför:** Tyst fel → tydligt fel vid API-ändringar.
+### 7. Kontoradering felmeddelande (15 min)
+**Fil:** `ProfileDropdown.tsx:38-44`
+**Andra:** Visa felmeddelande istallet for tom catch.
+**Effekt:** Anvandare ser om radering misslyckades.
 
 ---
 
-## 30-minutersfixar
+## UX/Accessibility (5 st)
 
-### QW-08: HTML-escapa användarinput i e-postmallar
-**Fil:** `src/lib/email/resend.ts`
-**Ändring:** Skapa utility:
-```typescript
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-```
-Applicera på alla `${...}` i HTML-mallar.
-**Varför:** Eliminerar XSS/HTML-injection i e-postinbjudningar.
+### 8. RSVP toggle aria-labels (5 min)
+**Fil:** `src/components/forms/RsvpForm.tsx:229-254`
+**Andra:** Lagg till `aria-label="Ja, vi kommer pa kalaset"` pa Ja-knapp, liknande for Nej.
+**Effekt:** Skarmlasar-anvandare forstar knapparna.
 
-### QW-09: RSVP-deadline-kontroll
-**Fil:** `src/app/api/rsvp/route.ts` + `src/app/r/[token]/page.tsx`
-**API-ändring:** Kontrollera `party.rsvp_deadline` mot `new Date()`. Returnera 400 om förbi.
-**UI-ändring:** Visa "Sista svarsdatum har passerat" + kontakta-arrangören text.
-**Varför:** Klas sätter deadline av en anledning.
+### 9. SubmitButton aria-busy (5 min)
+**Fil:** `src/components/forms/SubmitButton.tsx`
+**Andra:** Lagg till `aria-busy={pending}` pa Button.
+**Effekt:** Skarmlasar meddelar laddar-tillstand.
 
-### QW-10: Loading state på RSVP-sida
-**Fil:** Skapa `src/app/r/[token]/loading.tsx`
-**Ändring:**
-```typescript
-export default function Loading() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto" />
-        <p className="mt-4 text-muted-foreground">Laddar inbjudan...</p>
-      </div>
-    </div>
-  );
-}
-```
-**Varför:** Eliminerar blank skärm för 99% av besökarna.
+### 10. Allergi-consent visuell markering (5 min)
+**Fil:** `src/components/forms/AllergyCheckboxes.tsx:72`
+**Andra:** Lagg till `<span className="text-destructive font-semibold">*</span>` fore texten.
+**Effekt:** Tydligare att samtycke kravs.
 
-### QW-11: Bättre felmeddelande vid ogiltig QR-kod
-**Fil:** `src/app/r/[token]/page.tsx`
-**Ändring:** Ersätt `notFound()` med en hjälpsam sida:
-```typescript
-if (!invitation) {
-  return (
-    <div className="text-center py-20">
-      <h1>Inbjudan hittades inte</h1>
-      <p>QR-koden verkar vara ogiltig eller har gått ut. Kontakta den som bjöd in dig.</p>
-    </div>
-  );
-}
-```
-**Varför:** En generisk 404 hjälper ingen. Kontektuellt meddelande hjälper gästen.
+### 11. Multi-child knappar touch targets (5 min)
+**Fil:** `src/components/forms/RsvpForm.tsx:329-352`
+**Andra:** `p-2` -> `p-3` for att na 44x44px minimum.
+**Effekt:** Lattare att trycka pa mobil.
 
-### QW-12: Error boundaries på dashboard
-**Fil:** `src/app/(dashboard)/dashboard/page.tsx`
-**Ändring:** Wrappa `Promise.all()` i try/catch. Vid fel, rendera fallback med "Kunde inte ladda data. Försök igen."
-**Varför:** En Supabase-hicka ska inte krascha hela sidan.
-
-### QW-13: Timeout på externa API-anrop
-**Fil:** `src/lib/ai/replicate.ts`, `openai.ts`, `src/lib/sms/elks.ts`
-**Ändring:**
-```typescript
-const controller = new AbortController();
-const timeout = setTimeout(() => controller.abort(), 30000);
-try {
-  const response = await fetch(url, { signal: controller.signal });
-} finally {
-  clearTimeout(timeout);
-}
-```
-**Varför:** Förhindrar att serverless-funktioner hänger.
-
-### QW-14: Ownership-checks på 4 API-routes
-**Fil:** `generate`, `select-image`, `select-template`, `upload-photo`
-**Ändring:** Lägg till efter party-fetch:
-```typescript
-if (party.owner_id !== user.id) {
-  return NextResponse.json({ error: 'Åtkomst nekad' }, { status: 403 });
-}
-```
-**Varför:** Defense-in-depth. RLS skyddar men explicit kontroll är bättre.
+### 12. Toggle focus-visible ring (5 min)
+**Fil:** `src/components/forms/RsvpForm.tsx:228-255`
+**Andra:** Lagg till `focus-visible:ring-ring/50 focus-visible:ring-[3px]` pa toggle-knappar.
+**Effekt:** Tangentbordsnavigering synlig.
 
 ---
 
-## Impact/Effort-matris
+## UI Polish (3 st)
 
-```
-             IMPACT
-        Hög ─────────── Låg
-  Snabb │ QW-01  QW-08  │ QW-02
-  (S)   │ QW-04  QW-09  │ QW-03
-        │ QW-10  QW-11  │ QW-05
-        │───────────────│
-  Medel │ QW-12  QW-14  │ QW-06
-  (M)   │ QW-13         │ QW-07
-        └───────────────┘
-```
+### 13. Felmeddelanden till svenska (20 min)
+**Filer:** `api/auth/delete-account`, `api/admin/impersonate`, `api/invitation/send`
+**Andra:** "Unauthorized" -> "Ej inloggad", "Forbidden" -> "Atkomst nekad", etc.
+**Effekt:** Konsekvent sprak genom appen.
 
-**Rekommendation:** Gör QW-01 till QW-11 i ordning. De ger mest förbättring per minut.
+### 14. Loading spinner aria-label (5 min)
+**Fil:** `src/app/r/[token]/loading.tsx` (och andra loading.tsx)
+**Andra:** Lagg till `role="status" aria-label="Laser in"`.
+**Effekt:** Skarmlasar meddelar laddning.
+
+### 15. LoginForm autoFocus (2 min)
+**Fil:** `src/app/(auth)/login/LoginForm.tsx:45`
+**Andra:** Lagg till `autoFocus` pa email-input.
+**Effekt:** Snabbare inloggning.
+
+---
+
+## Sammanfattning
+
+| Kategori | Antal | Total tid |
+|----------|-------|-----------|
+| Sakerhet | 3 | ~25 min |
+| Felhantering | 4 | ~55 min |
+| UX/A11y | 5 | ~25 min |
+| UI Polish | 3 | ~27 min |
+| **Totalt** | **15** | **~2 timmar** |
+
+Alla 15 quick wins kan goras pa en eftermiddag och forbattrar sakerhet, tillganglighet och anvandbarhet avsevart.
+
+---
+
+*Genererad 2026-02-14*
