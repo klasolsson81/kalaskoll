@@ -58,25 +58,29 @@ export function buildPrompt({ style, theme, customPrompt }: BuildPromptOptions):
   const themeDesc = THEME_DESCRIPTION[theme] || theme || THEME_DESCRIPTION.default;
   const quality = STYLE_QUALITY[style];
 
-  const parts = [
-    `${prefix} of a children's birthday party invitation background.`,
-  ];
+  const parts: string[] = [];
 
   if (customPrompt) {
-    // Custom prompt is the PRIMARY instruction — theme is secondary context
+    // Custom prompt: user's description is the PRIMARY subject
+    // The style prefix already carries the visual feel (cartoon/3D/watercolor)
     parts.push(
-      `The scene MUST prominently show: ${customPrompt}.`,
-      `Use these as supporting theme elements: ${themeDesc}.`,
+      `${prefix} of: ${customPrompt}.`,
+      'The image is for a children\'s birthday party invitation card.',
+      'Leave the center area relatively clear for text overlay.',
     );
   } else {
-    parts.push(`Featuring ${themeDesc}.`);
+    // No custom prompt: theme drives the image with full party context
+    parts.push(
+      `${prefix} of a children's birthday party invitation background.`,
+      `Featuring ${themeDesc}.`,
+      'Leave the center area relatively clear for text overlay.',
+      'Joyful, festive, and child-friendly mood.',
+    );
   }
 
   parts.push(
-    'Leave the center area relatively clear for text overlay.',
     'No text, no letters, no numbers, no words anywhere in the image.',
     'Vertical portrait orientation.',
-    'Joyful, festive, and child-friendly mood.',
     quality,
   );
 

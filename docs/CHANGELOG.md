@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+#### AI-bildgenerering: custom prompt respekteras
+- **Prompt-byggare** — användarens custom prompt är nu bildens primära subjekt istället för att vara underordnat "birthday party invitation background"
+- Tema-element (ballonger, konfetti etc.) injiceras inte längre i custom prompts — stilprefixet (cartoon/3D/watercolor) bär kalaskänslan
+- "Joyful, festive" tvingar inte längre stämning på custom prompts
+- Utan custom prompt — oförändrat beteende (tema + full kalaskontext)
+
 ### Changed
 
 #### Admin-impersonering: dölj admin-UI
