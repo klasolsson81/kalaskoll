@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, KeyRound, Crown, Trash2, LogOut, ChevronDown } from 'lucide-react';
+import { User, Crown, Trash2, LogOut, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +16,10 @@ import {
 interface ProfileDropdownProps {
   displayName: string;
   email: string;
+  isImpersonating?: boolean;
 }
 
-export function ProfileDropdown({ displayName, email }: ProfileDropdownProps) {
+export function ProfileDropdown({ displayName, email, isImpersonating = false }: ProfileDropdownProps) {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -84,33 +85,33 @@ export function ProfileDropdown({ displayName, email }: ProfileDropdownProps) {
             <p className="text-xs text-muted-foreground">{email}</p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/profile')}>
-            <User />
-            Ändra profil
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/profile/password')}>
-            <KeyRound />
-            Ändra lösenord
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem disabled className="opacity-60">
-          <Crown className="text-accent" />
-          <span>Köp Guldkalas</span>
-          <span className="ml-auto rounded-md bg-accent/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-            Snart
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => setShowDeleteConfirm(true)}
-          className="text-destructive focus:text-destructive"
-        >
-          <Trash2 />
-          Radera konto
-        </DropdownMenuItem>
+        {!isImpersonating && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => router.push('/profile')}>
+                <User />
+                Ändra profil
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem disabled className="opacity-60">
+              <Crown className="text-accent" />
+              <span>Köp Guldkalas</span>
+              <span className="ml-auto rounded-md bg-accent/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
+                Snart
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => setShowDeleteConfirm(true)}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 />
+              Radera konto
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuItem onClick={handleLogout} disabled={loggingOut}>
           <LogOut />
           {loggingOut ? 'Loggar ut...' : 'Logga ut'}

@@ -27,16 +27,25 @@ export default async function DashboardLayout({
   const isAdmin = isAdminEmail(email);
 
   const impersonation = await getImpersonationContext();
+  const isImpersonating = impersonation?.isImpersonating ?? false;
+
+  // When impersonating, show the impersonated user's info in the header
+  const headerDisplayName = isImpersonating
+    ? impersonation?.impersonatedName || impersonation?.impersonatedEmail || ''
+    : displayName;
+  const headerEmail = isImpersonating
+    ? impersonation?.impersonatedEmail || ''
+    : email;
 
   return (
     <div className="min-h-screen">
-      {impersonation?.isImpersonating && (
+      {isImpersonating && (
         <ImpersonationBanner
-          name={impersonation.impersonatedName}
-          email={impersonation.impersonatedEmail}
+          name={impersonation?.impersonatedName ?? null}
+          email={impersonation?.impersonatedEmail ?? null}
         />
       )}
-      <header className={`sticky ${impersonation?.isImpersonating ? 'top-10' : 'top-0'} z-50 border-b border-white/30 bg-white/30 backdrop-blur-xl print:hidden`}>
+      <header className={`sticky ${isImpersonating ? 'top-10' : 'top-0'} z-50 border-b border-white/30 bg-white/30 backdrop-blur-xl print:hidden`}>
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center gap-2">
@@ -44,7 +53,7 @@ export default async function DashboardLayout({
                 KalasKoll
               </span>
             </Link>
-            {isAdmin && (
+            {isAdmin && !isImpersonating && (
               <nav className="flex items-center gap-1">
                 <Link
                   href="/admin"
@@ -56,7 +65,7 @@ export default async function DashboardLayout({
               </nav>
             )}
           </div>
-          <ProfileDropdown displayName={displayName} email={email} />
+          <ProfileDropdown displayName={headerDisplayName} email={headerEmail} isImpersonating={isImpersonating} />
         </div>
         <div className="h-[3px] gradient-celebration" />
       </header>

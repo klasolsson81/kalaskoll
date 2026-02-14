@@ -267,7 +267,7 @@ export const uploadChildPhotoSchema = z.object({
 
 export type UploadChildPhotoFormData = z.infer<typeof uploadChildPhotoSchema>;
 
-// Profile schema
+// Profile schema (basic fields only, used for parsing)
 export const profileSchema = z.object({
   fullName: z.string().min(1, 'Namn krävs').max(100),
   phone: z
@@ -276,6 +276,30 @@ export const profileSchema = z.object({
     .optional()
     .or(z.literal('')),
 });
+
+// Full profile update schema (with email, current password, optional new password)
+export const profileUpdateSchema = z
+  .object({
+    fullName: z.string().min(1, 'Namn krävs').max(100),
+    phone: z
+      .string()
+      .regex(/^(\+46|0)[0-9]{6,12}$/, 'Ogiltigt telefonnummer')
+      .optional()
+      .or(z.literal('')),
+    email: z.string().email('Ogiltig e-postadress'),
+    currentPassword: z.string().min(1, 'Nuvarande lösenord krävs'),
+    newPassword: z.string().min(6, 'Lösenordet måste vara minst 6 tecken').optional().or(z.literal('')),
+    confirmPassword: z.string().optional().or(z.literal('')),
+  })
+  .refine(
+    (data) => {
+      if (data.newPassword && data.newPassword !== data.confirmPassword) return false;
+      return true;
+    },
+    { message: 'Lösenorden matchar inte', path: ['confirmPassword'] },
+  );
+
+export type ProfileUpdateFormData = z.infer<typeof profileUpdateSchema>;
 
 // Forgot password schema
 export const forgotPasswordSchema = z.object({

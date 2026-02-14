@@ -1,32 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-
-const GENERATING_MESSAGES = [
-  'Förbereder...',
-  'AI skapar din bild...',
-  'Snart klar...',
-  'Bara lite till...',
-];
-
-function GeneratingText() {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % GENERATING_MESSAGES.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <p className="mt-2 text-xs font-medium text-amber-700">
-      {GENERATING_MESSAGES[index]}
-    </p>
-  );
-}
 
 interface PartyImage {
   id: string;
@@ -113,21 +88,22 @@ export function AiColumn({
           );
         })}
 
-        {/* Generate new AI image button / loading shimmer */}
-        {generating ? (
-          <div className="flex aspect-[3/4] flex-col items-center justify-center rounded-lg border-2 border-amber-300 bg-gradient-to-b from-amber-50 to-amber-100 animate-pulse">
-            <span className="text-2xl">✨</span>
-            <GeneratingText />
-          </div>
-        ) : canGenerate ? (
+        {/* Generate new AI image button */}
+        {canGenerate && (
           <button
             onClick={onGenerate}
-            className="flex aspect-[3/4] flex-col items-center justify-center rounded-lg border-2 border-dashed border-amber-300 text-amber-600 transition-colors hover:border-amber-400 hover:bg-amber-50 hover:text-amber-800"
+            disabled={generating}
+            className={cn(
+              'flex aspect-[3/4] flex-col items-center justify-center rounded-lg border-2 border-dashed border-amber-300 text-amber-600 transition-colors',
+              generating
+                ? 'cursor-not-allowed opacity-50'
+                : 'hover:border-amber-400 hover:bg-amber-50 hover:text-amber-800',
+            )}
           >
             <span className="text-lg">+</span>
-            <span className="text-[10px] font-medium">Ny AI-bild</span>
+            <span className="text-[10px] font-medium">{generating ? 'Genererar...' : 'Ny AI-bild'}</span>
           </button>
-        ) : null}
+        )}
       </div>
 
       {/* Counter / upgrade text */}

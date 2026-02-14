@@ -36,6 +36,7 @@ export function useInvitation({
   const [selecting, setSelecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [generatedPreview, setGeneratedPreview] = useState<{ imageUrl: string; imageId: string } | null>(null);
 
   const [activeTemplate, setActiveTemplate] = useState<string | null>(invitationTemplate);
   const [savingTemplate, setSavingTemplate] = useState(false);
@@ -89,6 +90,7 @@ export function useInvitation({
     setGenerating(true);
     setShowGenerateDialog(false);
     setError(null);
+    setGeneratedPreview(null);
     try {
       const res = await fetch('/api/invitation/generate', {
         method: 'POST',
@@ -106,31 +108,59 @@ export function useInvitation({
         return;
       }
       if (data.imageUrl) {
-        setCurrentImageUrl(data.imageUrl);
-        setActiveTemplate(null);
-        setExpanded(true);
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 4000);
+        // Add to images library immediately
         if (data.imageId) {
-          const isFirst = images.length === 0;
           const newImage: PartyImage = {
             id: data.imageId,
             imageUrl: data.imageUrl,
-            isSelected: isFirst,
+            isSelected: false,
           };
-          if (isFirst) {
-            setImages([newImage]);
-          } else {
-            setImages((prev) => [...prev, newImage]);
-          }
+          setImages((prev) => [...prev, newImage]);
         }
+        // Show preview for user to choose
+        setGeneratedPreview({
+          imageUrl: data.imageUrl,
+          imageId: data.imageId,
+        });
       }
     } catch {
       setError('Något gick fel vid bildgenerering');
     } finally {
       setGenerating(false);
     }
-  }, [partyId, images.length]);
+  }, [partyId]);
+
+  const acceptGeneratedImage = useCallback(async () => {
+    if (!generatedPreview) return;
+    // Set as active image
+    setCurrentImageUrl(generatedPreview.imageUrl);
+    setActiveTemplate(null);
+    setExpanded(true);
+    // Mark this image as selected in the library
+    setImages((prev) =>
+      prev.map((img) => ({ ...img, isSelected: img.id === generatedPreview.imageId })),
+    );
+    // Select in DB
+    if (generatedPreview.imageId) {
+      try {
+        await fetch('/api/invitation/select-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ partyId, imageId: generatedPreview.imageId }),
+        });
+      } catch {
+        // Image is already set locally, silent fail for DB sync
+      }
+    }
+    setGeneratedPreview(null);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 4000);
+  }, [generatedPreview, partyId]);
+
+  const dismissGeneratedImage = useCallback(() => {
+    // Keep image in library but don't set as active
+    setGeneratedPreview(null);
+  }, []);
 
   const selectImage = useCallback(async (imageId: string) => {
     const image = images.find((img) => img.id === imageId);
@@ -234,6 +264,7 @@ export function useInvitation({
     activeMode,
     maxImages,
     canGenerate,
+    generatedPreview,
     // Actions
     setError,
     setExpanded,
@@ -242,6 +273,8 @@ export function useInvitation({
     selectTemplate,
     generateImage,
     selectImage,
+    acceptGeneratedImage,
+    dismissGeneratedImage,
     handleCropSave,
     handleCropCancel,
     removePhoto,

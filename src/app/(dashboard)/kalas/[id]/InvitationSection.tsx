@@ -9,6 +9,7 @@ import { PhotoUploadSection } from './PhotoUploadSection';
 import { TemplateColumn } from './TemplateColumn';
 import { AiColumn } from './AiColumn';
 import { AiGenerateDialog } from './AiGenerateDialog';
+import { AiGeneratingModal } from './AiGeneratingModal';
 import { useInvitation } from './useInvitation';
 
 interface PartyImage {
@@ -199,6 +200,14 @@ export function InvitationSection({
           onCancel={inv.handleCropCancel}
         />
       )}
+
+      {/* AI generating / preview modal */}
+      <AiGeneratingModal
+        generating={inv.generating}
+        generatedPreview={inv.generatedPreview}
+        onAccept={inv.acceptGeneratedImage}
+        onDismiss={inv.dismissGeneratedImage}
+      />
     </Card>
   );
 }

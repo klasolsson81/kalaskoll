@@ -1,6 +1,6 @@
 # CLAUDE.md – KalasKoll
 
-> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-04
+> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-14
 
 ---
 
@@ -36,7 +36,7 @@ Foralder skapar konto → Verifierar e-post → Dashboard
 | SMS | 46elks API |
 | E-post | Resend |
 | Hosting | Vercel |
-| Tester | Vitest (135 unit) + Playwright (41 E2E) |
+| Tester | Vitest (153 unit) + Playwright (41 E2E) |
 
 ---
 
@@ -59,7 +59,7 @@ pnpm test:coverage    # Coverage-rapport
 src/
   app/
     (auth)/              # Login, register, check-email, confirmed
-    (dashboard)/         # Dashboard, kalas CRUD, gastlista, profil
+    (dashboard)/         # Dashboard, kalas CRUD, gastlista, profil (inkl. losenordsbyte)
     api/                 # RSVP, invitation, auth, children
     r/[token]/           # Publik RSVP-sida + redigera svar
     sitemap.ts           # Sitemap (/, /login, /register, /forgot-password)

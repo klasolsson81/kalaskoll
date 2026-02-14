@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Admin-impersonering: dölj admin-UI
+- **Dashboard layout** — döljer Admin-länk + AdminFeedbackBadge vid impersonering, visar impersonerad användares namn/email i headern
+- **ProfileDropdown** — döljer "Ändra profil", "Köp Guldkalas" och "Radera konto" vid impersonering, behåller "Logga ut"
+
+#### Profilsida: sammanslagen med lösenordsbyte
+- **ProfileForm** — helt ombyggd med tre sektioner: Personuppgifter (namn, telefon, e-post), Ändra lösenord (expanderbar), Bekräfta med lösenord (krävs alltid)
+- **Profile page** — nu server-komponent som hämtar aktuella data och skickar som props
+- **Profile action** — verifierar nuvarande lösenord via `signInWithPassword()` innan alla ändringar, stöder e-postbyte (skickar bekräftelselänk) och lösenordsbyte
+- **Validation** — nytt `profileUpdateSchema` med e-post + nuvarande lösenord + valfritt nytt lösenord
+- **Borttaget** — `/profile/password` (separat lösenordssida), "Ändra lösenord"-länk i ProfileDropdown
+
+#### AI-bildgenerering: fullskärms-modal
+- **AiGeneratingModal** — ny fullskärms-modal med animerad spinner under generering och bildförhandsvisning efter
+- **Användarval** — "Använd bilden" (sätter som aktiv) eller "Spara till biblioteket" (behåller i galleriet utan att byta)
+- **useInvitation** — nytt `generatedPreview`-state + `acceptGeneratedImage`/`dismissGeneratedImage`-funktioner
+- **AiColumn** — shimmer-animation ersatt med disabled-knapp (modal hanterar visuell feedback)
+
 ### Added
 
 #### RSVP multi-child / syskon-stöd
