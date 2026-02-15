@@ -197,9 +197,9 @@ async function handlePost(request: NextRequest) {
     }
   }
 
-  // Notify party owner (fire-and-forget)
+  // Notify party owner
   const anyAttendingForNotify = children.some((c) => c.attending);
-  notifyPartyOwner(
+  await notifyPartyOwner(
     supabase,
     invitation.party_id,
     children.map((c) => c.childName),

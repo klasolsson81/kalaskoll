@@ -314,8 +314,8 @@ async function handlePost(request: NextRequest) {
         console.error('Failed to send RSVP update confirmation email:', err);
       });
 
-      // Notify party owner about the edit (fire-and-forget)
-      notifyPartyOwner(
+      // Notify party owner about the edit
+      await notifyPartyOwner(
         supabase,
         invitationForEmail.party_id,
         childNames,
