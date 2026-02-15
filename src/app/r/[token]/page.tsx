@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,25 +20,36 @@ function createServiceClient() {
   );
 }
 
-export async function generateMetadata({ params }: RsvpPageProps): Promise<Metadata> {
-  const { token } = await params;
+// React cache() deduplicates these queries between generateMetadata and page render
+const getInvitationByToken = cache(async (token: string) => {
   const supabase = createServiceClient();
-
-  const { data: invitation } = await supabase
+  const { data } = await supabase
     .from('invitations')
-    .select('party_id')
+    .select('id, party_id')
     .eq('token', token)
     .single();
+  return data;
+});
+
+const getPartyById = cache(async (partyId: string) => {
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from('parties')
+    .select('child_name, child_age, party_date, party_time, party_time_end, venue_name, venue_address, theme, description, rsvp_deadline')
+    .eq('id', partyId)
+    .single();
+  return data;
+});
+
+export async function generateMetadata({ params }: RsvpPageProps): Promise<Metadata> {
+  const { token } = await params;
+  const invitation = await getInvitationByToken(token);
 
   if (!invitation) {
     return { title: 'Inbjudan', robots: { index: false, follow: false } };
   }
 
-  const { data: party } = await supabase
-    .from('parties')
-    .select('child_name, child_age')
-    .eq('id', invitation.party_id)
-    .single();
+  const party = await getPartyById(invitation.party_id);
 
   if (!party) {
     return { title: 'Inbjudan', robots: { index: false, follow: false } };
@@ -60,14 +72,9 @@ export async function generateMetadata({ params }: RsvpPageProps): Promise<Metad
 export default async function RsvpPage({ params, searchParams }: RsvpPageProps) {
   const { token } = await params;
   const { phone: phoneParam, email: emailParam } = await searchParams;
-  const supabase = createServiceClient();
 
-  // Look up invitation
-  const { data: invitation } = await supabase
-    .from('invitations')
-    .select('id, party_id')
-    .eq('token', token)
-    .single();
+  // Cached — same call in generateMetadata is deduplicated
+  const invitation = await getInvitationByToken(token);
 
   if (!invitation) {
     return (
@@ -83,12 +90,8 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     );
   }
 
-  // Get party details
-  const { data: party } = await supabase
-    .from('parties')
-    .select('child_name, child_age, party_date, party_time, party_time_end, venue_name, venue_address, theme, description, rsvp_deadline')
-    .eq('id', invitation.party_id)
-    .single();
+  // Cached — same call in generateMetadata is deduplicated
+  const party = await getPartyById(invitation.party_id);
 
   if (!party) {
     return (
@@ -122,7 +125,8 @@ export default async function RsvpPage({ params, searchParams }: RsvpPageProps) 
     );
   }
 
-  // Fetch all responses for this invitation
+  // Fetch all responses for this invitation (not cached — only used in page)
+  const supabase = createServiceClient();
   const { data: responses } = await supabase
     .from('rsvp_responses')
     .select('child_name, attending')

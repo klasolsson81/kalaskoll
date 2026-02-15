@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Dashboard Onboarding (E4)
+- Ny `OnboardingCard`-komponent med 3-stegs guide (Skapa kalas → Skicka inbjudningar → Följ svaren) för förstagångare
+- Ersätter den enkla "Inga kalas ännu"-tomtillståndet på dashboard
+
+#### RSVP Performance (E3)
+- React `cache()` deduplicerar `invitations`- och `parties`-queries mellan `generateMetadata` och sidrendering (4→2 queries per RSVP-sidladdning)
+
 #### Integration Tests (E2)
 - Nytt test-helper: `tests/helpers/supabase-mock.ts` — kedjebar Supabase-mock med `mockTable`/`mockTableSequence`
 - `tests/integration/api/cleanup-allergy.test.ts` — 5 tester (auth-header, deletion, empty, db-error)

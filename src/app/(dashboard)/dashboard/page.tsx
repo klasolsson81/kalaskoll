@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTimeRange } from '@/lib/utils/format';
 import { ChildrenSection } from './ChildrenSection';
+import { OnboardingCard } from './OnboardingCard';
 import { BetaLimitsDisplay } from '@/components/beta/BetaLimitsDisplay';
 import { getImpersonationContext } from '@/lib/utils/impersonation';
 
@@ -215,22 +216,7 @@ export default async function DashboardPage() {
             })}
           </div>
         ) : (
-          <Card className="border-0 glass-card">
-            <CardContent className="py-12 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-3xl">
-                🎉
-              </div>
-              <h3 className="mb-2 text-lg font-bold font-display">Inga kalas ännu</h3>
-              <p className="mb-6 text-muted-foreground">
-                Skapa ditt första kalas och börja samla in OSA-svar!
-              </p>
-              <Link href="/kalas/new">
-                <Button className="font-semibold gradient-celebration text-white shadow-warm">
-                  Skapa nytt kalas
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+          <OnboardingCard />
         )}
       </section>
     </div>
