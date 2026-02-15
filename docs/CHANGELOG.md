@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Integration Tests (E2)
+- Nytt test-helper: `tests/helpers/supabase-mock.ts` — kedjebar Supabase-mock med `mockTable`/`mockTableSequence`
+- `tests/integration/api/cleanup-allergy.test.ts` — 5 tester (auth-header, deletion, empty, db-error)
+- `tests/integration/api/delete-account.test.ts` — 3 tester (auth, success, admin-error)
+- `tests/integration/api/rsvp-submit.test.ts` — 8 tester (validation, 404, 409, deadline, rate-limit, success, malformed JSON)
+- `tests/integration/api/send-sms.test.ts` — 7 tester (auth, validation, 404, owner-check, 503 credentials, success)
+
 ### Fixed
 
 #### Code Review: LOW issues
