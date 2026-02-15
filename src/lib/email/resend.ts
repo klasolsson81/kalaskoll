@@ -20,6 +20,31 @@ function getResendClient() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
+const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://kalaskoll.se';
+
+/** Promotional footer for guest-facing emails (RSVP confirmation + party invitation). */
+function promoFooterHtml(): string {
+  const registerUrl = `${APP_BASE_URL}/register`;
+  return `
+    <div style="margin-top:24px;border-top:2px solid #2563eb;border-radius:0 0 12px 12px;padding:20px 24px;background:linear-gradient(180deg,#eff6ff 0%,#ffffff 100%);">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="vertical-align:middle;">
+            <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#2563eb;">
+              KalasKoll
+            </p>
+            <p style="margin:0;font-size:13px;color:#374151;line-height:1.4;">
+              Planerar du eget barnkalas? Slipp kaoset &ndash; skapa snygga inbjudningar, samla OSA-svar och h&aring;ll koll p&aring; allergier. Helt gratis.
+            </p>
+            <a href="${registerUrl}" style="display:inline-block;margin-top:10px;background:#2563eb;color:#ffffff;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;">
+              Prova KalasKoll gratis
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+}
+
 interface SendRsvpConfirmationParams {
   to: string;
   childName: string;
@@ -110,8 +135,10 @@ export async function sendRsvpConfirmation({
       </p>
     </div>
 
-    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:16px;">
-      Skickat via KalasKoll – Smarta inbjudningar för barnkalas
+    ${promoFooterHtml()}
+
+    <p style="text-align:center;font-size:11px;color:#9ca3af;margin-top:12px;">
+      &copy; ${new Date().getFullYear()} KalasKoll &ndash; Smarta inbjudningar f&ouml;r barnkalas
     </p>
   </div>
 </body>
@@ -411,8 +438,10 @@ export async function sendPartyInvitation({
       </p>
     </div>
 
-    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:16px;">
-      Skickat via KalasKoll – Smarta inbjudningar för barnkalas
+    ${promoFooterHtml()}
+
+    <p style="text-align:center;font-size:11px;color:#9ca3af;margin-top:12px;">
+      &copy; ${new Date().getFullYear()} KalasKoll &ndash; Smarta inbjudningar f&ouml;r barnkalas
     </p>
   </div>
 </body>

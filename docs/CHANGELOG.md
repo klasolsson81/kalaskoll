@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Email: Promo-footer i gäst-mail
+- Ny `promoFooterHtml()` — snygg promosektion med blå accent-linje, KalasKoll-logotyp, säljande text och "Prova KalasKoll gratis"-knapp
+- Tillagd i `sendRsvpConfirmation` (OSA-bekräftelse) och `sendPartyInvitation` (kalas-inbjudan via e-post)
+- Matchar primärblå (#2563eb) och gradient från webappen
+- Copyright-rad uppdaterad med &copy; + årtal
+
 #### E2E Tests: Dashboard Flows (TD11)
 - `tests/e2e/dashboard.spec.ts` — 17 nya E2E-tester:
   - 6 protected route redirects (dashboard, kalas/new, profile, kalas/[id], edit, guests)
