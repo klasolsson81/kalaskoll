@@ -32,7 +32,7 @@ export function GuestRow({ partyId, guest, allergy }: GuestRowProps) {
   const hasPhone = !!guest.parent_phone;
 
   return (
-    <li className="border-b border-border/50 pb-3 last:border-0 last:pb-0">
+    <li className="border-b border-border/50 pb-3 last:border-0 last:pb-0 -mx-2 rounded-lg px-2 transition-colors hover:bg-muted/50">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 space-y-0.5">
           <p className="font-medium">{guest.child_name}</p>
