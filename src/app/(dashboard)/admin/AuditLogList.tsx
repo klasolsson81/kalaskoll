@@ -30,6 +30,7 @@ export function AuditLogList() {
   const [actionFilter, setActionFilter] = useState('');
   const [userMap, setUserMap] = useState<Record<string, string>>({});
   const [summaries, setSummaries] = useState<Record<string, string>>({});
+  const [logActors, setLogActors] = useState<Record<string, string>>({});
   const limit = 50;
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export function AuditLogList() {
         setTotal(data.total);
         setUserMap(data.users ?? {});
         setSummaries(data.summaries ?? {});
+        setLogActors(data.logActors ?? {});
       }
     } catch (err) {
       console.error('Failed to fetch audit logs:', err);
@@ -67,11 +69,12 @@ export function AuditLogList() {
   }
 
   function getUserDisplay(log: AuditEntry): string {
+    // For RSVP entries: show the party owner (kalasägaren)
+    if (logActors[log.id]) {
+      return logActors[log.id];
+    }
     if (log.user_id && userMap[log.user_id]) {
       return userMap[log.user_id];
-    }
-    if (log.action === 'rsvp.submit') {
-      return 'via gästlänk';
     }
     return log.user_id ? log.user_id.slice(0, 8) + '...' : '—';
   }
@@ -139,10 +142,8 @@ export function AuditLogList() {
                         </span>
                       )}
                     </td>
-                    <td className="hidden whitespace-nowrap px-3 py-2.5 text-xs sm:table-cell">
-                      <span className={log.action === 'rsvp.submit' && !log.user_id ? 'italic text-muted-foreground' : 'text-foreground'}>
-                        {getUserDisplay(log)}
-                      </span>
+                    <td className="hidden whitespace-nowrap px-3 py-2.5 text-xs text-foreground sm:table-cell">
+                      {getUserDisplay(log)}
                     </td>
                   </tr>
                 );

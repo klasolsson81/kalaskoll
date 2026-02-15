@@ -67,16 +67,16 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // ── Resolve RSVP responses ──────────────────────────────────
-    const rsvpMap: Record<string, { childName: string; attending: boolean; invitationId: string }> = {};
+    // ── Resolve RSVP responses (including parent_email for sibling grouping) ─
+    const rsvpMap: Record<string, { childName: string; attending: boolean; invitationId: string; parentEmail: string; parentName: string | null }> = {};
     if (rsvpIds.size > 0) {
       const { data: rsvps } = await adminClient
         .from('rsvp_responses')
-        .select('id, child_name, attending, invitation_id')
+        .select('id, child_name, attending, invitation_id, parent_email, parent_name')
         .in('id', Array.from(rsvpIds));
 
       for (const r of rsvps ?? []) {
-        rsvpMap[r.id] = { childName: r.child_name, attending: r.attending, invitationId: r.invitation_id };
+        rsvpMap[r.id] = { childName: r.child_name, attending: r.attending, invitationId: r.invitation_id, parentEmail: r.parent_email, parentName: r.parent_name };
         invitationIds.add(r.invitation_id);
       }
     }
@@ -95,37 +95,62 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // ── Resolve parties ─────────────────────────────────────────
+    // ── Resolve parties (including owner_id) ────────────────────
     const partyMap: Record<string, string> = {};
+    const partyOwnerMap: Record<string, string> = {};
     if (partyIds.size > 0) {
       const { data: parties } = await adminClient
         .from('parties')
-        .select('id, child_name')
+        .select('id, child_name, owner_id')
         .in('id', Array.from(partyIds));
 
       for (const p of parties ?? []) {
         partyMap[p.id] = p.child_name;
+        partyOwnerMap[p.id] = p.owner_id;
+        userIds.add(p.owner_id);
       }
     }
 
-    // ── Also resolve all child names per invitation (multi-child) ─
-    const invitationChildNames: Record<string, string[]> = {};
+    // ── Resolve any new user IDs from party owners ──────────────
+    const unresolvedUserIds = Array.from(userIds).filter((id) => !userMap[id]);
+    if (unresolvedUserIds.length > 0) {
+      const { data: profiles } = await adminClient
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', unresolvedUserIds);
+
+      const { data: { users: authUsers } } = await adminClient.auth.admin.listUsers();
+      const emailMap: Record<string, string> = {};
+      for (const u of authUsers) {
+        if (u.email) emailMap[u.id] = u.email;
+      }
+
+      for (const id of unresolvedUserIds) {
+        const name = profiles?.find((p) => p.id === id)?.full_name;
+        const email = emailMap[id];
+        userMap[id] = name || email || id.slice(0, 8);
+      }
+    }
+
+    // ── Resolve siblings: group rsvp_responses by (invitation_id, parent_email) ─
+    // Only fetch for invitations we actually need
+    const siblingMap: Record<string, string[]> = {}; // key: "invitationId|parentEmail" → child names
     if (invitationIds.size > 0) {
       const { data: allRsvps } = await adminClient
         .from('rsvp_responses')
-        .select('invitation_id, child_name, attending')
+        .select('invitation_id, parent_email, child_name')
         .in('invitation_id', Array.from(invitationIds));
 
       for (const r of allRsvps ?? []) {
-        if (!invitationChildNames[r.invitation_id]) {
-          invitationChildNames[r.invitation_id] = [];
-        }
-        invitationChildNames[r.invitation_id].push(r.child_name);
+        const key = `${r.invitation_id}|${r.parent_email}`;
+        if (!siblingMap[key]) siblingMap[key] = [];
+        siblingMap[key].push(r.child_name);
       }
     }
 
-    // ── Build human-readable summaries per log entry ────────────
+    // ── Build human-readable summaries + actor map per log entry ─
     const summaries: Record<string, string> = {};
+    const logActors: Record<string, string> = {};
 
     for (const log of data ?? []) {
       const meta = log.metadata as Record<string, unknown> | null;
@@ -134,18 +159,25 @@ export async function GET(request: NextRequest) {
         const rsvp = rsvpMap[log.resource_id];
         if (rsvp) {
           const inv = invitationMap[rsvp.invitationId];
-          const partyName = inv ? partyMap[inv.partyId] : null;
+          const partyId = inv?.partyId;
+          const partyName = partyId ? partyMap[partyId] : null;
           const status = rsvp.attending ? 'JA' : 'NEJ';
 
-          // Get all child names for this invitation
-          const allChildren = invitationChildNames[rsvp.invitationId];
-          const childNames = allChildren && allChildren.length > 1
-            ? allChildren.join(' och ')
+          // Get only siblings from the same parent (not all children on the invitation)
+          const siblingKey = `${rsvp.invitationId}|${rsvp.parentEmail}`;
+          const siblings = siblingMap[siblingKey];
+          const childNames = siblings && siblings.length > 1
+            ? siblings.join(' och ')
             : rsvp.childName;
 
           let desc = `${childNames} svarade ${status}`;
           if (partyName) desc += ` — ${partyName}s kalas`;
           summaries[log.id] = desc;
+
+          // Show party owner as actor
+          if (partyId && partyOwnerMap[partyId]) {
+            logActors[log.id] = userMap[partyOwnerMap[partyId]] || '';
+          }
         }
       } else if (log.action === 'party.create' && log.resource_id) {
         const partyName = partyMap[log.resource_id];
@@ -174,6 +206,7 @@ export async function GET(request: NextRequest) {
       users: userMap,
       parties: partyMap,
       summaries,
+      logActors,
     });
   } catch (error) {
     console.error('Admin audit error:', error);
