@@ -28,6 +28,7 @@ interface PartyFormProps {
     theme?: string;
     rsvpDeadline?: string;
     maxGuests?: number;
+    notifyOnRsvp?: boolean;
   };
   savedChildren?: SavedChild[];
   submitLabel: string;
@@ -333,6 +334,26 @@ export function PartyForm({ action, defaultValues, savedChildren = [], submitLab
                 defaultValue={defaultValues?.maxGuests}
                 className="h-10"
               />
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 rounded-lg border border-input bg-white/60 p-3">
+            <input type="hidden" name="notifyOnRsvp" value="off" />
+            <input
+              type="checkbox"
+              id="notifyOnRsvp"
+              name="notifyOnRsvp"
+              value="on"
+              defaultChecked={defaultValues?.notifyOnRsvp !== false}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <div>
+              <Label htmlFor="notifyOnRsvp" className="cursor-pointer font-medium">
+                E-postavisering vid OSA-svar
+              </Label>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Få ett mail varje gång en gäst svarar på inbjudan
+              </p>
             </div>
           </div>
         </CardContent>

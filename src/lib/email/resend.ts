@@ -168,6 +168,126 @@ export async function sendRsvpConfirmation({
   }
 }
 
+export interface SendRsvpNotificationParams {
+  to: string;
+  ownerName: string;
+  childNames: string[];
+  attending: boolean;
+  partyChildName: string;
+  message?: string | null;
+  guestListUrl: string;
+  isEdit: boolean;
+  stats: { attending: number; declined: number; pending: number };
+}
+
+export async function sendRsvpNotification({
+  to,
+  ownerName,
+  childNames,
+  attending,
+  partyChildName,
+  message,
+  guestListUrl,
+  isEdit,
+  stats,
+}: SendRsvpNotificationParams): Promise<SendResult> {
+  const displayNames = childNames.length > 1
+    ? `${childNames.slice(0, -1).join(', ')} och ${childNames[childNames.length - 1]}`
+    : childNames[0];
+
+  const statusText = attending ? 'JA – de kommer!' : 'NEJ – de kan inte komma';
+  const statusEmoji = attending ? '✅' : '❌';
+  const headerEmoji = isEdit ? '📝' : '🎉';
+  const headerText = isEdit ? 'Ändrat OSA-svar!' : 'Nytt OSA-svar!';
+
+  const subject = isEdit
+    ? `${displayNames} ändrade sitt svar för ${partyChildName}s kalas`
+    : `${displayNames} svarade ${attending ? 'JA' : 'NEJ'} till ${partyChildName}s kalas`;
+
+  const greeting = ownerName ? `Hej ${escapeHtml(ownerName)}` : 'Hej';
+
+  const messageRow = message
+    ? `<tr>
+        <td style="padding:4px 0;color:#6b7280;font-size:14px;vertical-align:top;">Meddelande:</td>
+        <td style="padding:4px 0;font-size:14px;">${escapeHtml(message)}</td>
+      </tr>`
+    : '';
+
+  const html = `
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f9fafb;color:#111827;">
+  <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
+    <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <h1 style="font-size:24px;margin:0 0 8px;color:#111827;">
+        ${headerEmoji} ${headerText}
+      </h1>
+      <p style="font-size:16px;color:#6b7280;margin:0 0 24px;">
+        ${greeting}, <strong>${escapeHtml(displayNames)}</strong> svarade ${attending ? 'JA' : 'NEJ'} till <strong>${escapeHtml(partyChildName)}s kalas</strong>.
+      </p>
+
+      <div style="background:#f3f4f6;border-radius:8px;padding:16px;margin-bottom:24px;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:4px 0;color:#6b7280;font-size:14px;">Barn:</td>
+            <td style="padding:4px 0;font-weight:600;font-size:14px;">${escapeHtml(displayNames)}</td>
+          </tr>
+          <tr>
+            <td style="padding:4px 0;color:#6b7280;font-size:14px;">Svar:</td>
+            <td style="padding:4px 0;font-weight:600;font-size:14px;">${statusEmoji} ${statusText}</td>
+          </tr>
+          ${messageRow}
+        </table>
+      </div>
+
+      <div style="background:#eff6ff;border-radius:8px;padding:16px;margin-bottom:24px;text-align:center;">
+        <p style="margin:0;font-size:14px;color:#374151;">
+          <strong>${stats.attending}</strong> kommer &middot; <strong>${stats.declined}</strong> nej &middot; <strong>${stats.pending}</strong> väntar svar
+        </p>
+      </div>
+
+      <a href="${guestListUrl}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+        Se gästlistan
+      </a>
+    </div>
+
+    <p style="text-align:center;font-size:11px;color:#9ca3af;margin-top:12px;">
+      &copy; ${new Date().getFullYear()} KalasKoll &ndash; Smarta inbjudningar f&ouml;r barnkalas
+    </p>
+  </div>
+</body>
+</html>`.trim();
+
+  const resend = getResendClient();
+
+  try {
+    const { error } = await resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to,
+      subject,
+      html,
+    });
+
+    if (error) {
+      console.error('[Email] RSVP notification failed:', { to, error: error.message });
+      return { success: false, error: error.message };
+    }
+
+    console.log('[Email] RSVP notification sent:', { to, childNames, isEdit });
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Email] RSVP notification error:', { to, error: msg });
+    return { success: false, error: msg };
+  }
+}
+
 interface SendTesterInviteParams {
   to: string;
   name?: string;

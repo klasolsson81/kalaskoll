@@ -25,6 +25,7 @@ function parsePartyForm(formData: FormData) {
     theme: (formData.get('theme') as string) || undefined,
     rsvpDeadline: (formData.get('rsvpDeadline') as string) || undefined,
     maxGuests: formData.get('maxGuests') ? Number(formData.get('maxGuests')) : undefined,
+    notifyOnRsvp: formData.get('notifyOnRsvp') === 'on',
   };
 }
 
@@ -64,6 +65,7 @@ export async function createParty(
       theme: parsed.data.theme ?? null,
       rsvp_deadline: parsed.data.rsvpDeadline ?? null,
       max_guests: parsed.data.maxGuests ?? null,
+      notify_on_rsvp: parsed.data.notifyOnRsvp ?? true,
     })
     .select('id')
     .single();
@@ -150,6 +152,7 @@ export async function updateParty(
       theme: parsed.data.theme ?? null,
       rsvp_deadline: parsed.data.rsvpDeadline ?? null,
       max_guests: parsed.data.maxGuests ?? null,
+      notify_on_rsvp: parsed.data.notifyOnRsvp ?? true,
     })
     .eq('id', partyId);
 

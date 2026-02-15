@@ -78,6 +78,7 @@ export type Database = {
           child_photo_frame: string | null;
           rsvp_deadline: string | null;
           max_guests: number | null;
+          notify_on_rsvp: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -100,6 +101,7 @@ export type Database = {
           child_photo_frame?: string | null;
           rsvp_deadline?: string | null;
           max_guests?: number | null;
+          notify_on_rsvp?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -122,6 +124,7 @@ export type Database = {
           child_photo_frame?: string | null;
           rsvp_deadline?: string | null;
           max_guests?: number | null;
+          notify_on_rsvp?: boolean;
           updated_at?: string;
         };
         Relationships: [

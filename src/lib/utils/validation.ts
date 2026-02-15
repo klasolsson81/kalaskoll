@@ -136,6 +136,7 @@ export const partySchema = z
     theme: z.string().optional(),
     rsvpDeadline: z.string().optional(),
     maxGuests: z.number().int().min(1).max(100).optional(),
+    notifyOnRsvp: z.boolean().optional(),
   })
   .refine(
     (data) => {

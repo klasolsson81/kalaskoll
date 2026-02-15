@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { rsvpMultiChildEditSchema } from '@/lib/utils/validation';
 import { sendRsvpConfirmation } from '@/lib/email/resend';
+import { notifyPartyOwner } from '@/lib/email/notify-owner';
 import { formatDate, formatTime } from '@/lib/utils/format';
 import { APP_URL } from '@/lib/constants';
 import { isRateLimited } from '@/lib/utils/rate-limit';
@@ -312,6 +313,16 @@ async function handlePost(request: NextRequest) {
       }).catch((err) => {
         console.error('Failed to send RSVP update confirmation email:', err);
       });
+
+      // Notify party owner about the edit (fire-and-forget)
+      notifyPartyOwner(
+        supabase,
+        invitationForEmail.party_id,
+        childNames,
+        anyAttending,
+        parsed.data.message || null,
+        true,
+      );
     }
   }
 

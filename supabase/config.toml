@@ -1,5 +1,4 @@
-[project]
-id = "kalaskoll"
+project_id = "kalaskoll"
 
 [db]
 port = 54322

@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### OSA-notifieringar till kalasägaren
+- Kalasägaren får e-post vid varje nytt OSA-svar och vid ändrat svar
+- Ny toggle "E-postavisering vid OSA-svar" i kalasformuläret (på som standard)
+- Snyggt notifieringsmail i KalasKoll-stil med sammanfattning (X kommer, Y nej, Z väntar) + länk till gästlistan
+- GDPR-säkert: ingen gästlista i mailet, bara aggregerad statistik
+- Ny databas-kolumn `parties.notify_on_rsvp` (boolean, default true)
+- Ny `sendRsvpNotification()` i resend.ts + `notifyPartyOwner()` helper
+- Fire-and-forget: notifieringen blockerar aldrig RSVP-svaret
+
 #### Email: Promo-footer i gäst-mail
 - Ny `promoFooterHtml()` — snygg promosektion med blå accent-linje, KalasKoll-logotyp, säljande text och "Prova KalasKoll gratis"-knapp
 - Tillagd i `sendRsvpConfirmation` (OSA-bekräftelse) och `sendPartyInvitation` (kalas-inbjudan via e-post)
