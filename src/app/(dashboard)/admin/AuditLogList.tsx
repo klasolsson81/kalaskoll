@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Json } from '@/types/database';
+import { Badge } from '@/components/ui/badge';
 
 interface AuditEntry {
   id: string;
@@ -9,9 +9,18 @@ interface AuditEntry {
   action: string;
   resource_type: string;
   resource_id: string | null;
-  metadata: Json;
+  metadata: Record<string, unknown> | null;
   created_at: string;
 }
+
+const ACTION_LABELS: Record<string, { label: string; variant: 'default' | 'success' | 'destructive' | 'outline' }> = {
+  'rsvp.submit': { label: 'OSA-svar', variant: 'success' },
+  'party.create': { label: 'Nytt kalas', variant: 'default' },
+  'account.delete': { label: 'Konto raderat', variant: 'destructive' },
+  'admin.user.delete': { label: 'Admin: radera', variant: 'destructive' },
+  'admin.user.role_change': { label: 'Admin: roll', variant: 'outline' },
+  'admin.user.invite': { label: 'Admin: inbjudan', variant: 'outline' },
+};
 
 export function AuditLogList() {
   const [logs, setLogs] = useState<AuditEntry[]>([]);
@@ -20,7 +29,7 @@ export function AuditLogList() {
   const [total, setTotal] = useState(0);
   const [actionFilter, setActionFilter] = useState('');
   const [userMap, setUserMap] = useState<Record<string, string>>({});
-  const [partyMap, setPartyMap] = useState<Record<string, string>>({});
+  const [summaries, setSummaries] = useState<Record<string, string>>({});
   const limit = 50;
 
   useEffect(() => {
@@ -39,7 +48,7 @@ export function AuditLogList() {
         setLogs(data.logs);
         setTotal(data.total);
         setUserMap(data.users ?? {});
-        setPartyMap(data.parties ?? {});
+        setSummaries(data.summaries ?? {});
       }
     } catch (err) {
       console.error('Failed to fetch audit logs:', err);
@@ -50,17 +59,21 @@ export function AuditLogList() {
 
   function formatTimestamp(ts: string) {
     return new Date(ts).toLocaleString('sv-SE', {
-      month: 'short',
       day: 'numeric',
+      month: 'short',
       hour: '2-digit',
       minute: '2-digit',
     });
   }
 
-  function formatMetadata(meta: Json) {
-    if (!meta || typeof meta !== 'object' || Array.isArray(meta)) return '';
-    const entries = Object.entries(meta).slice(0, 3);
-    return entries.map(([k, v]) => `${k}: ${v}`).join(', ');
+  function getUserDisplay(log: AuditEntry): string {
+    if (log.user_id && userMap[log.user_id]) {
+      return userMap[log.user_id];
+    }
+    if (log.action === 'rsvp.submit') {
+      return 'via gästlänk';
+    }
+    return log.user_id ? log.user_id.slice(0, 8) + '...' : '—';
   }
 
   const totalPages = Math.ceil(total / limit);
@@ -74,12 +87,12 @@ export function AuditLogList() {
           className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value="">Alla åtgärder</option>
-          <option value="rsvp.submit">rsvp.submit</option>
-          <option value="party.create">party.create</option>
-          <option value="account.delete">account.delete</option>
-          <option value="admin.user.delete">admin.user.delete</option>
-          <option value="admin.user.role_change">admin.user.role_change</option>
-          <option value="admin.user.invite">admin.user.invite</option>
+          <option value="rsvp.submit">OSA-svar</option>
+          <option value="party.create">Nytt kalas</option>
+          <option value="account.delete">Konto raderat</option>
+          <option value="admin.user.delete">Admin: radera</option>
+          <option value="admin.user.role_change">Admin: roll</option>
+          <option value="admin.user.invite">Admin: inbjudan</option>
         </select>
         <span className="text-sm text-muted-foreground">{total} poster totalt</span>
       </div>
@@ -99,43 +112,44 @@ export function AuditLogList() {
               <tr className="border-b bg-muted/50 text-left">
                 <th className="px-3 py-2 font-medium">Tid</th>
                 <th className="px-3 py-2 font-medium">Åtgärd</th>
-                <th className="hidden px-3 py-2 font-medium sm:table-cell">Resurs</th>
-                <th className="hidden px-3 py-2 font-medium md:table-cell">Detaljer</th>
-                <th className="hidden px-3 py-2 font-medium lg:table-cell">Användare</th>
+                <th className="px-3 py-2 font-medium">Beskrivning</th>
+                <th className="hidden px-3 py-2 font-medium sm:table-cell">Användare</th>
               </tr>
             </thead>
             <tbody>
-              {logs.map((log) => (
-                <tr key={log.id} className="border-b last:border-0 hover:bg-muted/30">
-                  <td className="whitespace-nowrap px-3 py-2 text-xs text-muted-foreground">
-                    {formatTimestamp(log.created_at)}
-                  </td>
-                  <td className="px-3 py-2 font-mono text-xs">{log.action}</td>
-                  <td className="hidden px-3 py-2 sm:table-cell">
-                    <span className="text-xs">{log.resource_type}</span>
-                    {log.resource_id && (
-                      <span className="ml-1 text-xs text-muted-foreground" title={log.resource_id}>
-                        {log.resource_type === 'user' && userMap[log.resource_id]
-                          ? userMap[log.resource_id]
-                          : log.resource_type === 'party' && partyMap[log.resource_id]
-                            ? partyMap[log.resource_id]
-                            : `${log.resource_id.slice(0, 8)}...`}
+              {logs.map((log) => {
+                const actionInfo = ACTION_LABELS[log.action];
+                const summary = summaries[log.id];
+
+                return (
+                  <tr key={log.id} className="border-b last:border-0 hover:bg-muted/30">
+                    <td className="whitespace-nowrap px-3 py-2.5 text-xs text-muted-foreground">
+                      {formatTimestamp(log.created_at)}
+                    </td>
+                    <td className="px-3 py-2.5">
+                      <Badge variant={actionInfo?.variant ?? 'outline'} className="text-xs whitespace-nowrap">
+                        {actionInfo?.label ?? log.action}
+                      </Badge>
+                    </td>
+                    <td className="max-w-sm px-3 py-2.5 text-sm">
+                      {summary || (
+                        <span className="text-muted-foreground">
+                          {log.resource_type}
+                          {log.resource_id && ` ${log.resource_id.slice(0, 8)}...`}
+                        </span>
+                      )}
+                    </td>
+                    <td className="hidden whitespace-nowrap px-3 py-2.5 text-xs sm:table-cell">
+                      <span className={log.action === 'rsvp.submit' && !log.user_id ? 'italic text-muted-foreground' : 'text-foreground'}>
+                        {getUserDisplay(log)}
                       </span>
-                    )}
-                  </td>
-                  <td className="hidden max-w-xs truncate px-3 py-2 text-xs text-muted-foreground md:table-cell">
-                    {formatMetadata(log.metadata)}
-                  </td>
-                  <td className="hidden px-3 py-2 text-xs text-muted-foreground lg:table-cell" title={log.user_id ?? undefined}>
-                    {log.user_id
-                      ? userMap[log.user_id] || `${log.user_id.slice(0, 8)}...`
-                      : '—'}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                );
+              })}
               {logs.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-3 py-8 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-3 py-8 text-center text-muted-foreground">
                     Inga loggar hittades
                   </td>
                 </tr>
