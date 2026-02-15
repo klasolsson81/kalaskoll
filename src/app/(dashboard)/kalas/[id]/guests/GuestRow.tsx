@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Mail, Phone, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { deleteGuest } from './actions';
 import { EditGuestForm } from './EditGuestForm';
@@ -27,32 +28,64 @@ export function GuestRow({ partyId, guest, allergy }: GuestRowProps) {
     );
   }
 
+  const hasEmail = guest.parent_email && !isManualEmail(guest.parent_email);
+  const hasPhone = !!guest.parent_phone;
+
   return (
-    <li className="border-b pb-4 last:border-0 last:pb-0">
+    <li className="border-b border-border/50 pb-3 last:border-0 last:pb-0">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 space-y-0.5">
           <p className="font-medium">{guest.child_name}</p>
           {guest.parent_name && (
             <p className="text-sm text-muted-foreground">
               Förälder: {guest.parent_name}
             </p>
           )}
+          {(hasEmail || hasPhone) && (
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              {hasEmail && (
+                <>
+                  <Mail className="h-3 w-3 shrink-0" />
+                  <span className="truncate">{guest.parent_email}</span>
+                </>
+              )}
+              {hasEmail && hasPhone && <span>·</span>}
+              {hasPhone && (
+                <>
+                  <Phone className="h-3 w-3 shrink-0" />
+                  <span>{guest.parent_phone}</span>
+                </>
+              )}
+            </p>
+          )}
           {guest.message && (
-            <p className="mt-1 text-sm italic text-muted-foreground">
+            <p className="text-sm italic text-muted-foreground">
               &quot;{guest.message}&quot;
             </p>
           )}
+          {allergy && (
+            <div className="flex flex-wrap gap-1.5 pt-0.5">
+              {allergy.allergies.map((a) => (
+                <span
+                  key={a}
+                  className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"
+                >
+                  {a}
+                </span>
+              ))}
+              {allergy.other_dietary && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                  {allergy.other_dietary}
+                </span>
+              )}
+            </div>
+          )}
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-1">
-          <div className="text-right text-sm text-muted-foreground">
-            {guest.parent_phone && <p>{guest.parent_phone}</p>}
-            {guest.parent_email && !isManualEmail(guest.parent_email) && (
-              <p>{guest.parent_email}</p>
-            )}
-          </div>
+
+        <div className="flex shrink-0 gap-0.5">
           {mode === 'confirm-delete' ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Ta bort {guest.child_name}?</span>
+              <span className="text-sm text-muted-foreground">Ta bort?</span>
               <Button
                 variant="destructive"
                 size="sm"
@@ -67,26 +100,27 @@ export function GuestRow({ partyId, guest, allergy }: GuestRowProps) {
               </Button>
             </div>
           ) : (
-            <div className="flex gap-1">
-              <Button variant="ghost" size="sm" onClick={() => setMode('edit')}>
-                Redigera
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setMode('edit')}
+              >
+                <Pencil className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => setMode('confirm-delete')}>
-                Ta bort
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setMode('confirm-delete')}
+              >
+                <Trash2 className="h-4 w-4" />
               </Button>
-            </div>
+            </>
           )}
         </div>
       </div>
-      {allergy && (
-        <div className="mt-2 rounded-md bg-amber-50 p-2">
-          <p className="text-xs font-medium text-amber-800">Allergier:</p>
-          <p className="text-sm text-amber-700">
-            {allergy.allergies.join(', ')}
-            {allergy.other_dietary && ` + ${allergy.other_dietary}`}
-          </p>
-        </div>
-      )}
     </li>
   );
 }
