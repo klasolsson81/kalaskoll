@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### E2E Tests: Dashboard Flows (TD11)
+- `tests/e2e/dashboard.spec.ts` — 17 nya E2E-tester:
+  - 6 protected route redirects (dashboard, kalas/new, profile, kalas/[id], edit, guests)
+  - 2 branded 404-sida (rendering + titel)
+  - 4 forgot-password flow (formulär, tillbaka-länk, required-fält, titel)
+  - 2 reset/set-password sidtitlar
+  - 3 mobil-viewport (login, register, forgot-password utan overflow)
+
 #### Dashboard Onboarding (E4)
 - Ny `OnboardingCard`-komponent med 3-stegs guide (Skapa kalas → Skicka inbjudningar → Följ svaren) för förstagångare
 - Ersätter den enkla "Inga kalas ännu"-tomtillståndet på dashboard
