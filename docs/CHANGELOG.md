@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+#### Gästlistan: Ny GuestRow-layout
+- Kontaktinfo (e-post, telefon) visas under gästnamnet med lucide-ikoner (Mail, Phone) istället för högerställda textrader
+- Allergier visas som inline pills (`rounded-full bg-amber-100`) istället för separat gul box
+- "Redigera"/"Ta bort" textlänkar ersatta med Pencil/Trash2 ikon-knappar (ghost, 32x32)
+- Mjukare radseparator (`border-border/50 pb-3`)
+
 ### Added
 
 #### OSA-notifieringar till kalasägaren
