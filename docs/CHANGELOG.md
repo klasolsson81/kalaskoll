@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Allergier visas som inline pills (`rounded-full bg-amber-100`) istället för separat gul box
 - "Redigera"/"Ta bort" textlänkar ersatta med Pencil/Trash2 ikon-knappar (ghost, 32x32)
 - Mjukare radseparator (`border-border/50 pb-3`)
+- Subtil hover-highlight (`bg-muted/50`) på gästrader för tydligare visuell feedback på stora skärmar
 
 ### Added
 
