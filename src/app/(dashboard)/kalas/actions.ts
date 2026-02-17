@@ -12,6 +12,11 @@ export interface PartyActionResult {
 }
 
 function parsePartyForm(formData: FormData) {
+  // Normalize \r\n → \n so line breaks don't inflate the character count
+  // (browsers count \n as 1 char for maxLength but submit \r\n in FormData)
+  const rawDesc = (formData.get('description') as string) || undefined;
+  const description = rawDesc?.replace(/\r\n/g, '\n') || undefined;
+
   return {
     childName: formData.get('childName') as string,
     childAge: Number(formData.get('childAge')),
@@ -21,11 +26,12 @@ function parsePartyForm(formData: FormData) {
     partyTimeEnd: (formData.get('partyTimeEnd') as string) || undefined,
     venueName: formData.get('venueName') as string,
     venueAddress: (formData.get('venueAddress') as string) || undefined,
-    description: (formData.get('description') as string) || undefined,
+    description,
     theme: (formData.get('theme') as string) || undefined,
     rsvpDeadline: (formData.get('rsvpDeadline') as string) || undefined,
     maxGuests: formData.get('maxGuests') ? Number(formData.get('maxGuests')) : undefined,
-    notifyOnRsvp: formData.get('notifyOnRsvp') === 'on',
+    // Use getAll() — hidden input "off" is always first; checkbox "on" is second when checked
+    notifyOnRsvp: formData.getAll('notifyOnRsvp').includes('on'),
   };
 }
 

@@ -14,6 +14,11 @@ All notable changes to this project will be documented in this file.
 - Tog bort anpassat felmeddelande från Zod-schemat (`validation.ts`) för beskrivningsfältet
 - Textarea har redan `maxLength={200}` + live-räknare som hanterar gränsen klient-side
 - Server-side `.max(200)` behålls som säkerhetsnät men visar inte längre redundant banner
+- Normaliserar `\r\n` → `\n` i `parsePartyForm` så radbrytningar inte dubbelräknas (webbläsare räknar `\n`=1 i maxLength men skickar `\r\n`=2 i FormData)
+
+#### Kalas: E-postaviserings-checkbox sparades aldrig som påslagen
+- `formData.get('notifyOnRsvp')` returnerade alltid hidden-inputens `"off"` (första DOM-posten)
+- Bytte till `formData.getAll().includes('on')` som korrekt läser checkbox-värdet
 
 ### Changed
 
