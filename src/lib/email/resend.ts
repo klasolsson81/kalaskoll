@@ -55,6 +55,55 @@ interface SendRsvpConfirmationParams {
   partyDate: string;
   partyTime: string;
   venueName: string;
+  /** Raw ISO date (YYYY-MM-DD) for calendar link generation */
+  partyDateRaw: string;
+  /** Raw time (HH:mm) for calendar link generation */
+  partyTimeRaw: string;
+  /** Raw end time (HH:mm) — defaults to +2h if absent */
+  partyTimeEndRaw?: string | null;
+  venueAddress?: string | null;
+}
+
+/** Build a Google Calendar "add event" URL. */
+function buildGoogleCalendarUrl({
+  title,
+  dateRaw,
+  timeRaw,
+  timeEndRaw,
+  location,
+}: {
+  title: string;
+  dateRaw: string;
+  timeRaw: string;
+  timeEndRaw?: string | null;
+  location: string;
+}): string {
+  // Convert "YYYY-MM-DD" + "HH:mm" → "YYYYMMDDTHHmmss"
+  const toCalDate = (date: string, time: string) =>
+    date.replace(/-/g, '') + 'T' + time.replace(':', '') + '00';
+
+  const start = toCalDate(dateRaw, timeRaw);
+
+  let end: string;
+  if (timeEndRaw) {
+    end = toCalDate(dateRaw, timeEndRaw);
+  } else {
+    // Default to +2 hours
+    const [h, m] = timeRaw.split(':').map(Number);
+    const endH = String((h + 2) % 24).padStart(2, '0');
+    const endM = String(m).padStart(2, '0');
+    end = toCalDate(dateRaw, `${endH}:${endM}`);
+  }
+
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: title,
+    dates: `${start}/${end}`,
+    location,
+    ctz: 'Europe/Stockholm',
+  });
+
+  return `https://www.google.com/calendar/render?${params.toString()}`;
 }
 
 export async function sendRsvpConfirmation({
@@ -67,6 +116,10 @@ export async function sendRsvpConfirmation({
   partyDate,
   partyTime,
   venueName,
+  partyDateRaw,
+  partyTimeRaw,
+  partyTimeEndRaw,
+  venueAddress,
 }: SendRsvpConfirmationParams): Promise<SendResult> {
   const names = childNames && childNames.length > 1 ? childNames : [childName];
   const displayNames = names.length > 1
@@ -77,6 +130,29 @@ export async function sendRsvpConfirmation({
   const subject = attending
     ? `Bekräftelse: ${displayNames} kommer på ${partyChildName}s kalas!`
     : `Bekräftelse: Svar registrerat för ${partyChildName}s kalas`;
+
+  const calendarLocation = venueAddress
+    ? `${venueName}, ${venueAddress}`
+    : venueName;
+
+  const calendarUrl = attending
+    ? buildGoogleCalendarUrl({
+        title: `${partyChildName}s kalas`,
+        dateRaw: partyDateRaw,
+        timeRaw: partyTimeRaw,
+        timeEndRaw: partyTimeEndRaw,
+        location: calendarLocation,
+      })
+    : '';
+
+  const calendarSection = attending
+    ? `<div style="margin-top:16px;padding:16px;background:#eff6ff;border-radius:8px;text-align:center;">
+        <p style="margin:0 0 8px;font-size:13px;color:#374151;">Gl&ouml;m inte bort kalaset!</p>
+        <a href="${calendarUrl}" style="display:inline-block;background:#16a34a;color:#ffffff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:13px;">
+          L&auml;gg till i kalendern
+        </a>
+      </div>`
+    : '';
 
   const html = `
 <!DOCTYPE html>
@@ -122,7 +198,9 @@ export async function sendRsvpConfirmation({
         </table>
       </div>
 
-      <p style="font-size:14px;color:#374151;margin:0 0 16px;">
+      ${calendarSection}
+
+      <p style="font-size:14px;color:#374151;margin:${attending ? '16px' : '0'} 0 16px;">
         Behöver du ändra ditt svar? Klicka på knappen nedan:
       </p>
 

@@ -20,6 +20,14 @@ All notable changes to this project will be documented in this file.
 - `formData.get('notifyOnRsvp')` returnerade alltid hidden-inputens `"off"` (första DOM-posten)
 - Bytte till `formData.getAll().includes('on')` som korrekt läser checkbox-värdet
 
+### Added
+
+#### OSA-bekräftelse: "Lägg till i kalendern"-knapp
+- Grön knapp i bekräftelsemailet (visas bara vid JA-svar) som öppnar Google Calendar med kalasets detaljer
+- Fyller i titel, datum, tid, sluttid och plats (inkl. adress om den finns)
+- Tidszon satt till `Europe/Stockholm`; om sluttid saknas antas +2 timmar
+- RSVP-queryn utökad med `party_time_end` + `venue_address` i båda routerna
+
 ### Changed
 
 #### Gästlistan: Ny GuestRow-layout

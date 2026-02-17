@@ -292,7 +292,7 @@ async function handlePost(request: NextRequest) {
   if (invitationForEmail) {
     const { data: party } = await supabase
       .from('parties')
-      .select('child_name, party_date, party_time, venue_name')
+      .select('child_name, party_date, party_time, party_time_end, venue_name, venue_address')
       .eq('id', invitationForEmail.party_id)
       .single();
 
@@ -310,6 +310,10 @@ async function handlePost(request: NextRequest) {
         partyDate: formatDate(party.party_date),
         partyTime: formatTime(party.party_time),
         venueName: party.venue_name,
+        partyDateRaw: party.party_date,
+        partyTimeRaw: party.party_time,
+        partyTimeEndRaw: party.party_time_end,
+        venueAddress: party.venue_address,
       }).catch((err) => {
         console.error('Failed to send RSVP update confirmation email:', err);
       });
