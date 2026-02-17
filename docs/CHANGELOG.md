@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+#### Fotobeskärning: Dialog hamnade bakom glass-card
+- `PhotoCropDialog` renderas nu via React `createPortal` till `document.body`
+- Löser att `backdrop-filter` på `glass-card` skapade ny stacking context som fångade `position: fixed`-dialogen inuti kortet
+
+#### Skapa kalas: Onödig "Max 200 tecken"-banner borttagen
+- Tog bort anpassat felmeddelande från Zod-schemat (`validation.ts`) för beskrivningsfältet
+- Textarea har redan `maxLength={200}` + live-räknare som hanterar gränsen klient-side
+- Server-side `.max(200)` behålls som säkerhetsnät men visar inte längre redundant banner
+
 ### Changed
 
 #### Gästlistan: Ny GuestRow-layout

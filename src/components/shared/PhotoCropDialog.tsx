@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   PHOTO_OUTPUT_SIZE,
@@ -238,17 +239,22 @@ export function PhotoCropDialog({
     return () => window.removeEventListener('keydown', handler);
   }, [onCancel]);
 
+  // Portal target – render outside glass-card stacking context so
+  // backdrop-filter doesn't trap position:fixed inside the card.
+  const portalTarget = typeof document !== 'undefined' ? document.body : null;
+
   if (!imageSrc) {
-    return (
+    const loading = (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
         <div className="rounded-xl bg-white p-6 text-center">
           <p className="text-sm text-muted-foreground">Laddar bild...</p>
         </div>
       </div>
     );
+    return portalTarget ? createPortal(loading, portalTarget) : loading;
   }
 
-  return (
+  const dialog = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl">
         <h3 className="mb-4 text-center text-lg font-semibold">Beskär foto</h3>
@@ -350,4 +356,6 @@ export function PhotoCropDialog({
       </div>
     </div>
   );
+
+  return portalTarget ? createPortal(dialog, portalTarget) : dialog;
 }
