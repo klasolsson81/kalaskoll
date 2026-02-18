@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { feedbackSchema } from '@/lib/utils/validation';
 import { isFeedbackRateLimited } from '@/lib/utils/rate-limit';
+import { blockIp, hasBotSignals } from '@/lib/utils/bot-block';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,10 +38,11 @@ export async function POST(request: NextRequest) {
     }
 
     const { message, screenshot, pageUrl, userAgent, screenSize, honeypot } = result.data;
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
 
-    // Honeypot — bots fill hidden fields, real users don't
-    if (honeypot) {
-      // Pretend success so bots think it worked
+    // Honeypot or bot signals → block IP and pretend success
+    if (honeypot || hasBotSignals({ screenSize, userAgent })) {
+      await blockIp(ip);
       return NextResponse.json({ success: true, message: 'Tack för din feedback!' });
     }
 

@@ -26,6 +26,9 @@ All notable changes to this project will be documented in this file.
 - **Honeypot-fält** — osynligt fält som bots fyller i, tyst 200 OK om det har värde
 - **Rate limiting** — max 5 feedback per timme per användare (Upstash Redis)
 - **Minsta meddelandelängd** — ökat från 1 till 3 tecken (stoppar `.`-spam)
+- **IP-blockering** — bot-signaler (skärm >10000px, honeypot) triggar 1h IP-block i Redis
+- **Middleware-check** — blockerade IP:n redirectas till `/blocked` innan någon sida laddas
+- **Blocked-sida** — `/blocked` med "Du verkar inte mänsklig" och auto-unlock efter 1 timme
 
 #### OSA-bekräftelse: "Lägg till i kalendern"-knapp
 - Grön knapp i bekräftelsemailet (visas bara vid JA-svar) som öppnar Google Calendar med kalasets detaljer
