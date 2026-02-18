@@ -343,11 +343,12 @@ export const waitlistSchema = z.object({
 
 // Feedback schema
 export const feedbackSchema = z.object({
-  message: z.string().min(1, 'Meddelande krävs').max(5000),
+  message: z.string().min(3, 'Meddelande måste vara minst 3 tecken').max(5000),
   screenshot: z.string().nullish(),
   pageUrl: z.string().url(),
   userAgent: z.string().optional(),
   screenSize: z.string().optional(),
+  honeypot: z.string().optional(),
 });
 
 // Contact form schema

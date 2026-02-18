@@ -22,6 +22,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Feedback: Bot-skydd
+- **Honeypot-fält** — osynligt fält som bots fyller i, tyst 200 OK om det har värde
+- **Rate limiting** — max 5 feedback per timme per användare (Upstash Redis)
+- **Minsta meddelandelängd** — ökat från 1 till 3 tecken (stoppar `.`-spam)
+
 #### OSA-bekräftelse: "Lägg till i kalendern"-knapp
 - Grön knapp i bekräftelsemailet (visas bara vid JA-svar) som öppnar Google Calendar med kalasets detaljer
 - Fyller i titel, datum, tid, sluttid och plats (inkl. adress om den finns)

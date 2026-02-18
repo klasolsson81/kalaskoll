@@ -22,6 +22,7 @@ export function FeedbackWidget() {
   const [nudgeText, setNudgeText] = useState(NUDGE_MESSAGES[0]);
   const [nudgeVisible, setNudgeVisible] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   // Rotate nudge text at gentle intervals
   const rotateNudge = useCallback(() => {
@@ -90,6 +91,7 @@ export function FeedbackWidget() {
           pageUrl: window.location.href,
           userAgent: navigator.userAgent,
           screenSize: `${window.innerWidth}x${window.innerHeight}`,
+          honeypot: honeypotRef.current?.value || '',
         }),
       });
 
@@ -184,6 +186,16 @@ export function FeedbackWidget() {
                   placeholder={'Beskriv vad du tycker, hittade en bugg, eller har ett förslag...\n\nTips: Klistra in en skärmdump med Ctrl+V / Cmd+V'}
                   className="min-h-[120px] resize-none"
                   disabled={status === 'submitting'}
+                />
+                {/* Honeypot — hidden from real users, bots fill it in */}
+                <input
+                  ref={honeypotRef}
+                  type="text"
+                  name="website"
+                  autoComplete="off"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0"
                 />
 
                 {/* Screenshot preview */}

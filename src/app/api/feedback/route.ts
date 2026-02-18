@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { feedbackSchema } from '@/lib/utils/validation';
+import { isFeedbackRateLimited } from '@/lib/utils/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +18,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Rate limit: 5 per hour per user
+    if (await isFeedbackRateLimited(user.id)) {
+      return NextResponse.json(
+        { error: 'Du har skickat för mycket feedback. Försök igen om en stund.' },
+        { status: 429 },
+      );
+    }
+
     const body = await request.json();
     const result = feedbackSchema.safeParse(body);
 
@@ -27,7 +36,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { message, screenshot, pageUrl, userAgent, screenSize } = result.data;
+    const { message, screenshot, pageUrl, userAgent, screenSize, honeypot } = result.data;
+
+    // Honeypot — bots fill hidden fields, real users don't
+    if (honeypot) {
+      // Pretend success so bots think it worked
+      return NextResponse.json({ success: true, message: 'Tack för din feedback!' });
+    }
 
     const { error } = await supabase.from('feedback').insert({
       user_id: user.id,

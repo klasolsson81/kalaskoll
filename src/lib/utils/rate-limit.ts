@@ -69,6 +69,27 @@ export async function isContactRateLimited(ip: string): Promise<boolean> {
 }
 
 /**
+ * Check if a user is rate limited for feedback submissions.
+ * 5 submissions per hour per user.
+ * Returns true if the request should be blocked.
+ */
+export async function isFeedbackRateLimited(userId: string): Promise<boolean> {
+  const limiter = createRateLimiter('feedback', 5, '3600 s');
+
+  if (!limiter) {
+    return false;
+  }
+
+  try {
+    const { success } = await limiter.limit(userId);
+    return !success;
+  } catch (err) {
+    console.error('[RateLimit] Redis error:', err);
+    return false;
+  }
+}
+
+/**
  * Check if a user is rate limited for AI image generation.
  * 10 generations per hour per user.
  * Returns true if the request should be blocked.
