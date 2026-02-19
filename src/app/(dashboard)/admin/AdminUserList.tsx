@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Search, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
@@ -24,7 +23,6 @@ type SortKey = 'fullName' | 'email' | 'role' | 'emailConfirmedAt' | 'createdAt' 
 type SortDir = 'asc' | 'desc';
 
 export function AdminUserList() {
-  const router = useRouter();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -153,7 +151,7 @@ export function AdminUserList() {
         body: JSON.stringify({ userId }),
       });
       if (res.ok) {
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       }
     } catch (err) {
       console.error('Failed to impersonate:', err);
