@@ -56,11 +56,12 @@ export default async function EditRsvpPage({ params, searchParams }: EditPagePro
     notFound();
   }
 
-  // Get party details
+  // Get party details (exclude soft-deleted)
   const { data: party } = await supabase
     .from('parties')
     .select('child_name, child_age, party_date, party_time, party_time_end, venue_name, venue_address, theme, description, rsvp_deadline')
     .eq('id', invitation.party_id)
+    .is('deleted_at', null)
     .single();
 
   if (!party) {

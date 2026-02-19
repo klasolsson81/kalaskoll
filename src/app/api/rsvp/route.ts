@@ -76,12 +76,17 @@ async function handlePost(request: NextRequest) {
     return NextResponse.json({ error: 'Ogiltig inbjudan' }, { status: 404 });
   }
 
-  // Check RSVP deadline
+  // Check party exists and is not soft-deleted
   const { data: partyForDeadline } = await supabase
     .from('parties')
     .select('rsvp_deadline')
     .eq('id', invitation.party_id)
+    .is('deleted_at', null)
     .single();
+
+  if (!partyForDeadline) {
+    return NextResponse.json({ error: 'Kalaset finns inte längre' }, { status: 404 });
+  }
 
   if (partyForDeadline?.rsvp_deadline) {
     const deadline = new Date(partyForDeadline.rsvp_deadline);
@@ -112,11 +117,12 @@ async function handlePost(request: NextRequest) {
     );
   }
 
-  // Get party date for allergy auto-delete
+  // Get party date for allergy auto-delete (exclude soft-deleted)
   const { data: party } = await supabase
     .from('parties')
     .select('child_name, party_date, party_time, party_time_end, venue_name, venue_address')
     .eq('id', invitation.party_id)
+    .is('deleted_at', null)
     .single();
 
   const partyDate = party?.party_date ? new Date(party.party_date) : new Date();

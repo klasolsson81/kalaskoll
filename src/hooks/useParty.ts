@@ -16,7 +16,7 @@ export function useParty(partyId: string) {
       const supabase = createClient();
       const { data, error: fetchError } = await supabase
         .from('parties')
-        .select('id, owner_id, child_name, child_age, child_id, party_date, party_time, party_time_end, venue_name, venue_address, description, theme, invitation_image_url, invitation_template, child_photo_url, child_photo_frame, rsvp_deadline, max_guests, notify_on_rsvp, created_at, updated_at')
+        .select('id, owner_id, child_name, child_age, child_id, party_date, party_time, party_time_end, venue_name, venue_address, description, theme, invitation_image_url, invitation_template, child_photo_url, child_photo_frame, rsvp_deadline, max_guests, notify_on_rsvp, deleted_at, created_at, updated_at')
         .eq('id', partyId)
         .single();
 

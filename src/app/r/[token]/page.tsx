@@ -37,6 +37,7 @@ const getPartyById = cache(async (partyId: string) => {
     .from('parties')
     .select('child_name, child_age, party_date, party_time, party_time_end, venue_name, venue_address, theme, description, rsvp_deadline')
     .eq('id', partyId)
+    .is('deleted_at', null)
     .single();
   return data;
 });

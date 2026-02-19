@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+#### Soft-delete för kalas med admin-återställning
+- **Soft-delete** — `deleteParty` sätter `deleted_at`-timestamp istället för att radera permanent
+- **RLS-skydd** — vanliga användare ser aldrig raderade kalas (RLS-policy filtrerar `deleted_at IS NULL`)
+- **Service-role-filter** — RSVP-routes, publik RSVP-sida och admin-stats filtrerar bort raderade kalas
+- **Admin Papperskorg** — ny flik i admin-dashboard med sökbar lista av raderade kalas
+- **Återställ-knapp** — admin kan återställa raderade kalas med ett klick
+- **Audit-loggning** — loggar `party.soft_delete` vid radering och `party.restore` vid återställning
+- **Auto-cleanup** — pg_cron raderar permanent efter 30 dagar (daglig körning kl 05:00 UTC)
+- **Databasmigration** — `00025_soft_delete_parties.sql` med `deleted_at`-kolumn, index och cron-jobb
+
 ### Fixed
 
 #### Fotobeskärning: Dialog hamnade bakom glass-card

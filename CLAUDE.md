@@ -1,6 +1,6 @@
 # CLAUDE.md – KalasKoll
 
-> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-17
+> Instruktionsfil for Claude Code. Senast uppdaterad: 2026-02-19
 
 ---
 

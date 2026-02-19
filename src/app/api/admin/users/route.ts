@@ -13,7 +13,7 @@ export async function GET() {
     const [usersListRes, profilesRes, partiesRes, feedbackRes] = await Promise.all([
       adminClient.auth.admin.listUsers({ perPage: 1000 }),
       adminClient.from('profiles').select('id, full_name, role, beta_expires_at, beta_ai_images_used, beta_sms_used'),
-      adminClient.from('parties').select('id, owner_id'),
+      adminClient.from('parties').select('id, owner_id').is('deleted_at', null),
       adminClient.from('feedback').select('id, user_id'),
     ]);
 

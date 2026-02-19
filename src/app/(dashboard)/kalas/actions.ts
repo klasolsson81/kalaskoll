@@ -173,7 +173,21 @@ export async function updateParty(
 export async function deleteParty(partyId: string): Promise<void> {
   const supabase = await createClient();
 
-  await supabase.from('parties').delete().eq('id', partyId);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  await supabase
+    .from('parties')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', partyId);
+
+  logAudit(supabase, {
+    userId: user?.id,
+    action: 'party.soft_delete',
+    resourceType: 'party',
+    resourceId: partyId,
+  });
 
   revalidatePath('/dashboard');
   redirect('/dashboard');

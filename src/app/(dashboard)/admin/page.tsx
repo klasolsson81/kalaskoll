@@ -5,6 +5,7 @@ import { isAdminEmail } from '@/lib/utils/admin-guard';
 import { AdminStatsCards } from './AdminStatsCards';
 import { AdminInviteForm } from './AdminInviteForm';
 import { AdminUserList } from './AdminUserList';
+import { AdminTrashList } from './AdminTrashList';
 import { AuditLogList } from './AuditLogList';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
@@ -39,10 +40,14 @@ export default async function AdminPage() {
       <Tabs defaultValue="users">
         <TabsList>
           <TabsTrigger value="users">Användare</TabsTrigger>
+          <TabsTrigger value="trash">Papperskorg</TabsTrigger>
           <TabsTrigger value="audit">Auditlogg</TabsTrigger>
         </TabsList>
         <TabsContent value="users">
           <AdminUserList />
+        </TabsContent>
+        <TabsContent value="trash">
+          <AdminTrashList />
         </TabsContent>
         <TabsContent value="audit">
           <AuditLogList />

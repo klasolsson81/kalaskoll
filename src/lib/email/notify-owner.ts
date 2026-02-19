@@ -16,11 +16,12 @@ export async function notifyPartyOwner(
   isEdit: boolean,
 ): Promise<void> {
   try {
-    // Get party with owner info and notification preference
+    // Get party with owner info and notification preference (skip soft-deleted)
     const { data: party } = await supabase
       .from('parties')
       .select('owner_id, child_name, notify_on_rsvp')
       .eq('id', partyId)
+      .is('deleted_at', null)
       .single();
 
     if (!party || party.notify_on_rsvp === false) return;

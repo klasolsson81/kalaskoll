@@ -178,6 +178,7 @@ async function handlePost(request: NextRequest) {
       .from('parties')
       .select('party_date')
       .eq('id', invForParty.party_id)
+      .is('deleted_at', null)
       .single();
     const partyDate = partyForDate?.party_date ? new Date(partyForDate.party_date) : new Date();
     autoDeleteAt = new Date(partyDate);
@@ -294,6 +295,7 @@ async function handlePost(request: NextRequest) {
       .from('parties')
       .select('child_name, party_date, party_time, party_time_end, venue_name, venue_address')
       .eq('id', invitationForEmail.party_id)
+      .is('deleted_at', null)
       .single();
 
     if (party) {

@@ -79,6 +79,7 @@ export type Database = {
           rsvp_deadline: string | null;
           max_guests: number | null;
           notify_on_rsvp: boolean;
+          deleted_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -102,6 +103,7 @@ export type Database = {
           rsvp_deadline?: string | null;
           max_guests?: number | null;
           notify_on_rsvp?: boolean;
+          deleted_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -125,6 +127,7 @@ export type Database = {
           rsvp_deadline?: string | null;
           max_guests?: number | null;
           notify_on_rsvp?: boolean;
+          deleted_at?: string | null;
           updated_at?: string;
         };
         Relationships: [

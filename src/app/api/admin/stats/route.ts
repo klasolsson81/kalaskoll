@@ -17,7 +17,7 @@ export async function GET() {
       usersListRes,
     ] = await Promise.all([
       adminClient.from('profiles').select('id, role, beta_ai_images_used, beta_sms_used'),
-      adminClient.from('parties').select('id', { count: 'exact', head: true }),
+      adminClient.from('parties').select('id', { count: 'exact', head: true }).is('deleted_at', null),
       adminClient.from('rsvp_responses').select('id', { count: 'exact', head: true }),
       adminClient.from('feedback').select('id, status'),
       adminClient.from('waitlist').select('id', { count: 'exact', head: true }),
