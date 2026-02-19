@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 import { partySchema } from '@/lib/utils/validation';
 import { logAudit } from '@/lib/utils/audit';
 import { TEMPLATE_IDS } from '@/components/templates/theme-configs';
+import { ADMIN_EMAILS, MAX_ACTIVE_PARTIES } from '@/lib/constants';
 
 export interface PartyActionResult {
   error?: string;
@@ -53,6 +54,17 @@ export async function createParty(
 
   if (!user) {
     return { error: 'Du måste vara inloggad' };
+  }
+
+  // Enforce max active parties (admin exempt)
+  const { count } = await supabase
+    .from('parties')
+    .select('id', { count: 'exact', head: true })
+    .eq('owner_id', user.id)
+    .gte('party_date', new Date().toISOString().split('T')[0]);
+
+  if ((count ?? 0) >= MAX_ACTIVE_PARTIES && !ADMIN_EMAILS.includes(user.email ?? '')) {
+    return { error: `Du kan ha max ${MAX_ACTIVE_PARTIES} aktiva kalas. Ta bort eller vänta tills ett kalas passerat.` };
   }
 
   const { data: party, error } = await supabase

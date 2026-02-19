@@ -17,6 +17,9 @@ export const CONTACT_EMAIL = 'hej@kalaskoll.se';
 export const SMS_SENDER_ID = 'KalasKoll';
 export const SMS_MAX_PER_PARTY = 15;
 
+// Party limits
+export const MAX_ACTIVE_PARTIES = 3;
+
 // AI image generation
 export const AI_MAX_IMAGES_PER_PARTY = 5;
 

@@ -6,6 +6,31 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Max 3 aktiva kalas per användare
+- **Kalasgräns** — `createParty` blockerar skapande om användaren redan har 3 aktiva kalas (party_date >= idag)
+- **Admin-undantag** — superadmins kringgår gränsen
+- **`MAX_ACTIVE_PARTIES`** — ny konstant i `constants.ts` (3)
+
+#### Auto-radering av gamla kalas (GDPR)
+- **Vercel Cron** — ny `/api/cron/cleanup-parties` (daglig kl 04:00 UTC) raderar kalas där `party_date` passerat 30+ dagar
+- CASCADE tar bort alla relaterade data (invitations, rsvp_responses, allergy_data, party_images, invited_guests)
+- Audit-loggar `party.auto_deleted` med metadata `{ reason: 'expired', partyDate }`
+- Separat från pg_cron (som hanterar soft-deleted kalas)
+
+#### Dashboard: Uppdelning aktiva / tidigare kalas
+- **Mina kalas** — visar bara kommande kalas som card-grid med info om max 3 kalas
+- **Tidigare kalas** — ny sektion med kompakt listvy (namn, datum, antal gäster som kom)
+- Informationstext: "Tidigare kalas sparas i 30 dagar, sedan raderas all data."
+
+#### Utökad FAQ (9 frågor)
+- 4 nya frågor: max kalas, vad händer efter kalasdagen, kan man ta bort kalas, SMS-kostnad
+- FAQ-data extraherad till delad `faqItems`-array (används av både visuella kort och JSON-LD)
+
+### Changed
+
+#### DeletePartyButton: Uppdaterad bekräftelsetext
+- Bekräftelsetexten speglar nu soft-delete: "Kalaset flyttas till papperskorgen och raderas permanent efter 30 dagar."
+
 #### Soft-delete för kalas med admin-återställning
 - **Soft-delete** — `deleteParty` sätter `deleted_at`-timestamp istället för att radera permanent
 - **RLS-skydd** — vanliga användare ser aldrig raderade kalas (RLS-policy filtrerar `deleted_at IS NULL`)

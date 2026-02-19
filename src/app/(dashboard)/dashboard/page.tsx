@@ -8,6 +8,7 @@ import { ChildrenSection } from './ChildrenSection';
 import { OnboardingCard } from './OnboardingCard';
 import { BetaLimitsDisplay } from '@/components/beta/BetaLimitsDisplay';
 import { getImpersonationContext } from '@/lib/utils/impersonation';
+import { MAX_ACTIVE_PARTIES } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -90,9 +91,10 @@ export default async function DashboardPage() {
     }
   }
 
-  const upcomingParties = (parties ?? []).filter(
-    (p) => new Date(p.party_date) >= new Date(),
-  );
+  const allParties = parties ?? [];
+  const activeParties = allParties.filter((p) => new Date(p.party_date) >= new Date());
+  const pastParties = allParties.filter((p) => new Date(p.party_date) < new Date());
+  const upcomingParties = activeParties;
   const totalAttending = Object.values(guestCounts).reduce((sum, c) => sum + c.attending, 0);
   const totalPending = Object.values(guestCounts).reduce(
     (sum, c) => sum + (c.total - c.attending - c.declined),
@@ -153,72 +155,115 @@ export default async function DashboardPage() {
       {/* Children */}
       <ChildrenSection savedChildren={children ?? []} />
 
-      {/* Parties */}
+      {/* Active Parties */}
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold font-display">Mina kalas</h2>
         </div>
 
         {parties && parties.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {parties.map((party) => {
-              const isUpcoming = new Date(party.party_date) >= new Date();
-              const counts = guestCounts[party.id];
-              const pending = counts ? counts.total - counts.attending - counts.declined : 0;
-              return (
-                <Link key={party.id} href={`/kalas/${party.id}`}>
-                  <Card className="h-full border-0 glass-card">
-                    {/* Theme accent strip */}
-                    <div className="h-1.5 rounded-t-[inherit] gradient-celebration" />
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center justify-between">
-                        <span className="text-base">{party.child_name}s kalas</span>
-                        <Badge variant={isUpcoming ? 'success' : 'outline'}>
-                          {isUpcoming ? 'Kommande' : 'Avslutat'}
-                        </Badge>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        {formatDate(party.party_date)} kl{' '}
-                        {formatTimeRange(party.party_time, party.party_time_end)}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{party.venue_name}</p>
-                      {party.theme && (
-                        <Badge variant="outline" className="capitalize">
-                          {party.theme}
-                        </Badge>
-                      )}
-                      {counts && counts.total > 0 && (
-                        <div className="flex gap-3 pt-1">
-                          <span className="text-xs">
-                            <span className="font-bold text-success">{counts.attending}</span>{' '}
-                            <span className="text-muted-foreground">kommer</span>
-                          </span>
-                          {counts.declined > 0 && (
-                            <span className="text-xs">
-                              <span className="font-bold text-destructive">{counts.declined}</span>{' '}
-                              <span className="text-muted-foreground">nej</span>
-                            </span>
+          <>
+            {activeParties.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {activeParties.map((party) => {
+                  const counts = guestCounts[party.id];
+                  const pending = counts ? counts.total - counts.attending - counts.declined : 0;
+                  return (
+                    <Link key={party.id} href={`/kalas/${party.id}`}>
+                      <Card className="h-full border-0 glass-card">
+                        {/* Theme accent strip */}
+                        <div className="h-1.5 rounded-t-[inherit] gradient-celebration" />
+                        <CardHeader className="pb-2">
+                          <CardTitle className="flex items-center justify-between">
+                            <span className="text-base">{party.child_name}s kalas</span>
+                            <Badge variant="success">Kommande</Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <p className="text-sm text-muted-foreground">
+                            {formatDate(party.party_date)} kl{' '}
+                            {formatTimeRange(party.party_time, party.party_time_end)}
+                          </p>
+                          <p className="text-sm text-muted-foreground">{party.venue_name}</p>
+                          {party.theme && (
+                            <Badge variant="outline" className="capitalize">
+                              {party.theme}
+                            </Badge>
                           )}
-                          {pending > 0 && (
-                            <span className="text-xs">
-                              <span className="font-bold text-warning-foreground">{pending}</span>{' '}
-                              <span className="text-muted-foreground">väntar</span>
-                            </span>
+                          {counts && counts.total > 0 && (
+                            <div className="flex gap-3 pt-1">
+                              <span className="text-xs">
+                                <span className="font-bold text-success">{counts.attending}</span>{' '}
+                                <span className="text-muted-foreground">kommer</span>
+                              </span>
+                              {counts.declined > 0 && (
+                                <span className="text-xs">
+                                  <span className="font-bold text-destructive">{counts.declined}</span>{' '}
+                                  <span className="text-muted-foreground">nej</span>
+                                </span>
+                              )}
+                              {pending > 0 && (
+                                <span className="text-xs">
+                                  <span className="font-bold text-warning-foreground">{pending}</span>{' '}
+                                  <span className="text-muted-foreground">väntar</span>
+                                </span>
+                              )}
+                            </div>
                           )}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Inga kommande kalas.</p>
+            )}
+            <p className="mt-3 text-xs text-muted-foreground">
+              Du kan ha max {MAX_ACTIVE_PARTIES} aktiva kalas samtidigt.
+            </p>
+          </>
         ) : (
           <OnboardingCard />
         )}
       </section>
+
+      {/* Past Parties */}
+      {pastParties.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold font-display">Tidigare kalas</h2>
+          </div>
+          <div className="glass-card rounded-xl border-0">
+            <div className="divide-y divide-border/50">
+              {pastParties.map((party) => {
+                const counts = guestCounts[party.id];
+                return (
+                  <Link
+                    key={party.id}
+                    href={`/kalas/${party.id}`}
+                    className="-mx-0 flex items-center justify-between rounded-lg px-4 py-3 transition-colors hover:bg-muted/50"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">{party.child_name}s kalas</p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatDate(party.party_date)}
+                        {counts && counts.attending > 0 && (
+                          <span> · {counts.attending} gäster kom</span>
+                        )}
+                      </p>
+                    </div>
+                    <Badge variant="outline">Avslutat</Badge>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Tidigare kalas sparas i 30 dagar, sedan raderas all data.
+          </p>
+        </section>
+      )}
     </div>
   );
 }

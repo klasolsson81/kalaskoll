@@ -55,7 +55,7 @@ export function DeletePartyButton({ partyId }: { partyId: string }) {
               Ta bort kalas?
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Detta tar bort kalaset, alla inbjudningar och OSA-svar permanent. Det går inte att ångra.
+              Kalaset flyttas till papperskorgen och raderas permanent efter 30 dagar.
             </p>
 
             {error && (
