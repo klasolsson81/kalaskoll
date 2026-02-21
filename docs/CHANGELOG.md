@@ -6,6 +6,24 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Dedikerad FAQ-sida (`/faq`)
+- **Ny sida** — `src/app/faq/page.tsx` med accordion-design (shadcn/ui Accordion)
+- **Kategoriserade frågor** — Grundläggande, Inbjudningar, Säkerhet & GDPR, Övrigt
+- **Delad FAQ-data** — `src/lib/faq-data.ts` med `featured`-flagga och `category` per fråga
+- **JSON-LD FAQPage** — schema flyttat från landingpage till `/faq`
+- **SEO** — metadata med title, description, canonical + tillagd i sitemap
+- **CTA-sektion** — "Har du fler frågor?" med kontakt- och registreringslänkar
+
+### Changed
+
+#### Trimmat FAQ på landingpage
+- Landingpage visar nu bara 4 featured frågor istället för alla 9
+- Ny "Se alla frågor →"-länk under FAQ-sektionen
+- Borttaget `faqJsonLd` från landingpage (flyttat till `/faq`)
+
+#### Footer
+- Ny "Vanliga frågor"-länk i navigations-sektionen (riktig länk till `/faq`)
+
 #### Max 3 aktiva kalas per användare
 - **Kalasgräns** — `createParty` blockerar skapande om användaren redan har 3 aktiva kalas (party_date >= idag)
 - **Admin-undantag** — superadmins kringgår gränsen

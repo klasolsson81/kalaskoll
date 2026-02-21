@@ -266,6 +266,14 @@ export function Footer() {
                   </button>
                 </li>
                 <li>
+                  <Link
+                    href="/faq"
+                    className="text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                  >
+                    Vanliga frågor
+                  </Link>
+                </li>
+                <li>
                   <button
                     onClick={() => setActiveModal('kontakta-oss')}
                     className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"

@@ -6,45 +6,9 @@ import { GradientMeshBg } from '@/components/landing/GradientMeshBg';
 import { Balloons3DLoader } from '@/components/landing/Balloons3DLoader';
 import { ConfettiTrigger } from '@/components/landing/ConfettiTrigger';
 import { APP_URL } from '@/lib/constants';
+import { faqItems } from '@/lib/faq-data';
 
-const faqItems = [
-  {
-    q: 'Kostar det något att använda KalasKoll?',
-    a: 'Grundfunktionerna är helt gratis. Premium-funktioner som AI-genererade inbjudningar kostar 49 kr per kalas.',
-  },
-  {
-    q: 'Hur skickar jag inbjudningar?',
-    a: 'Du kan skicka via e-post eller dela en länk direkt. Vill du ge fysiska inbjudningar? Varje kalas har en unik QR-kod du kan skriva ut. Med Guldkalas kan du även skicka via SMS. Gästerna svarar direkt via mobilen – inget konto krävs.',
-  },
-  {
-    q: 'Är allergiinformationen säker?',
-    a: 'Ja. Allergidata lagras separat och krypterat, kräver samtycke, och raderas automatiskt 7 dagar efter kalaset i enlighet med GDPR.',
-  },
-  {
-    q: 'Kan jag se gästlistan i realtid?',
-    a: 'Ja! Så snart en gäst svarar uppdateras din gästlista direkt. Du ser vilka som kommer, allergier och kontaktuppgifter.',
-  },
-  {
-    q: 'Hur många kalas kan jag ha samtidigt?',
-    a: 'Du kan ha upp till 3 aktiva kalas samtidigt. När ett kalas passerat frigörs platsen automatiskt.',
-  },
-  {
-    q: 'Vad händer med mitt kalas efter kalasdagen?',
-    a: 'Kalaset flyttas automatiskt till "Tidigare kalas" i din dashboard. Du kan se sammanfattningen i 30 dagar. Därefter raderas all data \u2014 inklusive gästlistor, OSA-svar och kontaktuppgifter \u2014 automatiskt i enlighet med GDPR.',
-  },
-  {
-    q: 'Kan jag ta bort ett kalas själv?',
-    a: 'Ja. Du kan ta bort ett kalas när som helst. Det hamnar i papperskorgen och försvinner helt efter 30 dagar.',
-  },
-  {
-    q: 'Vad kostar SMS-inbjudningar?',
-    a: 'SMS-inbjudningar ingår i Guldkalas. Du kan skicka upp till 15 SMS per kalas.',
-  },
-  {
-    q: 'Vem ligger bakom KalasKoll?',
-    a: 'KalasKoll är skapat av Klas Olsson i Göteborg. Idén föddes ur ett verkligt behov \u2013 att bjuda in 20 förskolebarn till ett kalas utan kaos med papperslappar och SMS. Allt nödvändigt är gratis, utan reklam.',
-  },
-];
+const featuredFaq = faqItems.filter((item) => item.featured);
 
 export default function HomePage() {
   const appJsonLd = {
@@ -70,28 +34,11 @@ export default function HomePage() {
     ],
   };
 
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqItems.map((item) => ({
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.a,
-      },
-    })),
-  };
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       <div className="flex min-h-screen flex-col">
@@ -303,7 +250,7 @@ export default function HomePage() {
                 </div>
               </ScrollReveal>
               <div className="space-y-4">
-                {faqItems.map((faq, i) => (
+                {featuredFaq.map((faq, i) => (
                   <ScrollReveal key={faq.q} delay={i * 80}>
                     <Card className="glass-card border-0">
                       <CardContent className="pt-6">
@@ -314,6 +261,16 @@ export default function HomePage() {
                   </ScrollReveal>
                 ))}
               </div>
+              <ScrollReveal delay={featuredFaq.length * 80}>
+                <div className="mt-8 text-center">
+                  <Link
+                    href="/faq"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Se alla frågor &rarr;
+                  </Link>
+                </div>
+              </ScrollReveal>
             </div>
           </section>
 
