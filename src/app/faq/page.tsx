@@ -73,13 +73,13 @@ export default function FaqPage() {
             <section className="relative py-16 sm:py-20">
               <div className="mx-auto max-w-3xl px-4 text-center">
                 <ScrollReveal>
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/70">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-700">
                     FAQ
                   </p>
-                  <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+                  <h1 className="font-display text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
                     Vanliga frågor
                   </h1>
-                  <p className="mx-auto mt-4 max-w-xl text-lg text-foreground/80">
+                  <p className="mx-auto mt-4 max-w-xl text-lg text-gray-700">
                     Allt du behöver veta om KalasKoll — från priser och inbjudningar till säkerhet och GDPR.
                   </p>
                 </ScrollReveal>
@@ -98,8 +98,8 @@ export default function FaqPage() {
 
                     return (
                       <ScrollReveal key={category.id} delay={catIdx * 100}>
-                        <div className="glass-card rounded-2xl p-6 sm:p-8">
-                          <h2 className="mb-4 font-display text-xl font-bold tracking-tight">
+                        <div className="rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-sm sm:p-8">
+                          <h2 className="mb-4 font-display text-xl font-bold tracking-tight text-gray-900">
                             {category.label}
                           </h2>
                           <Accordion type="single" collapsible>
@@ -107,12 +107,12 @@ export default function FaqPage() {
                               <AccordionItem
                                 key={i}
                                 value={`${category.id}-${i}`}
-                                className="border-border/50"
+                                className="border-gray-200"
                               >
-                                <AccordionTrigger className="text-left font-semibold hover:no-underline hover:text-primary">
+                                <AccordionTrigger className="text-left font-semibold text-gray-900 hover:no-underline hover:text-primary">
                                   {faq.q}
                                 </AccordionTrigger>
-                                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                                <AccordionContent className="text-sm leading-relaxed text-gray-700">
                                   {faq.a}
                                 </AccordionContent>
                               </AccordionItem>
@@ -130,11 +130,11 @@ export default function FaqPage() {
             <section className="relative pb-20">
               <div className="mx-auto max-w-2xl px-4">
                 <ScrollReveal>
-                  <div className="glass-card rounded-3xl px-6 py-12 text-center sm:px-12">
-                    <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                  <div className="rounded-3xl bg-white/90 backdrop-blur-sm px-6 py-12 text-center shadow-sm sm:px-12">
+                    <h2 className="font-display text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                       Har du fler frågor?
                     </h2>
-                    <p className="mt-3 text-foreground/80">
+                    <p className="mt-3 text-gray-700">
                       Hör av dig till oss så hjälper vi dig. Eller kom igång direkt — det är gratis.
                     </p>
                     <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
