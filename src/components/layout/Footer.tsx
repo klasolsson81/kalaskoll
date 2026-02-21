@@ -232,17 +232,6 @@ export function Footer() {
               <p className="mt-1 text-sm text-foreground/80">
                 Smarta inbjudningar för barnkalas
               </p>
-              <p className="mt-2 text-xs text-foreground/70">
-                Skapad av{' '}
-                <a
-                  href="https://klasolsson.se"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
-                >
-                  Klas Olsson
-                </a>
-              </p>
             </div>
 
             {/* Navigation */}

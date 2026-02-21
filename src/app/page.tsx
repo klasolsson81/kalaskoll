@@ -263,11 +263,10 @@ export default function HomePage() {
               </div>
               <ScrollReveal delay={featuredFaq.length * 80}>
                 <div className="mt-8 text-center">
-                  <Link
-                    href="/faq"
-                    className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-                  >
-                    Se alla frågor &rarr;
+                  <Link href="/faq">
+                    <Button variant="outline" className="bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all">
+                      Se alla frågor &rarr;
+                    </Button>
                   </Link>
                 </div>
               </ScrollReveal>
