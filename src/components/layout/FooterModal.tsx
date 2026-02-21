@@ -35,7 +35,7 @@ export function FooterModal({ title, children, onClose }: FooterModalProps) {
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl glass-card p-6 shadow-xl outline-none"
+        className="relative max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
