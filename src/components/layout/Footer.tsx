@@ -11,7 +11,7 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
   'om-oss': {
     title: 'Om KalasKoll',
     content: (
-      <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+      <div className="space-y-4 text-sm leading-relaxed text-foreground">
         <p>
           KalasKoll skapades av{' '}
           <a
@@ -48,7 +48,7 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
   priser: {
     title: 'Priser',
     content: (
-      <div className="space-y-6 text-sm leading-relaxed text-muted-foreground">
+      <div className="space-y-6 text-sm leading-relaxed text-foreground">
         <div>
           <h3 className="mb-2 text-base font-bold text-foreground">Gratis</h3>
           <ul className="list-inside list-disc space-y-1">
@@ -70,7 +70,7 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
             <li>Skicka inbjudningar via SMS</li>
           </ul>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-foreground">
           Alla priser inkluderar moms. Inga dolda avgifter, inga prenumerationer.
         </p>
       </div>
@@ -83,7 +83,7 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
   integritetspolicy: {
     title: 'Integritetspolicy',
     content: (
-      <div className="space-y-5 text-sm leading-relaxed text-muted-foreground">
+      <div className="space-y-5 text-sm leading-relaxed text-foreground">
         <section>
           <h3 className="mb-1 font-bold text-foreground">1. Inledning</h3>
           <p>
@@ -138,7 +138,7 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
   anvandarvillkor: {
     title: 'Användarvillkor',
     content: (
-      <div className="space-y-5 text-sm leading-relaxed text-muted-foreground">
+      <div className="space-y-5 text-sm leading-relaxed text-foreground">
         <section>
           <h3 className="mb-1 font-bold text-foreground">1. Tjänsten</h3>
           <p>
@@ -189,7 +189,7 @@ const MODALS: Record<ModalId, { title: string; content: React.ReactNode }> = {
   cookiepolicy: {
     title: 'Cookiepolicy',
     content: (
-      <div className="space-y-5 text-sm leading-relaxed text-muted-foreground">
+      <div className="space-y-5 text-sm leading-relaxed text-foreground">
         <section>
           <h3 className="mb-1 font-bold text-foreground">1. Vilka cookies använder vi?</h3>
           <p>
@@ -229,7 +229,7 @@ export function Footer() {
               <Link href="/" className="text-lg font-extrabold tracking-tight text-primary hover:text-primary/80 transition-colors font-display">
                 KalasKoll
               </Link>
-              <p className="mt-1 text-sm text-foreground/80">
+              <p className="mt-1 text-sm text-foreground">
                 Smarta inbjudningar för barnkalas
               </p>
             </div>
@@ -241,7 +241,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('om-oss')}
-                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                    className="cursor-pointer text-sm text-foreground underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Om oss
                   </button>
@@ -249,7 +249,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('priser')}
-                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                    className="cursor-pointer text-sm text-foreground underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Priser
                   </button>
@@ -257,7 +257,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/faq"
-                    className="text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                    className="text-sm text-foreground underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Vanliga frågor
                   </Link>
@@ -265,7 +265,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('kontakta-oss')}
-                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                    className="cursor-pointer text-sm text-foreground underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Kontakta oss
                   </button>
@@ -280,7 +280,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('integritetspolicy')}
-                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                    className="cursor-pointer text-sm text-foreground underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Integritetspolicy
                   </button>
@@ -288,7 +288,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('anvandarvillkor')}
-                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                    className="cursor-pointer text-sm text-foreground underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Användarvillkor
                   </button>
@@ -296,7 +296,7 @@ export function Footer() {
                 <li>
                   <button
                     onClick={() => setActiveModal('cookiepolicy')}
-                    className="cursor-pointer text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline transition-colors"
+                    className="cursor-pointer text-sm text-foreground underline-offset-2 hover:text-foreground hover:underline transition-colors"
                   >
                     Cookiepolicy
                   </button>
@@ -306,7 +306,7 @@ export function Footer() {
           </div>
 
           {/* Copyright — extra bottom padding to clear feedback widget on mobile */}
-          <div className="mt-6 border-t border-foreground/10 pt-4 pb-14 sm:pb-0 text-center text-xs text-foreground/60">
+          <div className="mt-6 border-t border-foreground/10 pt-4 pb-14 sm:pb-0 text-center text-xs text-foreground">
             &copy; {new Date().getFullYear()} KalasKoll. Alla rättigheter förbehållna.
           </div>
         </div>

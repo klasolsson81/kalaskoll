@@ -93,7 +93,7 @@ export default function HomePage() {
                   </h1>
                 </ScrollReveal>
                 <ScrollReveal delay={200}>
-                  <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground/80 sm:text-xl">
+                  <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground sm:text-xl">
                     Skapa inbjudningar och dela via e-post, länk eller QR-utskrift.
                     Gästerna svarar direkt via mobilen.
                   </p>
@@ -167,11 +167,11 @@ export default function HomePage() {
                         <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${feature.color} ${feature.glow}`}>
                           {feature.icon}
                         </div>
-                        <div className="mb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        <div className="mb-1 text-xs font-bold uppercase tracking-wider text-foreground">
                           Steg {feature.step}
                         </div>
                         <h3 className="mb-2 text-lg font-bold">{feature.title}</h3>
-                        <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+                        <p className="text-sm leading-relaxed text-foreground">{feature.description}</p>
                       </CardContent>
                     </Card>
                   </ScrollReveal>
@@ -185,7 +185,7 @@ export default function HomePage() {
             <div className="mx-auto max-w-5xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/70">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground">
                     Funktioner
                   </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight">Allt du behöver för kalaset</h2>
@@ -228,7 +228,7 @@ export default function HomePage() {
                         </div>
                         <div>
                           <h3 className="mb-1 font-bold">{feature.title}</h3>
-                          <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+                          <p className="text-sm leading-relaxed text-foreground">{feature.description}</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -243,7 +243,7 @@ export default function HomePage() {
             <div className="mx-auto max-w-3xl px-4">
               <ScrollReveal>
                 <div className="mb-12 text-center">
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground/70">
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground">
                     Vanliga frågor
                   </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight">Vanliga frågor</h2>
@@ -255,7 +255,7 @@ export default function HomePage() {
                     <Card className="glass-card border-0">
                       <CardContent className="pt-6">
                         <h3 className="mb-2 font-bold">{faq.q}</h3>
-                        <p className="text-sm leading-relaxed text-gray-900">{faq.a}</p>
+                        <p className="text-sm leading-relaxed text-foreground">{faq.a}</p>
                       </CardContent>
                     </Card>
                   </ScrollReveal>
@@ -280,7 +280,7 @@ export default function HomePage() {
                 <ScrollReveal>
                   <div className="glass-card rounded-3xl px-6 py-12 sm:px-12">
                     <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Redo att planera kalas?</h2>
-                    <p className="mt-4 text-lg text-foreground/80">
+                    <p className="mt-4 text-lg text-foreground">
                       Skapa ditt konto gratis och ha full koll på nästa barnkalas.
                     </p>
                     <div className="mt-8">
