@@ -1,12 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { ScrollReveal } from '@/components/shared/ScrollReveal';
 import { GradientMeshBg } from '@/components/landing/GradientMeshBg';
 import { faqItems, faqCategories } from '@/lib/faq-data';
@@ -99,25 +93,17 @@ export default function FaqPage() {
                     return (
                       <ScrollReveal key={category.id} delay={catIdx * 100}>
                         <div className="rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-sm sm:p-8">
-                          <h2 className="mb-4 font-display text-xl font-bold tracking-tight text-foreground">
+                          <h2 className="mb-6 font-display text-xl font-bold tracking-tight text-foreground">
                             {category.label}
                           </h2>
-                          <Accordion type="single" collapsible>
+                          <div className="space-y-5">
                             {categoryItems.map((faq, i) => (
-                              <AccordionItem
-                                key={i}
-                                value={`${category.id}-${i}`}
-                                className="border-gray-200"
-                              >
-                                <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline hover:text-primary">
-                                  {faq.q}
-                                </AccordionTrigger>
-                                <AccordionContent className="text-sm leading-relaxed text-foreground">
-                                  {faq.a}
-                                </AccordionContent>
-                              </AccordionItem>
+                              <div key={i} className={i < categoryItems.length - 1 ? 'border-b border-gray-200 pb-5' : ''}>
+                                <h3 className="mb-2 font-semibold text-foreground">{faq.q}</h3>
+                                <p className="text-sm leading-relaxed text-foreground">{faq.a}</p>
+                              </div>
                             ))}
-                          </Accordion>
+                          </div>
                         </div>
                       </ScrollReveal>
                     );
